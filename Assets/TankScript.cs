@@ -1,7 +1,5 @@
 using UnityEngine;
 
-using UnityEngine;
-
 public class TankScript : MonoBehaviour
 {
     [Header("References")]
@@ -22,26 +20,30 @@ public class TankScript : MonoBehaviour
 
     void Shoot()
     {
-        // convert mouse to world position
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
-        // direction and distance
         Vector2 dir = (cursorPosition - (Vector2)firePoint.position).normalized;
         float distance = Vector2.Distance(cursorPosition, firePoint.position);
 
-        // compute initial speed
         float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
 
-        // spawn projectile
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
-        // apply velocity
         Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.linearVelocity = dir * speed;
+            rb.velocity = dir * speed;
+        }
+
+        // Pass the tank collider to the projectile so it won't collide with it
+        Collider2D tankCollider = GetComponent<Collider2D>();
+        Projectile projectileScript = proj.GetComponent<Projectile>();
+        if (projectileScript != null)
+        {
+            projectileScript.SetOwner(tankCollider);
         }
     }
+
 }
 
