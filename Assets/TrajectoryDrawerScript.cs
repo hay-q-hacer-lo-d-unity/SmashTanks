@@ -6,7 +6,7 @@ namespace DefaultNamespace
     {
         public int points = 50;
         public float gravity = -9.81f;
-        public float curveLength = 0.2f; // Duración máxima de la curva en segundos
+        public float curveLength = 2f; // Duración máxima de la curva en segundos
 
         private LineRenderer _lineRenderer;
 

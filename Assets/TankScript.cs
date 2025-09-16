@@ -1,5 +1,6 @@
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TankScript : MonoBehaviour
 {
@@ -11,8 +12,8 @@ public class TankScript : MonoBehaviour
     public float speedMultiplier = 5f;   // scales velocity by distance
     public float maxSpeed = 20f;         // cap velocity if cursor is very far
 
-    [Header("Trajectory")]
-    public TrajectoryDrawerScript TrajectoryDrawerScript;
+    [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
+    public TrajectoryDrawerScript trajectoryDrawerScript;
     void Update()
     {
         // dibujar trayectoria en tiempo real
@@ -39,9 +40,6 @@ public class TankScript : MonoBehaviour
 
             float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
 
-            GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-            // crear proyectil
             GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
             // aplicar velocidad
@@ -73,10 +71,9 @@ public class TankScript : MonoBehaviour
 
         void UpdateTrajectory()
             {
-                if (TrajectoryDrawerScript == null || firePoint == null) return;
-
+                if (trajectoryDrawerScript == null || firePoint == null) return;
                 Vector2 initialVelocity = CalculateInitialVelocity();
-                TrajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+                trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
             }
 }
 
