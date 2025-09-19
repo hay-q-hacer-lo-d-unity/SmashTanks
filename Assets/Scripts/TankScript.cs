@@ -56,7 +56,8 @@ public class TankScript : MonoBehaviour
     {
         // dibujar trayectoria en tiempo real
         UpdateTrajectory();
-
+        if (EventSystem.current && EventSystem.current.IsPointerOverGameObject())
+            return;
         // disparar al hacer click izquierdo
         if (turnManager != null && turnManager.IsPlanningPhase() && !HasRegisteredAction())
         {
@@ -98,15 +99,7 @@ public class TankScript : MonoBehaviour
         
         public void ExecuteAction(PlayerAction action)
         {
-            switch (action.actionType)
-            {
-                case "Move":
-                    //Move(action.direction);
-                    break;
-                case "Shoot":
-                    Shoot();
-                    break;
-            }
+            currentMode.Execute(action.target);
         }
         
         private bool HasRegisteredAction()
