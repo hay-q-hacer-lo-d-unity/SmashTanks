@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
     {
         _ownerCollider = owner;
         Collider2D projectileCollider = GetComponent<Collider2D>();
-        if (_ownerCollider != null && projectileCollider != null)
+        if (_ownerCollider && projectileCollider)
         {
             Physics2D.IgnoreCollision(_ownerCollider, projectileCollider);
         }
@@ -30,7 +30,7 @@ public class Projectile : MonoBehaviour
     {
         if (_rb.linearVelocity.sqrMagnitude > 0.01f)
         {
-            float angle = Mathf.Atan2(_rb.linearVelocity.y, _rb.linearVelocity.x) * Mathf.Rad2Deg;
+            float angle = Mathf.Atan2(_rb.linearVelocity.y, _rb.linearVelocity.x) * Mathf.Rad2Deg + 90;
             transform.rotation = Quaternion.Euler(0, 0, angle);
         }
     }

@@ -66,10 +66,10 @@ public class TankScript : MonoBehaviour
             GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
             // aplicar velocidad
-            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            if (rb)
+            Rigidbody2D rb_ = proj.GetComponent<Rigidbody2D>();
+            if (rb_)
             {
-                rb.linearVelocity = dir * speed; // en 2D se usa "velocity"
+                rb_.linearVelocity = dir * speed;
             }
             // Pass the tank collider to the projectile so it won't collide with it
             Collider2D tankCollider = GetComponent<Collider2D>();
