@@ -2,22 +2,39 @@ using UnityEngine;
 
 public interface IAction
 {
-    void Execute(Transform aimPoint, Transform firePoint, Rigidbody2D rb,
-        GameObject projectilePrefab, float speedMultiplier,
-        float maxSpeed, float forceMultiplier);
+    void Execute(Vector3 target);
 }
 
 public class MissileAction : IAction
 {
+    private GameObject projectilePrefab;
+    private float speedMultiplier;
+    private float maxSpeed;
+    private Transform aimPoint;
+    private Transform firePoint;
+    private Rigidbody2D rb;
+    public MissileAction(
+        GameObject projectilePrefab,
+        float speedMultiplier,
+        float maxSpeed,
+        Transform aimPoint,
+        Transform firePoint,
+        Rigidbody2D rb
+        )
+    {
+        this.projectilePrefab = projectilePrefab;
+        this.speedMultiplier = speedMultiplier;
+        this.maxSpeed = maxSpeed;
+        this.aimPoint = aimPoint;
+        this.firePoint = firePoint;
+        this.rb = rb;
+    }
     
-    public void Execute(Transform aimPoint, Transform firePoint, Rigidbody2D rb,
-        GameObject projectilePrefab, float speedMultiplier,
-        float maxSpeed, float forceMultiplier)
+    public void Execute(Vector3 target)
     {
         if (!projectilePrefab || !firePoint) return;
 
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
+        Vector2 cursorPosition = new Vector2(target.x, target.y);
 
         Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
         float distance = Vector2.Distance(cursorPosition, firePoint.position);
@@ -27,7 +44,7 @@ public class MissileAction : IAction
         GameObject proj = Object.Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
         Rigidbody2D rb_ = proj.GetComponent<Rigidbody2D>();
-        if (rb_ != null)
+        if (rb_)
         {
             rb_.linearVelocity = dir * speed;
         }
@@ -43,12 +60,22 @@ public class MissileAction : IAction
 
 public class JumpAction : IAction
 {
-    public void Execute(Transform aimPoint, Transform firePoint, Rigidbody2D rb,
-        GameObject projectilePrefab, float speedMultiplier,
-        float maxSpeed, float forceMultiplier)
+    private Transform aimPoint;
+    private Rigidbody2D rb;
+    float forceMultiplier;
+    public JumpAction(
+        float forceMultiplier,
+        Transform  aimPoint,
+        Rigidbody2D rb
+    )
     {
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
+        this.forceMultiplier = forceMultiplier;
+        this.aimPoint = aimPoint;
+        this.rb = rb;
+    }
+    public void Execute(Vector3 target)
+    {
+        Vector2 cursorPosition = new Vector2(target.x, target.y);
 
         Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
         float distance = Vector2.Distance(cursorPosition, aimPoint.position);

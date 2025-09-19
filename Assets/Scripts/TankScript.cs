@@ -15,7 +15,7 @@ public class TankScript : MonoBehaviour
     public float maxSpeed = 20f;         // cap velocity if cursor is very far
 
     [Header("Jump Settings")] 
-    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] public Rigidbody2D rb;
     public float forceMultiplier;
     public float maxForce;
     
@@ -30,7 +30,14 @@ public class TankScript : MonoBehaviour
     public IAction currentMode;
     void Start()
     {
-        currentMode = new MissileAction();
+        currentMode = new MissileAction(
+            projectilePrefab,
+            speedMultiplier,
+            maxSpeed,
+            aimPoint,
+            firePoint,
+            rb
+            );
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         rb.mass = tankMass;  // assign mass at runtime
         aimPoint.SetParent(transform);
@@ -46,15 +53,7 @@ public class TankScript : MonoBehaviour
         // disparar al hacer click izquierdo
         if (Input.GetMouseButtonDown(0) && currentMode != null)
         {
-            currentMode.Execute(
-                aimPoint, 
-                firePoint, 
-                rb,
-                projectilePrefab, 
-                speedMultiplier,
-                maxSpeed, 
-                forceMultiplier
-            );
+            currentMode.Execute(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         }
     }
     
@@ -76,10 +75,10 @@ public class TankScript : MonoBehaviour
     }
 
     void UpdateTrajectory()
-        {
-            if (!trajectoryDrawerScript || !firePoint) return;
-            Vector2 initialVelocity = CalculateInitialVelocity();
-            trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
-        }
+    {
+        if (!trajectoryDrawerScript || !firePoint) return;
+        Vector2 initialVelocity = CalculateInitialVelocity();
+        trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+    }
 }
 
