@@ -7,6 +7,7 @@ public class TankScript : MonoBehaviour
     [Header("References")]
     public GameObject projectilePrefab;  // assign in Inspector
     public Transform firePoint;          // empty GameObject at tank’s barrel
+    public Transform aimPoint;
 
     [Header("Shot Settings")]
     public float speedMultiplier = 5f;   // scales velocity by distance
@@ -28,14 +29,14 @@ public class TankScript : MonoBehaviour
 
     void Shoot()
         {
-            if (projectilePrefab == null || firePoint == null) return;
+            if (!projectilePrefab || !firePoint) return;
 
             Vector2 initialVelocity = CalculateInitialVelocity();
 
             Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
-            Vector2 dir = (cursorPosition - (Vector2)firePoint.position).normalized;
+            Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
             float distance = Vector2.Distance(cursorPosition, firePoint.position);
 
             float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
@@ -51,7 +52,7 @@ public class TankScript : MonoBehaviour
             // Pass the tank collider to the projectile so it won't collide with it
                     Collider2D tankCollider = GetComponent<Collider2D>();
                     Projectile projectileScript = proj.GetComponent<Projectile>();
-                    if (projectileScript != null)
+                    if (projectileScript)
                     {
                         projectileScript.SetOwner(tankCollider);
                     }
@@ -62,7 +63,7 @@ public class TankScript : MonoBehaviour
             Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
-            Vector2 dir = (cursorPosition - (Vector2)firePoint.position).normalized;
+            Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
             float distance = Vector2.Distance(cursorPosition, firePoint.position);
             float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
 
@@ -71,7 +72,7 @@ public class TankScript : MonoBehaviour
 
         void UpdateTrajectory()
             {
-                if (trajectoryDrawerScript == null || firePoint == null) return;
+                if (!trajectoryDrawerScript || !firePoint) return;
                 Vector2 initialVelocity = CalculateInitialVelocity();
                 trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
             }

@@ -52,7 +52,7 @@ public class Projectile : MonoBehaviour
         foreach (Collider2D col in colliders)
         {
             Rigidbody2D rb = col.GetComponent<Rigidbody2D>();
-            if (rb != null && rb != _rb && col != _ownerCollider)
+            if (rb != null && rb != _rb)
             {
                 Vector2 direction = rb.position - (Vector2)transform.position;
                 float distance = direction.magnitude;
