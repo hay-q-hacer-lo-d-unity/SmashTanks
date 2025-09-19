@@ -1,5 +1,6 @@
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 public class TankScript : MonoBehaviour
@@ -24,9 +25,12 @@ public class TankScript : MonoBehaviour
 
     [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
     public TrajectoryDrawerScript trajectoryDrawerScript;
-    
+
+
+    public IAction currentMode;
     void Start()
     {
+        currentMode = new MissileAction();
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         rb.mass = tankMass;  // assign mass at runtime
         aimPoint.SetParent(transform);
@@ -37,68 +41,26 @@ public class TankScript : MonoBehaviour
         // dibujar trayectoria en tiempo real
         UpdateTrajectory();
 
+        if (EventSystem.current && EventSystem.current.IsPointerOverGameObject())
+            return;
         // disparar al hacer click izquierdo
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && currentMode != null)
         {
-            Shoot();
-        }
-
-        if (Input.GetMouseButton(1))
-        {
-            Jump();
+            currentMode.Execute(
+                aimPoint, 
+                firePoint, 
+                rb,
+                projectilePrefab, 
+                speedMultiplier,
+                maxSpeed, 
+                forceMultiplier
+            );
         }
     }
-
-    void Shoot()
-        {
-            if (!projectilePrefab || !firePoint) return;
-
-            Vector2 initialVelocity = CalculateInitialVelocity();
-
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
-
-            Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-            float distance = Vector2.Distance(cursorPosition, firePoint.position);
-
-            float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
-
-            GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-            // aplicar velocidad
-            Rigidbody2D rb_ = proj.GetComponent<Rigidbody2D>();
-            if (rb_)
-            {
-                rb_.linearVelocity = dir * speed;
-            }
-            // Pass the tank collider to the projectile so it won't collide with it
-            Collider2D tankCollider = GetComponent<Collider2D>();
-            Projectile projectileScript = proj.GetComponent<Projectile>();
-            if (projectileScript)
-            {
-                projectileScript.SetOwner(tankCollider);
-            }
-        }
-
-    void Jump()
+    
+    public void SetAction(IAction newAction)
     {
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
-
-        // Direction from aimPoint to cursor
-        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-
-        // Distance between aimPoint and cursor
-        float distance = Vector2.Distance(cursorPosition, aimPoint.position);
-
-        // Clamp distance so force doesn’t grow infinitely
-        float clampedDistance = Mathf.Clamp(distance, 0f, 10f);
-
-        // Compute force
-        Vector2 force = dir * (clampedDistance * forceMultiplier);
-
-        // Apply force -> Unity takes Rigidbody2D.mass into account
-        rb.AddForce(force, ForceMode2D.Impulse);
+        currentMode = newAction;
     }
 
     Vector2 CalculateInitialVelocity()
