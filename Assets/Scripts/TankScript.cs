@@ -1,5 +1,6 @@
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 public class TankScript : MonoBehaviour
@@ -13,6 +14,15 @@ public class TankScript : MonoBehaviour
     public float speedMultiplier = 5f;   // scales velocity by distance
     public float maxSpeed = 20f;         // cap velocity if cursor is very far
 
+    [Header("Jump Settings")] 
+    [SerializeField] public Rigidbody2D rb;
+    public float forceMultiplier;
+    public float maxForce;
+    
+    [Header("Tank Settings")]
+    [SerializeField] private float tankMass = 1f;  // custom mass per tank
+
+
     public int ownerId;
     
     private TurnManagerScript turnManager;
@@ -23,6 +33,25 @@ public class TankScript : MonoBehaviour
 
     [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
     public TrajectoryDrawerScript trajectoryDrawerScript;
+
+
+    public IAction currentMode;
+    void Start()
+    {
+        turnManager = FindObjectOfType<TurnManagerScript>();
+        currentMode = new MissileAction(
+            projectilePrefab,
+            speedMultiplier,
+            maxSpeed,
+            aimPoint,
+            firePoint,
+            rb
+            );
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
+        rb.mass = tankMass;  // assign mass at runtime
+        aimPoint.SetParent(transform);
+    }
+    
     void Update()
     {
         // dibujar trayectoria en tiempo real
@@ -31,7 +60,7 @@ public class TankScript : MonoBehaviour
         // disparar al hacer click izquierdo
         if (turnManager != null && turnManager.IsPlanningPhase() && !HasRegisteredAction())
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && currentMode != null)
             {
                 // calcular hacia dónde apunta el mouse
                 Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -42,54 +71,23 @@ public class TankScript : MonoBehaviour
             }
         }
     }
-
-    private void Start()
+    
+    public void SetAction(IAction newAction)
     {
-        turnManager = FindObjectOfType<TurnManagerScript>();
+        currentMode = newAction;
     }
 
-    void Shoot()
-        {
-            if (!projectilePrefab || !firePoint) return;
+    Vector2 CalculateInitialVelocity()
+    {
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
-            Vector2 initialVelocity = CalculateInitialVelocity();
+        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
+        float distance = Vector2.Distance(cursorPosition, firePoint.position);
+        float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
 
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
-
-            Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-            float distance = Vector2.Distance(cursorPosition, firePoint.position);
-
-            float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
-
-            GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-            // aplicar velocidad
-            Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.linearVelocity = dir * speed; // en 2D se usa "velocity"
-            }
-            // Pass the tank collider to the projectile so it won't collide with it
-                    Collider2D tankCollider = GetComponent<Collider2D>();
-                    Projectile projectileScript = proj.GetComponent<Projectile>();
-                    if (projectileScript)
-                    {
-                        projectileScript.SetOwner(tankCollider);
-                    }
-        }
-
-        Vector2 CalculateInitialVelocity()
-        {
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
-
-            Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-            float distance = Vector2.Distance(cursorPosition, firePoint.position);
-            float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
-
-            return dir * speed;
-        }
+        return dir * speed;
+    }
 
         void UpdateTrajectory()
         {
