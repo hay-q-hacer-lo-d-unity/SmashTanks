@@ -818,6 +818,53 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1346154244}
   m_SourcePrefab: {fileID: 100100000, guid: 775246f4fd918824f9c7a0a5f0f29d65, type: 3}
+--- !u!1 &1171114583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1171114585}
+  - component: {fileID: 1171114584}
+  m_Layer: 0
+  m_Name: TurnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1171114584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171114583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036ab1e779749aa4fb069c097b885d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TurnManagerScript
+  turnDuration: 30
+  timer: 0
+  players: []
+--- !u!4 &1171114585
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171114583}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.86889, y: 0.67497, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1258637754
 GameObject:
   m_ObjectHideFlags: 0
@@ -1341,7 +1388,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   projectilePrefab: {fileID: 4481765794907147700, guid: e03a4bf1ed78320439bde0de637dbb29, type: 3}
   firePoint: {fileID: 1258637755}
-  aimPoint: {fileID: 0}
+  aimPoint: {fileID: 1400632621}
   speedMultiplier: 5
   maxSpeed: 20
   trajectoryDrawerScript: {fileID: 214730409}
@@ -1869,3 +1916,4 @@ SceneRoots:
   - {fileID: 1896606603}
   - {fileID: 1773734121}
   - {fileID: 1989717171}
+  - {fileID: 1171114585}

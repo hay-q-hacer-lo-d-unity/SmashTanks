@@ -13,6 +13,14 @@ public class TankScript : MonoBehaviour
     public float speedMultiplier = 5f;   // scales velocity by distance
     public float maxSpeed = 20f;         // cap velocity if cursor is very far
 
+    public int ownerId;
+    
+    private TurnManagerScript turnManager;
+    public void SetOwnerId(int id)
+    {
+        ownerId = id;
+    }
+
     [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
     public TrajectoryDrawerScript trajectoryDrawerScript;
     void Update()
@@ -21,10 +29,23 @@ public class TankScript : MonoBehaviour
         UpdateTrajectory();
 
         // disparar al hacer click izquierdo
-        if (Input.GetMouseButtonDown(0))
+        if (turnManager != null && turnManager.IsPlanningPhase() && !HasRegisteredAction())
         {
-            Shoot();
+            if (Input.GetMouseButtonDown(0))
+            {
+                // calcular hacia dónde apunta el mouse
+                Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
+
+                // registrar acción de disparo
+                turnManager.RegisterAction(ownerId, "Shoot", cursorPosition);
+            }
         }
+    }
+
+    private void Start()
+    {
+        turnManager = FindObjectOfType<TurnManagerScript>();
     }
 
     void Shoot()
@@ -71,10 +92,29 @@ public class TankScript : MonoBehaviour
         }
 
         void UpdateTrajectory()
+        {
+            if (!trajectoryDrawerScript || !firePoint) return;
+            Vector2 initialVelocity = CalculateInitialVelocity();
+            trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+        }
+        
+        public void ExecuteAction(PlayerAction action)
+        {
+            switch (action.actionType)
             {
-                if (!trajectoryDrawerScript || !firePoint) return;
-                Vector2 initialVelocity = CalculateInitialVelocity();
-                trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+                case "Move":
+                    //Move(action.direction);
+                    break;
+                case "Shoot":
+                    Shoot();
+                    break;
             }
+        }
+        
+        private bool HasRegisteredAction()
+        {
+            return turnManager.HasAction(ownerId);
+        }
+
 }
 
