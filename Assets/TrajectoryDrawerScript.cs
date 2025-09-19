@@ -22,10 +22,9 @@ namespace DefaultNamespace
         public void DrawParabola(Vector2 origin, Vector2 initialVelocity)
         {
             float tMax = CalculateTimeToHitGround(origin.y, initialVelocity.y, gravity);
-            float tLimit = Mathf.Min(curveLength, tMax > 0 ? tMax : curveLength); // Usar el menor entre el tiempo de impacto y el límite
             for (int i = 0; i < points; i++)
             {
-                float t = tLimit * i / (points - 1);
+                float t = curveLength * i / (points - 1);
                 float x = origin.x + initialVelocity.x * t;
                 float y = origin.y + initialVelocity.y * t + 0.5f * gravity * t * t;
                 _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
