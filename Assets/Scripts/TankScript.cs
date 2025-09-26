@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,13 +15,20 @@ public class TankScript : MonoBehaviour
 
     [Header("Jump Settings")] [SerializeField]
     public Rigidbody2D rb;
-
     public float forceMultiplier;
     public float maxForce;
     
     [Header("Tank Settings")] [SerializeField]
-    private float tankMass = 1f; // custom mass per tank
-
+    public float tankMass; // custom mass per tank
+    public float maxHealth;
+    public float health;
+    
+    [Header("Health Bar Settings")]
+    public GameObject healthBarPrefab;   // assign prefab in Inspector
+    private HealthBarScript healthBarScript;     // assign in Inspector (World Space Canvas prefab)
+    
+    [Header("Weapons")] [SerializeField]
+    public Missile missileWeapon = new Missile(2f, 500f, 20);
 
     public int ownerId;
     
@@ -36,6 +44,15 @@ public class TankScript : MonoBehaviour
     {
         if (CanonOrbitAndAim != null)
             CanonOrbitAndAim.canMove = canMove;
+    }
+
+    public void ApplyDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
 [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
@@ -56,6 +73,16 @@ public class TankScript : MonoBehaviour
             );
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         rb.mass = tankMass;  // assign mass at runtime
+        health = tankMass;
+        maxHealth = tankMass;
+        if (healthBarPrefab != null)
+        {
+            GameObject hb = Instantiate(healthBarPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
+            hb.transform.SetParent(transform, worldPositionStays: true);
+
+            healthBarScript = hb.GetComponent<HealthBarScript>();
+            healthBarScript.SetHealth(health, maxHealth);
+        }
         aimPoint.SetParent(transform);
     }
     

@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     [Header("Explosion Settings")]
     public float explosionRadius = 3f;
     public float explosionForce = 500f;
+    public float damage = 2f;
     public GameObject explosionEffectPrefab;
 
     private Collider2D _ownerCollider;
@@ -56,7 +57,19 @@ public class Projectile : MonoBehaviour
             {
                 Vector2 direction = rb.position - (Vector2)transform.position;
                 float distance = direction.magnitude;
-                float force = Mathf.Lerp(explosionForce, 0, distance / explosionRadius);
+                float normalizedDistance = Mathf.Clamp01(distance / explosionRadius);
+                float attenuation = 1f - normalizedDistance * normalizedDistance;
+                Debug.Log("Damage: " + damage);
+                Debug.Log("Attenuation: " + attenuation);
+
+                float force = explosionForce * attenuation;
+                float damageAmount = damage * attenuation;
+                TankScript tank = col.GetComponent<TankScript>();
+                if (tank != null)
+                {
+                    tank.ApplyDamage(damageAmount);
+                    Debug.Log("Damage applied: " + damageAmount);
+                }
                 rb.AddForce(direction.normalized * force);
             }
         }
