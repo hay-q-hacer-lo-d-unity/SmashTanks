@@ -6,10 +6,11 @@ public class CanonOrbitAndAim : MonoBehaviour
     [SerializeField] Transform canonSprite;  // arrastrá el objeto "Canon"
     [SerializeField] float radius = 0.8f;    // ajustá hasta que “toque” el borde
     [SerializeField] float spriteAngleOffset = 0f; // ej: -90 si tu sprite mira “arriba”
+    [SerializeField] public bool canMove = true;
 
     void Update()
     {
-        if (!tank) return;
+        if (!tank || !canMove) return;
 
         // Mouse en mundo (2D)
         var m = Camera.main.ScreenToWorldPoint(Input.mousePosition);

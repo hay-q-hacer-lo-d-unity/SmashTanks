@@ -5,22 +5,21 @@ using UnityEngine.Serialization;
 
 public class TankScript : MonoBehaviour
 {
-    [Header("References")]
-    public GameObject projectilePrefab;  // assign in Inspector
-    public Transform firePoint;          // empty GameObject at tank’s barrel
+    [Header("References")] public GameObject projectilePrefab; // assign in Inspector
+    public Transform firePoint; // empty GameObject at tank’s barrel
     public Transform aimPoint;
 
-    [Header("Shot Settings")]
-    public float speedMultiplier = 5f;   // scales velocity by distance
-    public float maxSpeed = 20f;         // cap velocity if cursor is very far
+    [Header("Shot Settings")] public float speedMultiplier = 5f; // scales velocity by distance
+    public float maxSpeed = 20f; // cap velocity if cursor is very far
 
-    [Header("Jump Settings")] 
-    [SerializeField] public Rigidbody2D rb;
+    [Header("Jump Settings")] [SerializeField]
+    public Rigidbody2D rb;
+
     public float forceMultiplier;
     public float maxForce;
     
-    [Header("Tank Settings")]
-    [SerializeField] private float tankMass = 1f;  // custom mass per tank
+    [Header("Tank Settings")] [SerializeField]
+    private float tankMass = 1f; // custom mass per tank
 
 
     public int ownerId;
@@ -31,7 +30,15 @@ public class TankScript : MonoBehaviour
         ownerId = id;
     }
 
-    [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
+    public CanonOrbitAndAim CanonOrbitAndAim;
+    
+    public void SetCanMove(bool canMove)
+    {
+        if (CanonOrbitAndAim != null)
+            CanonOrbitAndAim.canMove = canMove;
+    }
+
+[FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
     public TrajectoryDrawerScript trajectoryDrawerScript;
 
 
@@ -55,12 +62,13 @@ public class TankScript : MonoBehaviour
     void Update()
     {
         // dibujar trayectoria en tiempo real
-        UpdateTrajectory();
         if (EventSystem.current && EventSystem.current.IsPointerOverGameObject())
             return;
         // disparar al hacer click izquierdo
         if (turnManager != null && turnManager.IsPlanningPhase() && !HasRegisteredAction())
         {
+            UpdateTrajectory();
+            if(!CanonOrbitAndAim.canMove) SetCanMove(true);
             if (Input.GetMouseButtonDown(0) && currentMode != null)
             {
                 // calcular hacia dónde apunta el mouse
@@ -69,6 +77,7 @@ public class TankScript : MonoBehaviour
 
                 // registrar acción de disparo
                 turnManager.RegisterAction(ownerId, "Shoot", cursorPosition);
+                SetCanMove(false);
             }
         }
     }

@@ -896,6 +896,7 @@ MonoBehaviour:
   canonSprite: {fileID: 2105701151}
   radius: 1
   spriteAngleOffset: 0
+  canMove: 1
 --- !u!1001 &766721164
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -993,7 +994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036ab1e779749aa4fb069c097b885d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnManagerScript
-  turnDuration: 30
+  turnDuration: 10
   timer: 0
 --- !u!4 &1171114585
 Transform:
@@ -1515,6 +1516,7 @@ MonoBehaviour:
   maxForce: 5
   tankMass: 1
   ownerId: 0
+  CanonOrbitAndAim: {fileID: 763118203}
   trajectoryDrawerScript: {fileID: 214730409}
 --- !u!61 &1896606600
 BoxCollider2D:
@@ -1950,6 +1952,10 @@ PrefabInstance:
       propertyPath: forceMultiplier
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 690457831894852220, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
+      propertyPath: CanonOrbitAndAim
+      value: 
+      objectReference: {fileID: 5573158039712207003}
     - target: {fileID: 3523176707015978058, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.07
@@ -1999,6 +2005,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
+--- !u!114 &5573158039712207003 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3630657204664757001, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
+  m_PrefabInstance: {fileID: 5573158039712207002}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e2ba2f91b5169246bae57bacd2f4a28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
