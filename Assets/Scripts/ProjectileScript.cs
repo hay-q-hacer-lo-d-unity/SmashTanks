@@ -1,6 +1,7 @@
+using Fusion;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : NetworkBehaviour
 {
     private Rigidbody2D _rb;
 
@@ -11,6 +12,8 @@ public class Projectile : MonoBehaviour
     public GameObject explosionEffectPrefab;
 
     private Collider2D _ownerCollider;
+    private float lifeTime = 5f;
+    private float timer = 0f;
 
     public void SetOwner(Collider2D owner)
     {
@@ -22,22 +25,32 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    void Start()
+    public override void Spawned()
     {
         _rb = GetComponent<Rigidbody2D>();
+        timer = 0f;
     }
 
-    void Update()
+    public override void FixedUpdateNetwork()
     {
         if (_rb.linearVelocity.sqrMagnitude > 0.01f)
         {
             float angle = Mathf.Atan2(_rb.linearVelocity.y, _rb.linearVelocity.x) * Mathf.Rad2Deg + 90;
             transform.rotation = Quaternion.Euler(0, 0, angle);
         }
+
+        timer += Runner.DeltaTime;
+        if (timer >= lifeTime && Object.HasStateAuthority)
+        {
+            Explode();
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!Object.HasStateAuthority)
+            return;
+
         Explode();
     }
 
@@ -45,6 +58,7 @@ public class Projectile : MonoBehaviour
     {
         if (explosionEffectPrefab != null)
         {
+            // Instancia solo efectos visuales (no en red)
             Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
         }
 
@@ -59,22 +73,25 @@ public class Projectile : MonoBehaviour
                 float distance = direction.magnitude;
                 float normalizedDistance = Mathf.Clamp01(distance / explosionRadius);
                 float attenuation = 1f - normalizedDistance * normalizedDistance;
-                Debug.Log("Damage: " + damage);
-                Debug.Log("Attenuation: " + attenuation);
 
                 float force = explosionForce * attenuation;
                 float damageAmount = damage * attenuation;
+
                 TankScript tank = col.GetComponent<TankScript>();
                 if (tank != null)
                 {
                     tank.ApplyDamage(damageAmount);
-                    Debug.Log("Damage applied: " + damageAmount);
+                    Debug.Log($"[Projectile] Hit {tank.name} → Damage: {damageAmount:F2}");
                 }
+
                 rb.AddForce(direction.normalized * force);
             }
         }
 
-        Destroy(gameObject);
+        if (Object.HasStateAuthority)
+        {
+            Runner.Despawn(Object);
+        }
     }
 
     void OnDrawGizmosSelected()

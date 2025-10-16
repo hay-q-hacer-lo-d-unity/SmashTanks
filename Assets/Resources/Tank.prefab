@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 7161840359085667864}
   - component: {fileID: 6522033948229156995}
   - component: {fileID: -9063571777775820456}
+  - component: {fileID: -1885013008467277745}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -213,19 +214,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14f15b5ccc21f164b88a338dfd0c7a51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  projectilePrefab: {fileID: 4481765794907147700, guid: e03a4bf1ed78320439bde0de637dbb29, type: 3}
+  projectilePrefab: {fileID: 4481765794907147700, guid: 9defac660ee968a41abd96dbc4644e31, type: 3}
   firePoint: {fileID: 2500206363125310524}
   aimPoint: {fileID: 7464117971673495541}
   speedMultiplier: 5
   maxSpeed: 20
+  shooter: {fileID: -1885013008467277745}
   rb: {fileID: 0}
   forceMultiplier: 2
   maxForce: 5
   tankMass: 0
   maxHealth: 0
-  health: 0
+  _health: 0
   healthBarPrefab: {fileID: 0}
-  ownerId: 0
+  _ownerId: 0
   CanonOrbitAndAim: {fileID: 506116055634165793}
   trajectoryDrawerScript: {fileID: 7080689132873705685}
 --- !u!114 &-9063571777775820456
@@ -244,8 +246,25 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 6522033948229156995}
+  - {fileID: -1885013008467277745}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &-1885013008467277745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 384380778201622499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8971409af0f3ec4468408372c4816cc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShooterScript
+  projectilePrefab: {fileID: 4481765794907147700, guid: 9defac660ee968a41abd96dbc4644e31, type: 3}
+  firePoint: {fileID: 2500206363125310524}
+  projectileSpeed: 10
 --- !u!1 &600312521590743489
 GameObject:
   m_ObjectHideFlags: 0

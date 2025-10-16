@@ -1,80 +1,63 @@
 using System.Net.Mime;
 using DefaultNamespace;
+using Fusion;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
-public class TankScript : MonoBehaviour
+public class TankScript : NetworkBehaviour
 {
-    [Header("References")] public GameObject projectilePrefab; // assign in Inspector
-    public Transform firePoint; // empty GameObject at tank’s barrel
+    [Header("References")] 
+    public GameObject projectilePrefab;
+    public Transform firePoint;
     public Transform aimPoint;
 
-    [Header("Shot Settings")] public float speedMultiplier = 5f; // scales velocity by distance
-    public float maxSpeed = 20f; // cap velocity if cursor is very far
+    [Header("Shot Settings")] 
+    public float speedMultiplier = 5f;
+    public float maxSpeed = 20f;
+    public ShooterScript shooter;
 
-    [Header("Jump Settings")] [SerializeField]
-    public Rigidbody2D rb;
+    [Header("Jump Settings")] 
+    [SerializeField] public Rigidbody2D rb;
     public float forceMultiplier;
     public float maxForce;
     
-    [Header("Tank Settings")] [SerializeField]
-    public float tankMass; // custom mass per tank
+    [Header("Tank Settings")] 
+    [SerializeField] public float tankMass;
     public float maxHealth;
-    public float health;
-    
-    [Header("Health Bar Settings")]
-    public GameObject healthBarPrefab;   // assign prefab in Inspector
-    private HealthBarScript healthBarScript;     // assign in Inspector (World Space Canvas prefab)
-    
-    [Header("Weapons")] [SerializeField]
-    public Missile missileWeapon = new Missile(2f, 500f, 20);
+    [Networked] public float health { get; set; }
 
-    public int ownerId;
+    [Header("Health Bar Settings")]
+    public GameObject healthBarPrefab;
+    private HealthBarScript healthBarScript;
+
+    [Header("Weapons")] 
+    [SerializeField] public Missile missileWeapon = new Missile(2f, 500f, 20);
+
+    [Networked] public int ownerId { get; set; }
     
     private TurnManagerScript turnManager;
-    public void SetOwnerId(int id)
-    {
-        ownerId = id;
-    }
 
     public CanonOrbitAndAim CanonOrbitAndAim;
-    
-    public void SetCanMove(bool canMove)
-    {
-        if (CanonOrbitAndAim != null)
-            CanonOrbitAndAim.canMove = canMove;
-    }
 
-    public void ApplyDamage(float damage)
-    {
-        health -= damage;
-        if (health <= 0)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-[FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
+    [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
     public TrajectoryDrawerScript trajectoryDrawerScript;
 
-
     public IAction currentMode;
-    void Start()
+
+    public override void Spawned()
     {
         turnManager = FindObjectOfType<TurnManagerScript>();
-        currentMode = new MissileAction(
-            projectilePrefab,
-            speedMultiplier,
-            maxSpeed,
-            aimPoint,
-            firePoint,
-            rb
-            );
+
         if (rb == null) rb = GetComponent<Rigidbody2D>();
-        rb.mass = tankMass;  // assign mass at runtime
-        health = tankMass;
+        rb.mass = tankMass;
+        
+        if (shooter == null) shooter = GetComponent<ShooterScript>();
+
         maxHealth = tankMass;
+        if (Object.HasStateAuthority)
+            health = tankMass; // solo el host inicializa el valor
+
         if (healthBarPrefab != null)
         {
             GameObject hb = Instantiate(healthBarPrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
@@ -83,35 +66,86 @@ public class TankScript : MonoBehaviour
             healthBarScript = hb.GetComponent<HealthBarScript>();
             healthBarScript.SetHealth(health, maxHealth);
         }
-        aimPoint.SetParent(transform);
+
+        if (aimPoint != null)
+            aimPoint.SetParent(transform);
+
+        currentMode = new MissileAction(
+            shooter,
+            speedMultiplier,
+            maxSpeed,
+            aimPoint,
+            firePoint
+        );
+
+        // Registrar este tanque con el TurnManager
+        if (turnManager != null && Object.HasStateAuthority)
+        {
+            turnManager.RegisterTank(this);
+            Debug.Log($"[Tank] Registrado en TurnManager");
+        }
+
+        if (Object.HasInputAuthority)
+            Debug.Log($"[Tank {Object.InputAuthority.PlayerId}] Control local activo ✅");
+        else
+            Debug.Log($"[Tank {Object.InputAuthority.PlayerId}] Control remoto 🌐");
     }
-    
-    void Update()
+
+    public override void FixedUpdateNetwork()
     {
-        // dibujar trayectoria en tiempo real
+        // Actualiza la barra de vida en todos los clientes
+        if (healthBarScript != null)
+            healthBarScript.SetHealth(health, maxHealth);
+
+        if (!Object.HasInputAuthority)
+            return;
+
         if (EventSystem.current && EventSystem.current.IsPointerOverGameObject())
             return;
-        // disparar al hacer click izquierdo
+
         if (turnManager != null && turnManager.IsPlanningPhase() && !HasRegisteredAction())
         {
             UpdateTrajectory();
-            if(!CanonOrbitAndAim.canMove) SetCanMove(true);
+
+            if (!CanonOrbitAndAim.canMove)
+                SetCanMove(true);
+
             if (Input.GetMouseButtonDown(0) && currentMode != null)
             {
-                // calcular hacia dónde apunta el mouse
                 Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
-                // registrar acción de disparo
-                turnManager.RegisterAction(ownerId, "Shoot", cursorPosition);
+                Debug.Log($"[Tank {ownerId}] Registrando acción de disparo (RPC)");
+
+                // Llamamos al RPC del TurnManager para registrar la acción en red
+                turnManager.RPC_RegisterAction(ownerId, "Shoot", cursorPosition);
                 SetCanMove(false);
             }
         }
     }
-    
-    public void SetAction(IAction newAction)
+
+    public void SetOwnerId(int id)
     {
-        currentMode = newAction;
+        ownerId = id;
+    }
+
+    public void SetCanMove(bool canMove)
+    {
+        if (CanonOrbitAndAim != null)
+            CanonOrbitAndAim.canMove = canMove;
+    }
+
+    public void ApplyDamage(float damage)
+    {
+        if (!Object.HasStateAuthority)
+            return;
+
+        health -= damage;
+        if (health <= 0)
+        {
+            Debug.Log($"[Tank {ownerId}] fue destruido");
+            Runner.Despawn(Object);
+        }
     }
 
     Vector2 CalculateInitialVelocity()
@@ -126,22 +160,35 @@ public class TankScript : MonoBehaviour
         return dir * speed;
     }
 
-        void UpdateTrajectory()
-        {
-            if (!trajectoryDrawerScript || !firePoint) return;
-            Vector2 initialVelocity = CalculateInitialVelocity();
-            trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
-        }
+    void UpdateTrajectory()
+    {
+        if (!trajectoryDrawerScript || !firePoint) return;
+        Vector2 initialVelocity = CalculateInitialVelocity();
+        trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+    }
+    
+    public void SetAction(IAction newAction)
+    {
+        currentMode = newAction;
+    }
         
-        public void ExecuteAction(PlayerAction action)
+    public void ExecuteAction(PlayerAction action)
+    {
+        Debug.Log($"[TankScript] ExecuteAction llamado para Tank {ownerId} | Acción: {action.actionType} | Target: {action.target}");
+        
+        if (currentMode != null)
         {
+            Debug.Log($"[TankScript] currentMode NO es null, ejecutando...");
             currentMode.Execute(action.target);
         }
-        
-        private bool HasRegisteredAction()
+        else 
         {
-            return turnManager.HasAction(ownerId);
+            Debug.LogWarning($"[Tank {ownerId}] No hay acción asignada para ejecutar");
         }
-
+    }
+        
+    private bool HasRegisteredAction()
+    {
+        return turnManager.HasAction(ownerId);
+    }
 }
-

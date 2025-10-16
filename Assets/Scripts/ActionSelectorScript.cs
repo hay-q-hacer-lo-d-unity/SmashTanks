@@ -4,16 +4,20 @@ public class ActionSelectorScript : MonoBehaviour
 {
     public TankScript tank;
 
+    public void SetTank(TankScript newTank)
+    {
+        tank = newTank;
+    }
+    
     public void SelectMissile()
     {
         tank.SetAction(new MissileAction(
-            tank.projectilePrefab,
+            tank.shooter,
             tank.speedMultiplier,
             tank.maxSpeed,
             tank.aimPoint,
-            tank.firePoint,
-            tank.rb
-            ));
+            tank.firePoint
+        ));
     }
 
     public void SelectJump()
@@ -22,6 +26,6 @@ public class ActionSelectorScript : MonoBehaviour
             tank.forceMultiplier,
             tank.aimPoint,
             tank.rb
-            ));
+        ));
     }
 }

@@ -24,19 +24,49 @@ public class GameNetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         });
     }
 
-    // Se llama cuando entra un jugador nuevo
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    public async void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log($"Jugador conectado: {player.PlayerId}");
+        Debug.Log($"👥 Jugador conectado: {player.PlayerId}");
 
+        // Carga el prefab del tanque desde Resources
         var tankPrefab = Resources.Load<GameObject>("Tank");
-        if (tankPrefab != null)
+        if (tankPrefab == null)
         {
-            runner.Spawn(tankPrefab, Vector3.zero, Quaternion.identity, player);
+            Debug.LogError("❌ No se encontró el prefab Tank en Resources/");
+            return;
+        }
+
+        // Spawnea el tanque en una posición distinta por jugador
+        var spawnPos = new Vector3(player.PlayerId * 3, 0, 0);
+        var tankObject = runner.Spawn(tankPrefab, spawnPos, Quaternion.identity, player);
+
+        // 🔄 Espera brevemente para garantizar que la autoridad local esté establecida
+        await Task.Delay(200);
+
+        var tankScript = tankObject.GetComponent<TankScript>();
+        if (tankScript == null)
+        {
+            Debug.LogError("❌ El objeto spawneado no tiene TankScript");
+            return;
+        }
+
+        // 🔗 Vincula automáticamente el ActionSelector al tanque local
+        if (tankObject.HasInputAuthority)
+        {
+            var selector = FindObjectOfType<ActionSelectorScript>();
+            if (selector != null)
+            {
+                selector.SetTank(tankScript);
+                Debug.Log($"✅ ActionSelector vinculado automáticamente al tanque local (Jugador {player.PlayerId})");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ No se encontró ningún ActionSelector en la escena.");
+            }
         }
         else
         {
-            Debug.LogError("No se encontró el prefab Tank en Resources/");
+            Debug.Log($"[GameNetworkManager] Jugador {player.PlayerId} spawneado sin autoridad local (remoto).");
         }
     }
 

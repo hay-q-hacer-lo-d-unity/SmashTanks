@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,117 +17,158 @@ public class PlayerAction
     }
 }
 
-public class TurnManagerScript : MonoBehaviour
+public class TurnManagerScript : NetworkBehaviour
 {
+    [Networked] public float timer { get; set; }
+    [Networked] public bool isPlanningPhase { get; set; }
+    [Networked] public int currentTurn { get; set; }
+
     public float turnDuration = 30f;
-    public float timer;
-    
+
     public List<PlayerScript> players = new List<PlayerScript>();
     private Dictionary<int, PlayerAction> actions = new Dictionary<int, PlayerAction>();
-    
-    private bool isPlanningPhase = false;
-    
-    void Start()
+    private bool gameStarted = false;
+
+    public override void Spawned()
     {
-        TankScript[] tanks = FindObjectsOfType<TankScript>();
-        
-        for (int i = 0; i < tanks.Length; i++)
+        if (Object.HasStateAuthority)
         {
-            PlayerScript newPlayer = new PlayerScript(i, tanks[i]);
-            players.Add(newPlayer);
-            
-            tanks[i].SetOwnerId(i);
+            Debug.Log("[TurnManager] Host listo para recibir tanques...");
         }
-        Debug.Log("Asignados " + players.Count + " jugadores a tanques.");
+        else
+        {
+            Debug.Log("[TurnManager] Cliente sincronizado con host.");
+        }
+    }
+
+    public void RegisterTank(TankScript tank)
+    {
+        if (!Object.HasStateAuthority) return;
+
+        // Verifica que el tanque no esté ya registrado
+        if (players.Exists(p => p.tankNetworkId == tank.Object.Id))
+        {
+            Debug.LogWarning($"[TurnManager] Tanque {tank.name} ya está registrado");
+            return;
+        }
+
+        int playerId = players.Count;
+        PlayerScript newPlayer = new PlayerScript(playerId, tank);
+        players.Add(newPlayer);
+        tank.SetOwnerId(playerId);
+
+        Debug.Log($"[TurnManager] Tank {playerId} registrado: {tank.name}. Total tanques: {players.Count}");
+
+        // Si es el primer tanque, inicia el juego después de un pequeño delay
+        if (players.Count == 1 && !gameStarted)
+        {
+            gameStarted = true;
+            StartCoroutine(DelayedStartGame());
+        }
+    }
+
+    private System.Collections.IEnumerator DelayedStartGame()
+    {
+        // Espera un segundo para que todos los tanques se registren
+        yield return new WaitForSeconds(1f);
+        
+        Debug.Log($"[TurnManager] Iniciando juego con {players.Count} tanques registrados");
         StartTurn();
     }
-    
-    
-    void Update()
+
+    public override void FixedUpdateNetwork()
     {
+        if (!Object.HasStateAuthority)
+            return;
+
         if (isPlanningPhase)
         {
-            timer -= Time.deltaTime;
+            timer -= Runner.DeltaTime;
 
             if (timer <= 0f)
             {
                 EndTurn();
             }
-            
-            if (Input.GetKeyDown(KeyCode.A))
-                RegisterAction(0, "Move", new Vector2(1, 0));
-
-            if (Input.GetKeyDown(KeyCode.B))
-                RegisterAction(1, "Fire", new Vector2(0, 1));
-
-            if (Input.GetKeyDown(KeyCode.C))
-                RegisterAction(2, "Defend", new Vector2(-1, 0));
-
-            if (Input.GetKeyDown(KeyCode.D))
-                RegisterAction(3, "Wait", new Vector2(0, -1));
         }
     }
-    
-    void StartTurn()
+
+    private void StartTurn()
     {
-        Debug.Log("Nuevo turno comienza!");
+        Debug.Log("[TurnManager] Nuevo turno comienza!");
+        currentTurn++;
         timer = turnDuration;
         isPlanningPhase = true;
         actions.Clear();
     }
-    
-    public void RegisterAction(int playerId, string type, Vector2 target)
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RegisterAction(int playerId, string type, Vector2 target)
     {
         if (!isPlanningPhase)
         {
-            Debug.Log("No se pueden registrar acciones fuera de la fase de planificación");
+            Debug.Log("[TurnManager] No se pueden registrar acciones fuera de la fase de planificación");
             return;
         }
 
         if (!actions.ContainsKey(playerId))
         {
             actions[playerId] = new PlayerAction(playerId, type, target);
-            Debug.Log($"Acción registrada para jugador {playerId}: {type} -> {target}");
+            Debug.Log($"[TurnManager] Acción RPC registrada para jugador {playerId}: {type} -> {target}");
         }
         else
         {
-            Debug.Log($"Jugador {playerId} ya tiene una acción registrada.");
+            Debug.Log($"[TurnManager] Jugador {playerId} ya tiene acción registrada.");
         }
     }
-    
-    void EndTurn()
+
+    private async void EndTurn()
     {
         isPlanningPhase = false;
-        Debug.Log("Turno terminado. Acciones registradas:");
+        Debug.Log("[TurnManager] Turno terminado. Acciones registradas:");
 
         foreach (var kvp in actions)
         {
             Debug.Log($"Jugador {kvp.Key}: {kvp.Value.actionType} hacia {kvp.Value.target}");
-            
+
             PlayerScript player = players.Find(p => p.playerId == kvp.Key);
             if (player != null)
             {
                 player.pendingAction = kvp.Value;
             }
         }
-        
-        ExecuteTurn();
 
+        ExecuteTurn();
+        await System.Threading.Tasks.Task.Delay(2000);
         StartTurn();
     }
 
-    public void ExecuteTurn()
+    private void ExecuteTurn()
     {
+        Debug.Log($"[TurnManager] Ejecutando turno con {players.Count} jugadores");
+        
         foreach (PlayerScript player in players)
         {
             if (player.pendingAction != null)
             {
-                player.tank.ExecuteAction(player.pendingAction);
-                player.pendingAction = null; // limpiar para el próximo turno
+                TankScript tank = player.GetTank(Runner);
+                if (tank != null)
+                {
+                    Debug.Log($"[TurnManager] Ejecutando acción de jugador {player.playerId}: {player.pendingAction.actionType} hacia {player.pendingAction.target}");
+                    tank.ExecuteAction(player.pendingAction);
+                }
+                else
+                {
+                    Debug.LogWarning($"[TurnManager] Tank null para jugador {player.playerId}");
+                }
+                player.pendingAction = null;
+            }
+            else
+            {
+                Debug.Log($"[TurnManager] Jugador {player.playerId} no tiene acción pendiente");
             }
         }
     }
-    
+
     public bool IsPlanningPhase()
     {
         return isPlanningPhase;
@@ -136,5 +178,4 @@ public class TurnManagerScript : MonoBehaviour
     {
         return actions.ContainsKey(playerId);
     }
-
 }

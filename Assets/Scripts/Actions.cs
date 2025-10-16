@@ -7,54 +7,43 @@ public interface IAction
 
 public class MissileAction : IAction
 {
-    private GameObject projectilePrefab;
+    private ShooterScript shooter;
     private float speedMultiplier;
     private float maxSpeed;
     private Transform aimPoint;
     private Transform firePoint;
-    private Rigidbody2D rb;
+
     public MissileAction(
-        GameObject projectilePrefab,
+        ShooterScript shooter,
         float speedMultiplier,
         float maxSpeed,
         Transform aimPoint,
-        Transform firePoint,
-        Rigidbody2D rb
-        )
+        Transform firePoint
+    )
     {
-        this.projectilePrefab = projectilePrefab;
+        this.shooter = shooter;
         this.speedMultiplier = speedMultiplier;
         this.maxSpeed = maxSpeed;
         this.aimPoint = aimPoint;
         this.firePoint = firePoint;
-        this.rb = rb;
     }
-    
+
     public void Execute(Vector3 target)
     {
-        if (!projectilePrefab || !firePoint) return;
+        Debug.Log($"[MissileAction] Execute llamado | Target: {target}");
+        
+        if (shooter == null || firePoint == null)
+        {
+            Debug.LogWarning($"[MissileAction] Falta ShooterScript ({shooter != null}) o firePoint ({firePoint != null}) asignado");
+            return;
+        }
 
         Vector2 cursorPosition = new Vector2(target.x, target.y);
-
         Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-        float distance = Vector2.Distance(cursorPosition, firePoint.position);
 
-        float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
-
-        GameObject proj = Object.Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-        Rigidbody2D rb_ = proj.GetComponent<Rigidbody2D>();
-        if (rb_)
-        {
-            rb_.linearVelocity = dir * speed;
-        }
-
-        Collider2D tankCollider = firePoint.GetComponentInParent<Collider2D>();
-        Projectile projectileScript = proj.GetComponent<Projectile>();
-        if (projectileScript)
-        {
-            projectileScript.SetOwner(tankCollider);
-        }
+        Debug.Log($"[MissileAction] Disparando misil | Dir: {dir} | Shooter: {shooter.name}");
+        // Mandamos solo la dirección, Shooter se encarga del resto
+        shooter.FireProjectile(dir);
     }
 }
 
@@ -62,10 +51,11 @@ public class JumpAction : IAction
 {
     private Transform aimPoint;
     private Rigidbody2D rb;
-    float forceMultiplier;
+    private float forceMultiplier;
+
     public JumpAction(
         float forceMultiplier,
-        Transform  aimPoint,
+        Transform aimPoint,
         Rigidbody2D rb
     )
     {
@@ -73,16 +63,15 @@ public class JumpAction : IAction
         this.aimPoint = aimPoint;
         this.rb = rb;
     }
+
     public void Execute(Vector3 target)
     {
         Vector2 cursorPosition = new Vector2(target.x, target.y);
-
         Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
         float distance = Vector2.Distance(cursorPosition, aimPoint.position);
         float clampedDistance = Mathf.Clamp(distance, 0f, 5f);
 
         Vector2 force = dir * (clampedDistance * forceMultiplier);
-
         rb.AddForce(force, ForceMode2D.Impulse);
     }
 }
