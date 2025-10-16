@@ -47,6 +47,8 @@ public class TankScript : NetworkBehaviour
 
     public override void Spawned()
     {
+        Debug.Log($"[Tank] Spawned con InputAuthority: {Object.InputAuthority.PlayerId} | IsServer: {Runner.IsServer} | HasStateAuth: {Object.HasStateAuthority}");
+
         turnManager = FindObjectOfType<TurnManagerScript>();
 
         if (rb == null) rb = GetComponent<Rigidbody2D>();
@@ -78,11 +80,11 @@ public class TankScript : NetworkBehaviour
             firePoint
         );
 
-        // Registrar este tanque con el TurnManager
-        if (turnManager != null && Object.HasStateAuthority)
+        // Registrar este tanque con el TurnManager mediante RPC
+        if (turnManager != null && Object.HasInputAuthority)
         {
-            turnManager.RegisterTank(this);
-            Debug.Log($"[Tank] Registrado en TurnManager");
+            Debug.Log($"[Tank] Registrando tanque vía RPC. NetworkId: {Object.Id}");
+            turnManager.RPC_RegisterTank(Object.Id);
         }
 
         if (Object.HasInputAuthority)

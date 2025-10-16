@@ -41,39 +41,49 @@ public class TurnManagerScript : NetworkBehaviour
         }
     }
 
-    public void RegisterTank(TankScript tank)
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RegisterTank(NetworkId tankNetworkId)
     {
-        if (!Object.HasStateAuthority) return;
+        Debug.Log($"[TurnManager] RPC_RegisterTank recibido para NetworkId: {tankNetworkId}");
 
         // Verifica que el tanque no esté ya registrado
-        if (players.Exists(p => p.tankNetworkId == tank.Object.Id))
+        if (players.Exists(p => p.tankNetworkId == tankNetworkId))
         {
-            Debug.LogWarning($"[TurnManager] Tanque {tank.name} ya está registrado");
+            Debug.LogWarning($"[TurnManager] Tanque {tankNetworkId} ya está registrado");
             return;
         }
 
-        int playerId = players.Count;
-        PlayerScript newPlayer = new PlayerScript(playerId, tank);
-        players.Add(newPlayer);
-        tank.SetOwnerId(playerId);
-
-        Debug.Log($"[TurnManager] Tank {playerId} registrado: {tank.name}. Total tanques: {players.Count}");
-
-        // Si es el primer tanque, inicia el juego después de un pequeño delay
-        if (players.Count == 1 && !gameStarted)
+        // Busca el tanque por su NetworkId
+        if (Runner.TryFindObject(tankNetworkId, out NetworkObject networkObject))
         {
-            gameStarted = true;
-            StartCoroutine(DelayedStartGame());
-        }
-    }
+            TankScript tank = networkObject.GetComponent<TankScript>();
+            if (tank != null)
+            {
+                int playerId = players.Count;
+                PlayerScript newPlayer = new PlayerScript(playerId, tank);
+                players.Add(newPlayer);
+                tank.SetOwnerId(playerId);
 
-    private System.Collections.IEnumerator DelayedStartGame()
-    {
-        // Espera un segundo para que todos los tanques se registren
-        yield return new WaitForSeconds(1f);
-        
-        Debug.Log($"[TurnManager] Iniciando juego con {players.Count} tanques registrados");
-        StartTurn();
+                Debug.Log($"[TurnManager] Tank {playerId} registrado: {tank.name}. Total tanques: {players.Count}");
+
+                // Si el juego no ha iniciado, inicia inmediatamente con el primer jugador
+                if (!gameStarted)
+                {
+                    gameStarted = true;
+                    Debug.Log($"[TurnManager] Iniciando juego con el primer jugador");
+                    StartTurn();
+                }
+                else
+                {
+                    // Late join: el jugador se une al juego en curso
+                    Debug.Log($"[TurnManager] Late join: Jugador {playerId} se une al juego en progreso");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError($"[TurnManager] No se pudo encontrar el tanque con NetworkId: {tankNetworkId}");
+        }
     }
 
     public override void FixedUpdateNetwork()
@@ -121,7 +131,7 @@ public class TurnManagerScript : NetworkBehaviour
         }
     }
 
-    private async void EndTurn()
+    private void EndTurn()
     {
         isPlanningPhase = false;
         Debug.Log("[TurnManager] Turno terminado. Acciones registradas:");
@@ -138,7 +148,6 @@ public class TurnManagerScript : NetworkBehaviour
         }
 
         ExecuteTurn();
-        await System.Threading.Tasks.Task.Delay(2000);
         StartTurn();
     }
 

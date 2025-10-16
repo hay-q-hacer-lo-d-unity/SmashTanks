@@ -4,6 +4,7 @@ using Fusion.Sockets;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameNetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -13,13 +14,19 @@ public class GameNetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         runner = gameObject.AddComponent<NetworkRunner>();
         runner.ProvideInput = true;
-
+        
+        var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+        var sceneInfo = new NetworkSceneInfo();
+        if (scene.IsValid) {
+            sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
+        }
+        
         // Inicia el juego como Host (puede ser Client si cambiás el modo)
         await runner.StartGame(new StartGameArgs
         {
             GameMode = GameMode.Host,
             SessionName = "SmashTanksRoom",
-            Scene = SceneRef.FromIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex),
+            Scene = scene,
             SceneManager = runner.gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
     }
