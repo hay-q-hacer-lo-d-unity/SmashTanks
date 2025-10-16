@@ -21,10 +21,10 @@ public class GameNetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
         
-        // Inicia el juego como Host (puede ser Client si cambiás el modo)
+        // Inicia el juego uniéndose a una sesión o creando una si no existe.
         await runner.StartGame(new StartGameArgs
         {
-            GameMode = GameMode.Host,
+            GameMode = GameMode.AutoHostOrClient,
             SessionName = "SmashTanksRoom",
             Scene = scene,
             SceneManager = runner.gameObject.AddComponent<NetworkSceneManagerDefault>()
@@ -35,45 +35,47 @@ public class GameNetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         Debug.Log($"👥 Jugador conectado: {player.PlayerId}");
 
-        // Carga el prefab del tanque desde Resources
-        var tankPrefab = Resources.Load<GameObject>("Tank");
-        if (tankPrefab == null)
+        // Solo el servidor/host puede spawnear objetos de red.
+        if (runner.IsServer)
         {
-            Debug.LogError("❌ No se encontró el prefab Tank en Resources/");
-            return;
+            // Carga el prefab del tanque desde Resources
+            var tankPrefab = Resources.Load<GameObject>("Tank");
+            if (tankPrefab == null)
+            {
+                Debug.LogError("❌ No se encontró el prefab Tank en Resources/");
+                return;
+            }
+
+            // Spawnea el tanque en una posición distinta por jugador y le da autoridad al jugador que entró.
+            var spawnPos = new Vector3(player.PlayerId * 3, 0, 0);
+            runner.Spawn(tankPrefab, spawnPos, Quaternion.identity, player);
         }
 
-        // Spawnea el tanque en una posición distinta por jugador
-        var spawnPos = new Vector3(player.PlayerId * 3, 0, 0);
-        var tankObject = runner.Spawn(tankPrefab, spawnPos, Quaternion.identity, player);
-
-        // 🔄 Espera brevemente para garantizar que la autoridad local esté establecida
+        // La lógica para vincular el tanque al controlador de acciones debe ejecutarse en el cliente propietario.
+        // Esperamos un momento para que el objeto sea creado por el servidor y replicado a los clientes.
         await Task.Delay(200);
 
-        var tankScript = tankObject.GetComponent<TankScript>();
-        if (tankScript == null)
-        {
-            Debug.LogError("❌ El objeto spawneado no tiene TankScript");
-            return;
+        // Buscamos el tanque que nos pertenece (el que tiene nuestra autoridad de input).
+        TankScript localTank = null;
+        foreach (var tank in FindObjectsOfType<TankScript>()) {
+            if (tank.HasInputAuthority) {
+                localTank = tank;
+                break;
+            }
         }
 
-        // 🔗 Vincula automáticamente el ActionSelector al tanque local
-        if (tankObject.HasInputAuthority)
+        if (localTank != null)
         {
             var selector = FindObjectOfType<ActionSelectorScript>();
             if (selector != null)
             {
-                selector.SetTank(tankScript);
-                Debug.Log($"✅ ActionSelector vinculado automáticamente al tanque local (Jugador {player.PlayerId})");
+                selector.SetTank(localTank);
+                Debug.Log($"✅ ActionSelector vinculado automáticamente al tanque local.");
             }
             else
             {
                 Debug.LogWarning("⚠️ No se encontró ningún ActionSelector en la escena.");
             }
-        }
-        else
-        {
-            Debug.Log($"[GameNetworkManager] Jugador {player.PlayerId} spawneado sin autoridad local (remoto).");
         }
     }
 
