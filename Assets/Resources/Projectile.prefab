@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4079883057427621505}
   - component: {fileID: 3056298596859091383}
   - component: {fileID: -1945122024681215213}
+  - component: {fileID: 5788635899191072310}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -192,4 +193,28 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 3056298596859091383}
+  - {fileID: 5788635899191072310}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &5788635899191072310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4481765794907147700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e690b5fb1084f5ab1c86457af401d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Addons.Physics::Fusion.Addons.Physics.NetworkRigidbody2D
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 1
+  _interpolationTarget: {fileID: 0}
+  UsePreciseRotation: 1
+  UseRenderSleepThresholds: 1
+  RenderThresholds:
+    UseEnergy: 1
+    Position: 0.01
+    Rotation: 0.01
+    Scale: 0.01
