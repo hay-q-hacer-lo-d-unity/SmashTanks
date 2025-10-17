@@ -24,7 +24,6 @@ public class TrajectoryDrawerScript : MonoBehaviour
 
         _lineRenderer.positionCount = points; // reset position count
 
-        float tMax = CalculateTimeToHitGround(origin.y, initialVelocity.y, gravity);
         for (int i = 0; i < points; i++)
         {
             float t = curveLength * i / (points - 1);
@@ -33,22 +32,7 @@ public class TrajectoryDrawerScript : MonoBehaviour
             _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
         }   
     }
-
     
-    private float CalculateTimeToHitGround(float y0, float vy, float g)
-    {
-        float a = 0.5f * g;
-        float b = vy;
-        float c = y0;
-        float discriminant = b * b - 4 * a * c;
-        if (discriminant < 0) return -1f;
-        float sqrtDisc = Mathf.Sqrt(discriminant);
-        float t1 = (-b + sqrtDisc) / (2 * a);
-        float t2 = (-b - sqrtDisc) / (2 * a);
-        float tMax = Mathf.Max(t1, t2);
-        if (tMax < 0) return -1f;
-        return tMax;
-    }
     public void ClearParabola()
     {
         if (!_lineRenderer) return;

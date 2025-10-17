@@ -9,7 +9,8 @@ public class TankScript : MonoBehaviour
     public Transform firePoint; // empty GameObject at tank’s barrel
     public Transform aimPoint;
 
-    [Header("Shot Settings")] public float speedMultiplier = 5f; // scales velocity by distance
+    [Header("Shot Settings")] 
+    public float speedMultiplier = 5f; // scales velocity by distance
     public float maxSpeed = 20f; // cap velocity if cursor is very far
 
     [Header("Jump Settings")] [SerializeField]
@@ -108,7 +109,7 @@ public class TankScript : MonoBehaviour
                 Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
                 // registrar acción de disparo
-                turnManager.RegisterAction(ownerId, "Shoot", cursorPosition);
+                turnManager.RegisterAction(ownerId, currentMode.GetName(), cursorPosition);
                 SetCanMove(false);
             }
         }
@@ -116,26 +117,68 @@ public class TankScript : MonoBehaviour
     
     public void SetAction(IAction newAction)
     {
+        Debug.Log($"Selected {newAction.GetName()} action");
         currentMode = newAction;
+        if (newAction.LocksCannon()) CanonOrbitAndAim.LockCannonPosition();
+        else CanonOrbitAndAim.UnlockCannonPosition();
     }
 
     Vector2 CalculateInitialVelocity()
     {
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
+        switch (currentMode.GetName())
+        {
+            case "Shoot":
+            {
+                Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
 
-        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-        float distance = Vector2.Distance(cursorPosition, firePoint.position);
-        float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
+                Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
+                float distance = Vector2.Distance(cursorPosition, firePoint.position);
+                float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
 
-        return dir * speed;
+                return dir * speed;
+            }
+            case "Jump":
+            {
+                Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
+
+                // Direction from aim point to cursor
+                Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
+
+                // Clamp distance to a maximum jump range (same as in Execute)
+                float distance = Vector2.Distance(cursorPosition, aimPoint.position);
+                float clampedDistance = Mathf.Clamp(distance, 0f, 5f);
+
+                // Compute the applied force
+                Vector2 force = dir * (clampedDistance * forceMultiplier);
+
+                // Convert force to velocity using the tank’s mass (v = F / m)
+                Vector2 initialVelocity = force / rb.mass;
+
+                return initialVelocity;
+            }
+        }
+        return Vector2.down;
     }
 
     void UpdateTrajectory()
     {
         if (!trajectoryDrawerScript || !firePoint) return;
         Vector2 initialVelocity = CalculateInitialVelocity();
-        trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+
+        Vector3 origin;
+        switch (currentMode.GetName())
+        {
+            case "Shoot": origin = firePoint.transform.position; break;
+            case "Jump": origin = aimPoint.transform.position; break;
+            default: origin = aimPoint.transform.position; break;
+        }
+            
+        trajectoryDrawerScript.DrawParabola(
+            origin, 
+            initialVelocity
+            );
     }
     
     public void ExecuteAction(PlayerAction action)
@@ -150,7 +193,7 @@ public class TankScript : MonoBehaviour
     
     public void HideTrajectory()
     {
-        if (trajectoryDrawerScript != null)
+        if (trajectoryDrawerScript)
         {
             trajectoryDrawerScript.ClearParabola();
         }

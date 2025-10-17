@@ -15,7 +15,7 @@ public class HealthBarScript : MonoBehaviour
     private void LateUpdate()
     {
         // ✅ Billboard effect (always face the camera)
-        if (mainCamera != null)
+        if (mainCamera)
             transform.forward = mainCamera.transform.forward;
     }
 

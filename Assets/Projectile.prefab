@@ -171,4 +171,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   explosionRadius: 3
   explosionForce: 5000
+  damage: 5
   explosionEffectPrefab: {fileID: 0}

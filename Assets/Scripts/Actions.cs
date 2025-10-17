@@ -1,8 +1,14 @@
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public interface IAction
 {
     void Execute(Vector3 target);
+
+    String GetName();
+
+    bool LocksCannon();
 }
 
 public class MissileAction : IAction
@@ -56,6 +62,16 @@ public class MissileAction : IAction
             projectileScript.SetOwner(tankCollider);
         }
     }
+
+    public string GetName()
+    {
+        return "Shoot";
+    }
+
+    public bool LocksCannon()
+    {
+        return false;
+    }
 }
 
 public class JumpAction : IAction
@@ -84,5 +100,15 @@ public class JumpAction : IAction
         Vector2 force = dir * (clampedDistance * forceMultiplier);
 
         rb.AddForce(force, ForceMode2D.Impulse);
+    }
+
+    public string GetName()
+    {
+        return "Jump";
+    }
+
+    public bool LocksCannon()
+    {
+        return true;
     }
 }
