@@ -771,15 +771,15 @@ PrefabInstance:
       objectReference: {fileID: 574522037}
     - target: {fileID: 690457831894852220, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
       propertyPath: maxForce
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 690457831894852220, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
-      propertyPath: tankMass
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 690457831894852220, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
+      propertyPath: tankMass
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 690457831894852220, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
       propertyPath: forceMultiplier
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1867845960252409071, guid: 01619ba46f6f4cb4cb16d65106fa4037, type: 3}
       propertyPath: curveLength

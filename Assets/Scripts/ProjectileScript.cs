@@ -73,7 +73,7 @@ public class Projectile : MonoBehaviour
                 rb.AddForce(direction.normalized * force);
             }
         }
-
+        Debug.Log("Explode");
         Destroy(gameObject);
     }
 

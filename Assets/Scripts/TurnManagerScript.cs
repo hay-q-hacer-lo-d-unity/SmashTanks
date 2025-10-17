@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 [System.Serializable]
@@ -7,6 +10,7 @@ public class PlayerAction
     public int playerId;
     public string actionType;
     public Vector2 target;
+    private TurnPhase currentPhase = TurnPhase.Planning;
 
     public PlayerAction(int id, string type, Vector2 tgt)
     {
@@ -18,12 +22,12 @@ public class PlayerAction
 
 public class TurnManagerScript : MonoBehaviour
 {
-    public float turnDuration = 30f;
+    public float turnDuration;
     public float timer;
-    
+    public TMP_Text timerText;
     public List<PlayerScript> players = new List<PlayerScript>();
     private Dictionary<int, PlayerAction> actions = new Dictionary<int, PlayerAction>();
-    
+    private TurnPhase currentPhase = TurnPhase.Planning;
     private bool isPlanningPhase = false;
     
     void Start()
@@ -38,32 +42,24 @@ public class TurnManagerScript : MonoBehaviour
             tanks[i].SetOwnerId(i);
         }
         Debug.Log("Asignados " + players.Count + " jugadores a tanques.");
-        StartTurn();
+        StartPlanningPhase();
     }
     
     
     void Update()
     {
-        if (isPlanningPhase)
+        if (timerText)
+        {
+            timerText.text = $"Time left: {Mathf.Ceil(timer)}s";
+        }
+        if (currentPhase == TurnPhase.Planning)
         {
             timer -= Time.deltaTime;
 
             if (timer <= 0f)
             {
-                EndTurn();
+                EndPlanningPhase();
             }
-            
-            if (Input.GetKeyDown(KeyCode.A))
-                RegisterAction(0, "Move", new Vector2(1, 0));
-
-            if (Input.GetKeyDown(KeyCode.B))
-                RegisterAction(1, "Fire", new Vector2(0, 1));
-
-            if (Input.GetKeyDown(KeyCode.C))
-                RegisterAction(2, "Defend", new Vector2(-1, 0));
-
-            if (Input.GetKeyDown(KeyCode.D))
-                RegisterAction(3, "Wait", new Vector2(0, -1));
         }
     }
     
@@ -77,7 +73,7 @@ public class TurnManagerScript : MonoBehaviour
     
     public void RegisterAction(int playerId, string type, Vector2 target)
     {
-        if (!isPlanningPhase)
+        if (currentPhase != TurnPhase.Planning)
         {
             Debug.Log("No se pueden registrar acciones fuera de la fase de planificación");
             return;
@@ -129,12 +125,94 @@ public class TurnManagerScript : MonoBehaviour
     
     public bool IsPlanningPhase()
     {
-        return isPlanningPhase;
+        return currentPhase == TurnPhase.Planning;
     }
 
     public bool HasAction(int playerId)
     {
         return actions.ContainsKey(playerId);
     }
+    
+    void StartPlanningPhase()
+    {
+        Debug.Log("Fase de planificación comienza!");
+        currentPhase = TurnPhase.Planning;
+        timer = turnDuration;
+        actions.Clear();
+    }
 
+    void EndPlanningPhase()
+    {
+        Debug.Log("Fase de planificación termina.");
+        currentPhase = TurnPhase.Action;
+        foreach (PlayerScript player in players)
+        {
+            if (player.tank)
+                player.tank.HideTrajectory();
+        }
+        // Assign pending actions
+        foreach (var kvp in actions)
+        {
+            PlayerScript player = players.Find(p => p.playerId == kvp.Key);
+            if (player != null)
+                player.pendingAction = kvp.Value;
+        }
+
+        StartCoroutine(ExecuteActionsPhase());
+    }
+    
+    IEnumerator ExecuteActionsPhase()
+    {
+        Debug.Log("Fase de acción comienza!");
+
+        // Execute all pending actions
+        foreach (PlayerScript player in players)
+        {
+            if (player.pendingAction != null)
+            {
+                player.tank.ExecuteAction(player.pendingAction);
+                player.pendingAction = null;
+            }
+        }
+
+        float stationaryTime = 0f;
+        float requiredStationaryTime = 2f; // 2 seconds of stationariness
+        while (stationaryTime < requiredStationaryTime)
+        {
+            yield return null;
+
+            if (CheckStationaryState())
+            {
+                stationaryTime += Time.deltaTime; // accumulate time while stationary
+            }
+            else
+            {
+                stationaryTime = 0f; // reset timer if anything moves
+            }
+        }
+
+        Debug.Log("Fase de acción termina.");
+        StartPlanningPhase();
+    }
+
+    bool CheckStationaryState()
+    {
+        Rigidbody2D[] allRigidbodies = FindObjectsByType<Rigidbody2D>(FindObjectsSortMode.None);
+
+        foreach (Rigidbody2D rb in allRigidbodies)
+        {
+            if (rb.linearVelocity.magnitude >= 0.05f)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+}
+
+public enum TurnPhase
+{
+    Planning,
+    Action
 }

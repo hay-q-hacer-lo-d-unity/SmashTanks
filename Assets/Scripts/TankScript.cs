@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -42,18 +41,24 @@ public class TankScript : MonoBehaviour
     
     public void SetCanMove(bool canMove)
     {
-        if (CanonOrbitAndAim != null)
+        if (CanonOrbitAndAim)
             CanonOrbitAndAim.canMove = canMove;
     }
 
     public void ApplyDamage(float damage)
     {
         health -= damage;
+        health = Mathf.Max(0, health);
+
+        if (healthBarScript != null)
+            healthBarScript.SetHealth(health, maxHealth);
+
         if (health <= 0)
         {
             Destroy(gameObject);
         }
     }
+
 
 [FormerlySerializedAs("TrajectoryDrawerScript")] [Header("Trajectory")]
     public TrajectoryDrawerScript trajectoryDrawerScript;
@@ -92,12 +97,12 @@ public class TankScript : MonoBehaviour
         if (EventSystem.current && EventSystem.current.IsPointerOverGameObject())
             return;
         // disparar al hacer click izquierdo
-        if (turnManager != null && turnManager.IsPlanningPhase() && !HasRegisteredAction())
+        if (turnManager && turnManager.IsPlanningPhase() && !HasRegisteredAction())
         {
             UpdateTrajectory();
             if(!CanonOrbitAndAim.canMove) SetCanMove(true);
             if (Input.GetMouseButtonDown(0) && currentMode != null)
-            {
+            { 
                 // calcular hacia dónde apunta el mouse
                 Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
@@ -126,22 +131,30 @@ public class TankScript : MonoBehaviour
         return dir * speed;
     }
 
-        void UpdateTrajectory()
+    void UpdateTrajectory()
+    {
+        if (!trajectoryDrawerScript || !firePoint) return;
+        Vector2 initialVelocity = CalculateInitialVelocity();
+        trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+    }
+    
+    public void ExecuteAction(PlayerAction action)
+    {
+        currentMode.Execute(action.target);
+    }
+    
+    private bool HasRegisteredAction()
+    {
+        return turnManager.HasAction(ownerId);
+    }
+    
+    public void HideTrajectory()
+    {
+        if (trajectoryDrawerScript != null)
         {
-            if (!trajectoryDrawerScript || !firePoint) return;
-            Vector2 initialVelocity = CalculateInitialVelocity();
-            trajectoryDrawerScript.DrawParabola(firePoint.position, initialVelocity);
+            trajectoryDrawerScript.ClearParabola();
         }
+    }
         
-        public void ExecuteAction(PlayerAction action)
-        {
-            currentMode.Execute(action.target);
-        }
-        
-        private bool HasRegisteredAction()
-        {
-            return turnManager.HasAction(ownerId);
-        }
-
 }
 
