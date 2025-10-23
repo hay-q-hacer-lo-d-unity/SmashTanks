@@ -112,3 +112,56 @@ public class JumpAction : IAction
         return true;
     }
 }
+
+public class CrashAction : IAction
+{
+    private Transform aimPoint;
+    private Rigidbody2D rb;
+    float forceMultiplier;
+    private float damageMultiplier;
+    public CrashAction(
+        float forceMultiplier,
+        Transform  aimPoint,
+        Rigidbody2D rb,
+        float damageMultiplier
+    )
+    {
+        this.forceMultiplier = forceMultiplier;
+        this.aimPoint = aimPoint;
+        this.rb = rb;
+        this.damageMultiplier = damageMultiplier;
+    }
+    public void Execute(Vector3 target)
+    {
+        Vector2 cursorPosition = new Vector2(target.x, target.y);
+
+        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
+        float distance = Vector2.Distance(cursorPosition, aimPoint.position);
+        float clampedDistance = Mathf.Clamp(distance, 0f, 5f);
+
+        Vector2 force = dir * (clampedDistance * forceMultiplier);
+        
+
+        rb.AddForce(force, ForceMode2D.Impulse);
+    }
+    
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        TankScript otherTank = collision.collider.GetComponent<TankScript>();
+        if (otherTank)
+        {
+            float damage = damageMultiplier * collision.relativeVelocity.magnitude * rb.mass;
+            otherTank.ApplyDamage(damage);
+        }
+    }
+
+    public string GetName()
+    {
+        return "Crash";
+    }
+
+    public bool LocksCannon()
+    {
+        return true;
+    }
+}

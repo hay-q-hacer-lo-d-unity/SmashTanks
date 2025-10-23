@@ -48,9 +48,9 @@ public class Projectile : MonoBehaviour
             Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
         }
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
+        var colliders = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
 
-        foreach (Collider2D col in colliders)
+        foreach (var col in colliders)
         {
             Rigidbody2D rb = col.GetComponent<Rigidbody2D>();
             if (rb != null && rb != _rb)
@@ -68,7 +68,6 @@ public class Projectile : MonoBehaviour
                 if (tank != null)
                 {
                     tank.ApplyDamage(damageAmount);
-                    Debug.Log("Damage applied: " + damageAmount);
                 }
                 rb.AddForce(direction.normalized * force);
             }

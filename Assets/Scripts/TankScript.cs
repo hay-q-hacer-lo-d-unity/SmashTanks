@@ -158,6 +158,26 @@ public class TankScript : MonoBehaviour
 
                 return initialVelocity;
             }
+            case "Crash":
+            {
+                Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 cursorPosition = new Vector2(mouseWorld.x, mouseWorld.y);
+
+                // Direction from aim point to cursor
+                Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
+
+                // Clamp distance to a maximum jump range (same as in Execute)
+                float distance = Vector2.Distance(cursorPosition, aimPoint.position);
+                float clampedDistance = Mathf.Clamp(distance, 0f, 5f);
+
+                // Compute the applied force
+                Vector2 force = dir * (clampedDistance * forceMultiplier);
+
+                // Convert force to velocity using the tank’s mass (v = F / m)
+                Vector2 initialVelocity = force / rb.mass;
+
+                return initialVelocity;
+            }
         }
         return Vector2.down;
     }

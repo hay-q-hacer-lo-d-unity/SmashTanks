@@ -24,4 +24,14 @@ public class ActionSelectorScript : MonoBehaviour
             tank.rb
             ));
     }
+    
+    public void SelectCrash()
+    {
+        tank.SetAction(new CrashAction(
+            tank.forceMultiplier,
+            tank.aimPoint,
+            tank.rb,
+            0.1f
+            ));
+    }
 }
