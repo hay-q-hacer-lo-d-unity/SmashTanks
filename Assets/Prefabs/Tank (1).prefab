@@ -248,7 +248,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DefaultNamespace.TrajectoryDrawerScript
   points: 50
   gravity: -9.81
-  curveLength: 2
 --- !u!1 &4495375124821400961
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,6 +441,7 @@ MonoBehaviour:
   maxHealth: 0
   health: 0
   healthBarPrefab: {fileID: 5510066182759078694, guid: c6d934981471c814cb968dcdd1efe62e, type: 3}
+  accuracy: 1
   ownerId: 0
   CanonOrbitAndAim: {fileID: 275371233239841363}
   trajectoryDrawerScript: {fileID: 7560664658849248389}
