@@ -29,7 +29,11 @@ public class TankScript : MonoBehaviour
     
     [Header("Weapons")] [SerializeField]
     public Missile missileWeapon = new Missile(2f, 500f, 20);
+    
+    [Header("Accuracy")]
+    public float accuracy; // 0 to 1, where 1 is perfect accuracy
 
+    [Header("Owner ID")]
     public int ownerId;
     
     private TurnManagerScript turnManager;
@@ -197,7 +201,8 @@ public class TankScript : MonoBehaviour
             
         trajectoryDrawerScript.DrawParabola(
             origin, 
-            initialVelocity
+            initialVelocity,
+            accuracy
             );
     }
     

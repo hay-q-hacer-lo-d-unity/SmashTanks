@@ -5,7 +5,6 @@ public class TrajectoryDrawerScript : MonoBehaviour
 {
     public int points = 50;
     public float gravity = -9.81f;
-    public float curveLength = 2f; // Duración máxima de la curva en segundos
 
     private LineRenderer _lineRenderer;
 
@@ -18,7 +17,7 @@ public class TrajectoryDrawerScript : MonoBehaviour
         _lineRenderer.widthMultiplier = 0.05f; //grosor
     }
 
-    public void DrawParabola(Vector2 origin, Vector2 initialVelocity)
+    public void DrawParabola(Vector2 origin, Vector2 initialVelocity, float accuracy)
     {
         if (!_lineRenderer) return;
 
@@ -26,7 +25,7 @@ public class TrajectoryDrawerScript : MonoBehaviour
 
         for (int i = 0; i < points; i++)
         {
-            float t = curveLength * i / (points - 1);
+            float t = accuracy * i / (points - 1);
             float x = origin.x + initialVelocity.x * t;
             float y = origin.y + initialVelocity.y * t + 0.5f * gravity * t * t;
             _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
