@@ -1,4 +1,6 @@
-﻿public class PlayerScript
+﻿using Tank;
+
+public class PlayerScript
 {
     public int playerId;
     public TankScript tank; // referencia al tanque en la escena

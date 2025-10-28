@@ -29,5 +29,12 @@ namespace UI
             Value--;
             OnValueChanged?.Invoke(Value);
         }
+        
+        public void Reset()
+        {
+            Value = 1;
+            OnValueChanged?.Invoke(Value);
+        }
+
     }
 }

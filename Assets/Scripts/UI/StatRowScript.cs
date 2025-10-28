@@ -1,46 +1,34 @@
-﻿using TMPro;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-
-namespace UI
+﻿namespace UI
 {
     using TMPro;
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class StatRowScript : MonoBehaviour
+    public class StatRowScript : Tooltipable
     {
         [Header("UI References")]
         [SerializeField] private TMP_Text valueTMP;
         [SerializeField] private Button increaseButton;
         [SerializeField] private Button decreaseButton;
 
-        [Header("Stat Info")]
-        [SerializeField] private string statName = "New Stat";
-        [TextArea] [SerializeField] private string description = "Stat description";
+        public string StatName => name;
+        public Stat Stat => _stat;
 
-        public string StatName => statName;
-        public Stat Stat => stat;
+        private Stat _stat;
 
-        private Stat stat;
-        private StatsManagerScript manager;
-        private StatLegendScript legend;
-
-        public void Initialize(Stat stat, StatsManagerScript manager, StatLegendScript legend)
+        public void Initialize(Stat stat, StatsManagerScript manager, LegendScript legend)
         {
-            this.stat = stat;
-            this.manager = manager;
-            this.legend = legend;
+            _stat = stat;
+            Legend = legend;
 
             stat.OnValueChanged += UpdateUI;
             UpdateUI(stat.Value);
 
-            increaseButton.onClick.AddListener(() => manager.TryIncrease(stat));
-            decreaseButton.onClick.AddListener(() => manager.TryDecrease(stat));
+            increaseButton.onClick.AddListener(() => manager.TryIncreaseStat(stat));
+            decreaseButton.onClick.AddListener(() => manager.TryDecreaseStat(stat));
         }
 
-        private void UpdateUI(int value)
+        internal void UpdateUI(int value)
         {
             valueTMP.text = value.ToString();
         }
@@ -49,17 +37,6 @@ namespace UI
         {
             increaseButton.interactable = canIncrease;
             decreaseButton.interactable = canDecrease;
-        }
-
-        public void ShowTooltip()
-        {
-            var backgroundImage = GetComponentInChildren<Image>();
-            legend?.Show(statName, description, backgroundImage.sprite);
-        }
-
-        public void HideTooltip()
-        {
-            legend?.Hide();
         }
     }
 }
