@@ -1,7 +1,7 @@
 using Tank;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class BasicMissile : MonoBehaviour, IProjectile
 {
     private Rigidbody2D _rb;
 
@@ -42,7 +42,7 @@ public class Projectile : MonoBehaviour
         Explode();
     }
 
-    void Explode()
+    public void Explode()
     {
         if (explosionEffectPrefab != null)
         {

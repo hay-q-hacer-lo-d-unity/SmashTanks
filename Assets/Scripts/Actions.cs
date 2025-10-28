@@ -57,8 +57,8 @@ public class MissileAction : IAction
         }
 
         Collider2D tankCollider = firePoint.GetComponentInParent<Collider2D>();
-        Projectile projectileScript = proj.GetComponent<Projectile>();
-        if (projectileScript)
+        IProjectile projectileScript = proj.GetComponent<IProjectile>();
+        if (projectileScript != null)
         {
             projectileScript.SetOwner(tankCollider);
         }
