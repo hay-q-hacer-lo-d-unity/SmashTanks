@@ -20,30 +20,40 @@ namespace Actions
 
         }
 
-        private static IAction CreateMissileAction(TankScript tank) =>
-            new MissileAction(
+        private static IAction CreateMissileAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new MissileAction(
                 tank.ProjectilePrefab,
-                tank.SpeedMultiplier,
-                tank.MaxSpeed,
-                tank.AimPoint,
+                stats.speedMultiplier,
+                stats.maxSpeed,
                 tank.FirePoint,
-                tank.Rb
+                stats.damage,
+                stats.explosionRadius,
+                stats.explosionForce
             );
+        }
 
-        private static IAction CreateJumpAction(TankScript tank) =>
-            new JumpAction(
-                tank.ForceMultiplier,
+        private static IAction CreateJumpAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new JumpAction(
+                stats.forceMultiplier,
                 tank.AimPoint,
                 tank.Rb
             );
+        }
 
-        private static IAction CreateCrashAction(TankScript tank) =>
-            new CrashAction(
-                tank.ForceMultiplier,
+        private static IAction CreateCrashAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new CrashAction(
+                stats.forceMultiplier,
                 tank.AimPoint,
                 tank.Rb,
                 0.1f
             );
+        }
     }
 
     public enum ActionType

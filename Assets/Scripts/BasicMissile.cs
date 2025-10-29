@@ -22,6 +22,13 @@ public class BasicMissile : MonoBehaviour, IProjectile
             Physics2D.IgnoreCollision(_ownerCollider, projectileCollider);
         }
     }
+    
+    public void SetStats(float newExplosionRadius, float newExplosionForce, float newDamage)
+    {
+        explosionRadius = newExplosionRadius;
+        explosionForce = newExplosionForce;
+        damage = newDamage;
+    }
 
     void Start()
     {

@@ -1,10 +1,5 @@
-﻿
-using UnityEngine;
-
-namespace UI
-{
-    using UnityEngine;
-
+﻿namespace UI.stat
+{ 
     public class Stat
     {
         public string Name { get; }
@@ -29,7 +24,7 @@ namespace UI
             Value--;
             OnValueChanged?.Invoke(Value);
         }
-        
+    
         public void Reset()
         {
             Value = 1;
@@ -37,4 +32,5 @@ namespace UI
         }
 
     }
+
 }

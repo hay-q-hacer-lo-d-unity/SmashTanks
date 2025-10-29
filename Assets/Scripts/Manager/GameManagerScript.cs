@@ -1,12 +1,11 @@
 using Tank;
 using UI;
+using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace Manager
 {
-    using UnityEngine;
-    using System;
-    using System.Collections.Generic;
-
     public class GameManagerScript : MonoBehaviour
     {
         public static GameManagerScript Instance { get; private set; }
@@ -19,20 +18,18 @@ namespace Manager
 
         [Header("Game Settings")]
         [SerializeField] private int playerCount = 2;
-        private int _confirmedPlayers = 0;
+        [SerializeField] private float spawnSpacing = 5f;
 
+        private int _confirmedPlayers;
         private readonly List<Skillset> _pendingSkillsets = new();
         private readonly List<TankScript> _tanks = new();
 
         // ---------- EVENTS ----------
-
-        public static event Action<int, int> OnTankConfirmed;  // (confirmedCount, totalCount)
+        public static event Action<int, int> OnTankConfirmed;
         public static event Action OnAllPlayersConfirmed;
         public static event Action OnGameStarted;
-        public static event Action<TankScript> OnTankSpawned;  // invoked for each tank
+        public static event Action<TankScript> OnTankSpawned;
         public static event Action OnAllTanksSpawned;
-
-        // ---------- UNITY LIFECYCLE ----------
 
         private void Awake()
         {
@@ -44,13 +41,8 @@ namespace Manager
             }
 
             Instance = this;
-            // Uncomment if you want persistence between scenes
-            // DontDestroyOnLoad(gameObject);
-
             gameplayRoot?.SetActive(false);
         }
-
-        // ---------- PUBLIC METHODS ----------
 
         public void ConfirmTank(Skillset skillset)
         {
@@ -60,12 +52,11 @@ namespace Manager
                 return;
             }
 
-            _confirmedPlayers++;
             _pendingSkillsets.Add(skillset);
-
-            Debug.Log($"[GameManager] Confirmed tank {_confirmedPlayers}/{playerCount}");
+            _confirmedPlayers++;
 
             OnTankConfirmed?.Invoke(_confirmedPlayers, playerCount);
+            Debug.Log($"[GameManager] Confirmed tank {_confirmedPlayers}/{playerCount}");
 
             if (_confirmedPlayers >= playerCount)
             {
@@ -74,15 +65,17 @@ namespace Manager
             }
         }
 
-        // ---------- GAME START ----------
-
         private void StartGame()
         {
-            Debug.Log("[GameManager] All players confirmed. Starting game!");
-
             if (!tankPrefab || !gameplayRoot || !turnManager)
             {
                 Debug.LogError("[GameManager] Missing references! Cannot start game.");
+                return;
+            }
+
+            if (_pendingSkillsets.Count != playerCount)
+            {
+                Debug.LogError("[GameManager] Skillset count does not match player count.");
                 return;
             }
 
@@ -91,47 +84,41 @@ namespace Manager
 
             SpawnTanks();
             _pendingSkillsets.Clear();
-            
+
             turnManager.AssignIds(_tanks.ToArray());
 
             OnGameStarted?.Invoke();
-            
             turnManager.StartGame();
         }
-
-        // ---------- INTERNAL LOGIC ----------
 
         private void SpawnTanks()
         {
             _tanks.Clear();
 
-            const float spacing = 5f;
-            var totalWidth = (playerCount - 1) * spacing;
+            var totalWidth = (playerCount - 1) * spawnSpacing;
             var startX = -totalWidth / 2f;
 
-            for (var i = 0; i < _pendingSkillsets.Count; i++)
+            for (var i = 0; i < playerCount; i++)
             {
-                var spawnPos = new Vector3(startX + i * spacing, 0f, 0f);
+                var spawnPos = new Vector3(startX + i * spawnSpacing, 0f, 0f);
                 var tankGo = Instantiate(tankPrefab, spawnPos, Quaternion.identity, gameplayRoot.transform);
 
-                if (tankGo.TryGetComponent(out TankScript newTank))
+                if (!tankGo.TryGetComponent(out TankScript newTank))
                 {
-                    newTank.SetOwnerId(i);
-                    newTank.Initialize(_pendingSkillsets[i]);
-                    _tanks.Add(newTank);
-                    OnTankSpawned?.Invoke(newTank);
+                    Debug.LogError($"[GameManager] Tank prefab missing TankScript at index {i}.");
+                    continue;
                 }
-                else
-                {
-                    Debug.LogError($"[GameManager] Tank prefab missing TankScript component at index {i}.");
-                }
+
+                newTank.SetOwnerId(i);
+                newTank.Initialize(_pendingSkillsets[i]);
+                _tanks.Add(newTank);
+
+                OnTankSpawned?.Invoke(newTank);
             }
 
             Debug.Log($"[GameManager] Spawned {_tanks.Count} tanks.");
             OnAllTanksSpawned?.Invoke();
         }
-
-        // ---------- GETTERS ----------
 
         public IReadOnlyList<TankScript> Tanks => _tanks.AsReadOnly();
     }

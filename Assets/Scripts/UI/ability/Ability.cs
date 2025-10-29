@@ -3,7 +3,7 @@
     public class Ability
     {
         public string Name { get; }
-        public bool Active { get; private set; }
+        public bool Active { get; internal set; }
 
         public event System.Action<bool> OnValueChanged;
 

@@ -1,166 +1,94 @@
 using Actions;
-using UI;
+using Manager;
 using UnityEngine;
-using UnityEngine.EventSystems;
+
+using UI;
 
 namespace Tank
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class TankScript : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
-        private GameObject projectilePrefab;
-
+        [Header("References")]
+        [SerializeField] private GameObject projectilePrefab;
         [SerializeField] private Transform firePoint;
         [SerializeField] private Transform aimPoint;
         [SerializeField] private TrajectoryDrawerScript trajectoryDrawer;
         [SerializeField] private GameObject healthBarPrefab;
         [SerializeField] private CanonOrbitAndAim canonOrbitAndAim;
 
-        [Header("Shot Settings")] [SerializeField]
-        private float speedMultiplier = 5f;
-
-        [SerializeField] private float maxSpeed = 20f;
-
-        [Header("Jump Settings")] [SerializeField]
-        private float forceMultiplier;
-
-        [SerializeField] private float maxForce;
-
-        [Header("Health Settings")] [SerializeField]
-        private float tankMass;
-
-        [SerializeField] private float maxHealth;
-
-        [Header("Accuracy Settings")] [SerializeField]
-        public float accuracy;
-
-        [Header("Owner Info")] [SerializeField]
-        public int ownerId;
+        [Header("Stats")]
+        [SerializeField] private TankStats stats = new();
 
         private Rigidbody2D _rb;
         private TurnManagerScript _turnManager;
         private IAction _currentAction;
+        private IAction _confirmedAction;
         private TankHealth _health;
-        private bool _canActThisTurn = false; // NEW — control flag for sequential planning
+        private TankTrajectoryHandler _trajectoryHandler;
+        private TankInputHandler _inputHandler;
 
-        // === Properties for external access ===
-        public int OwnerId => ownerId;
+        private bool _canActThisTurn;
+
+        public int OwnerId { get; private set; }
         public Rigidbody2D Rb => _rb;
-        public Transform AimPoint => aimPoint;
+        public TankStats Stats => stats;
         public Transform FirePoint => firePoint;
+        public Transform AimPoint => aimPoint;
         public GameObject ProjectilePrefab => projectilePrefab;
-        public float SpeedMultiplier => speedMultiplier;
-        public float MaxSpeed => maxSpeed;
-        public float ForceMultiplier => forceMultiplier;
-        public float Accuracy => accuracy;
-        public IAction CurrentAction => _currentAction;
 
         private void Start()
         {
-            if (aimPoint) aimPoint.SetParent(transform, true);
+            _rb = GetComponent<Rigidbody2D>();
+            _turnManager = FindObjectOfType<TurnManagerScript>();
+
+            _trajectoryHandler = new TankTrajectoryHandler(this, trajectoryDrawer);
+            _inputHandler = new TankInputHandler(this, _turnManager);
 
             _currentAction = ActionFactory.Create(ActionType.Missile, this);
         }
 
         private void Update()
         {
-            if (!_canActThisTurn) return; // only active on your turn
-            if (!CanAct()) return;
+            if (!_canActThisTurn || !_inputHandler.CanAct()) return;
+            _trajectoryHandler.UpdateTrajectory(_currentAction);
 
-            UpdateTrajectory();
-
-            if (!Input.GetMouseButtonDown(0)) return;
-            Vector2 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            _turnManager.RegisterAction(
-                ownerId,
-                _currentAction.GetName(),
-                firePoint.position,
-                cursorPos
-                );
+            if (!_inputHandler.TryGetActionTarget(out var target)) return;
+            _confirmedAction = _currentAction;
+            _turnManager.RegisterAction(OwnerId, _currentAction.GetName(), firePoint.position, target);
         }
-
-        private bool CanAct()
-        {
-            if (EventSystem.current?.IsPointerOverGameObject() == true) return false;
-            if (!_turnManager || !_turnManager.IsPlanningPhase()) return false;
-            return !_turnManager.HasAction(ownerId);
-        }
-
-        private void UpdateTrajectory()
-        {
-            if (!trajectoryDrawer || !firePoint) return;
-
-            Vector2 initialVelocity = _currentAction switch
-            {
-                MissileAction => CalculateMissileVelocity(),
-                JumpAction => CalculateJumpVelocity(),
-                CrashAction => CalculateJumpVelocity(),
-                _ => Vector2.zero
-            };
-
-            Vector3 origin = _currentAction switch
-            {
-                MissileAction => firePoint.position,
-                JumpAction => aimPoint.position,
-                CrashAction => aimPoint.position,
-                _ => aimPoint.position
-            };
-
-            trajectoryDrawer.DrawParabola(origin, initialVelocity, accuracy);
-        }
-
-        private Vector2 CalculateMissileVelocity()
-        {
-            var cursor = GetMouseWorld();
-            var dir = (cursor - (Vector2)aimPoint.position).normalized;
-            var distance = Vector2.Distance(cursor, firePoint.position);
-            var speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
-            return dir * speed;
-        }
-
-        private Vector2 CalculateJumpVelocity()
-        {
-            var cursor = GetMouseWorld();
-            var dir = (cursor - (Vector2)aimPoint.position).normalized;
-            var distance = Vector2.Distance(cursor, aimPoint.position);
-            var clampedDistance = Mathf.Clamp(distance, 0f, 5f);
-            var force = dir * (clampedDistance * forceMultiplier);
-            return force / _rb.mass;
-        }
-
-        private Vector2 GetMouseWorld()
-        {
-            var mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            return new Vector2(mouseWorld.x, mouseWorld.y);
-        }
-
-        // === Public API ===
 
         public void Initialize(Skillset skillset)
         {
-            SkillsetMapper mapper = new(skillset);
-            tankMass = mapper.Mass;
-            maxHealth = mapper.Health;
-            forceMultiplier = mapper.ForceMultiplier;
-            maxForce = mapper.MaxForce;
-            accuracy = mapper.Accuracy;
+            if (stats == null)
+            {
+                Debug.LogWarning("TankStats not assigned; creating new instance.");
+                stats = new TankStats();
+            }
 
-            _rb = GetComponent<Rigidbody2D>();
-            _turnManager = FindObjectOfType<TurnManagerScript>();
+            if (_rb == null) _rb = GetComponent<Rigidbody2D>();
 
-            _rb.mass = tankMass;
+            stats.ApplySkillset(skillset);
 
-            _health = new TankHealth(this, healthBarPrefab, maxHealth);
-            _health.SetHealth(maxHealth);
+            _rb.mass = stats.mass;
+
+            if (healthBarPrefab == null)
+            {
+                Debug.LogError($"Tank {OwnerId}: Missing healthBarPrefab reference!");
+                return;
+            }
+
+            _health = new TankHealth(this, healthBarPrefab, stats.maxHealth);
+            _health.SetHealth(stats.maxHealth);
         }
 
-        public void SetOwnerId(int id) => ownerId = id;
+
+        public void SetOwnerId(int id) => OwnerId = id;
 
         public void SetAction(IAction newAction)
         {
             if (newAction == null) return;
-            Debug.Log($"Selected {newAction.GetName()} for tank {ownerId}");
+            Debug.Log($"Selected {newAction.GetName()} for tank {OwnerId}");
             _currentAction = newAction;
 
             if (newAction.LocksCannon())
@@ -171,15 +99,7 @@ namespace Tank
 
         public void ExecuteAction(PlayerAction action)
         {
-            _currentAction?.Execute(action.Origin, action.Target);
-        }
-
-        public void HideTrajectory() => trajectoryDrawer?.ClearParabola();
-
-        private void SetCanMove(bool canMove)
-        {
-            if (canonOrbitAndAim)
-                canonOrbitAndAim.canMove = canMove;
+            _confirmedAction?.Execute(action.Origin, action.Target);
         }
 
         public void ApplyDamage(float damage)
@@ -187,20 +107,25 @@ namespace Tank
             _health?.ApplyDamage(damage);
         }
 
-        // === NEW METHODS FOR SEQUENTIAL TURN CONTROL ===
-
         public void SetControlEnabled(bool newEnabled)
         {
             _canActThisTurn = newEnabled;
+            if (!newEnabled) _trajectoryHandler.Hide();
+            else Debug.Log($"Tank {OwnerId} has control!");
+        }
+        
+        public void ApplyTurnStartEffects()
+        {
+            _health?.Heal(stats.mendingRate);
 
-            if (!newEnabled)
-            {
-                HideTrajectory();
-            }
-            else
-            {
-                Debug.Log($"Tanque {ownerId} tiene el control ahora!");
-            }
+            if (!stats.juggernaut) return;
+            const float maxBonus = SmashTanksConstants.JUGGERNAUT_MAX_BONUS;
+            const float softCap = SmashTanksConstants.JUGGERNAUT_SOFT_CAP;
+            var totalDamage = _health?.TotalDamageReceived ?? 0f;
+
+            var bonus = maxBonus * totalDamage / (totalDamage + softCap);
+
+            stats.damage += stats.baseDamage + bonus;
         }
     }
 }

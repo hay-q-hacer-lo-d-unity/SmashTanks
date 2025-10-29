@@ -9,6 +9,8 @@
         private readonly float _maxHealth;
 
         private float _currentHealth;
+        
+        public float TotalDamageReceived { get; private set; } = 0f;
 
         public TankHealth(TankScript tank, GameObject healthBarPrefab, float maxHealth)
         {
@@ -22,7 +24,6 @@
 
         public void SetHealth(float value)
         {
-            Debug.Log("Set health to: "+value);
             _currentHealth = Mathf.Clamp(value, 0, _maxHealth);
             _bar?.SetHealth(_currentHealth, _maxHealth);
         }
@@ -31,11 +32,16 @@
         {
             _currentHealth = Mathf.Max(0, _currentHealth - dmg);
             _bar?.SetHealth(_currentHealth, _maxHealth);
-
+            TotalDamageReceived += dmg;
             if (_currentHealth <= 0)
             {
                 Object.Destroy(_tank.gameObject);
             }
+        }
+        
+        public void Heal(float amount)
+        {
+            SetHealth(_currentHealth + amount);
         }
     }
 

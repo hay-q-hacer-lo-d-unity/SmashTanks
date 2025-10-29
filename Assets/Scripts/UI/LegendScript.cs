@@ -13,8 +13,8 @@ namespace UI
         [SerializeField] private Image backgroundImage; // New: background image
         [SerializeField] private float fadeDuration = 0.5f;
 
-        private CanvasGroup canvasGroup;
-        private Coroutine fadeCoroutine;
+        private CanvasGroup _canvasGroup;
+        private Coroutine _fadeCoroutine;
 
         private void Awake()
         {
@@ -22,11 +22,11 @@ namespace UI
                 return;
 
             // Ensure the panel has a CanvasGroup for fading
-            canvasGroup = legendPanel.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-                canvasGroup = legendPanel.AddComponent<CanvasGroup>();
+            _canvasGroup = legendPanel.GetComponent<CanvasGroup>();
+            if (_canvasGroup == null)
+                _canvasGroup = legendPanel.AddComponent<CanvasGroup>();
 
-            canvasGroup.alpha = 0f;
+            _canvasGroup.alpha = 0f;
             legendPanel.SetActive(false);
         }
 
@@ -56,35 +56,35 @@ namespace UI
                 }
             }
 
-            if (fadeCoroutine != null)
-                StopCoroutine(fadeCoroutine);
+            if (_fadeCoroutine != null)
+                StopCoroutine(_fadeCoroutine);
 
-            fadeCoroutine = StartCoroutine(FadeCanvasGroup(1f));
+            _fadeCoroutine = StartCoroutine(FadeCanvasGroup(1f));
         }
 
         public void Hide()
         {
             if (legendPanel == null) return;
 
-            if (fadeCoroutine != null)
-                StopCoroutine(fadeCoroutine);
+            if (_fadeCoroutine != null)
+                StopCoroutine(_fadeCoroutine);
 
-            fadeCoroutine = StartCoroutine(FadeCanvasGroup(0f, disableOnEnd: true));
+            _fadeCoroutine = StartCoroutine(FadeCanvasGroup(0f, disableOnEnd: true));
         }
 
         private IEnumerator FadeCanvasGroup(float targetAlpha, bool disableOnEnd = false)
         {
-            float startAlpha = canvasGroup.alpha;
+            float startAlpha = _canvasGroup.alpha;
             float elapsed = 0f;
 
             while (elapsed < fadeDuration)
             {
                 elapsed += Time.deltaTime;
-                canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsed / fadeDuration);
+                _canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsed / fadeDuration);
                 yield return null;
             }
 
-            canvasGroup.alpha = targetAlpha;
+            _canvasGroup.alpha = targetAlpha;
 
             if (disableOnEnd && targetAlpha == 0f)
                 legendPanel.SetActive(false);
