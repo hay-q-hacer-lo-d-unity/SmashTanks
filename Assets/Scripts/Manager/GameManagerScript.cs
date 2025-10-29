@@ -93,7 +93,6 @@ namespace Manager
             _pendingSkillsets.Clear();
             
             turnManager.AssignIds(_tanks.ToArray());
-            turnManager.StartPlanningPhase();
 
             OnGameStarted?.Invoke();
             
@@ -106,17 +105,18 @@ namespace Manager
         {
             _tanks.Clear();
 
-            float spacing = 5f;
-            float totalWidth = (playerCount - 1) * spacing;
-            float startX = -totalWidth / 2f;
+            const float spacing = 5f;
+            var totalWidth = (playerCount - 1) * spacing;
+            var startX = -totalWidth / 2f;
 
-            for (int i = 0; i < _pendingSkillsets.Count; i++)
+            for (var i = 0; i < _pendingSkillsets.Count; i++)
             {
-                Vector3 spawnPos = new Vector3(startX + i * spacing, 0f, 0f);
-                GameObject tankGo = Instantiate(tankPrefab, spawnPos, Quaternion.identity, gameplayRoot.transform);
+                var spawnPos = new Vector3(startX + i * spacing, 0f, 0f);
+                var tankGo = Instantiate(tankPrefab, spawnPos, Quaternion.identity, gameplayRoot.transform);
 
                 if (tankGo.TryGetComponent(out TankScript newTank))
                 {
+                    newTank.SetOwnerId(i);
                     newTank.Initialize(_pendingSkillsets[i]);
                     _tanks.Add(newTank);
                     OnTankSpawned?.Invoke(newTank);

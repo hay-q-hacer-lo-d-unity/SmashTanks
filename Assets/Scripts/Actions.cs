@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 public interface IAction
 {
-    void Execute(Vector3 target);
+    void Execute(Vector3 origin, Vector3 target);
 
     String GetName();
 
@@ -14,12 +14,12 @@ public interface IAction
 
 public class MissileAction : IAction
 {
-    private GameObject projectilePrefab;
-    private float speedMultiplier;
-    private float maxSpeed;
-    private Transform aimPoint;
-    private Transform firePoint;
-    private Rigidbody2D rb;
+    private readonly GameObject _projectilePrefab;
+    private readonly float _speedMultiplier;
+    private readonly float _maxSpeed;
+    private readonly Transform _aimPoint;
+    private readonly Transform _firePoint;
+    private Rigidbody2D _rb;
     public MissileAction(
         GameObject projectilePrefab,
         float speedMultiplier,
@@ -29,39 +29,37 @@ public class MissileAction : IAction
         Rigidbody2D rb
         )
     {
-        this.projectilePrefab = projectilePrefab;
-        this.speedMultiplier = speedMultiplier;
-        this.maxSpeed = maxSpeed;
-        this.aimPoint = aimPoint;
-        this.firePoint = firePoint;
-        this.rb = rb;
+        _projectilePrefab = projectilePrefab;
+        _speedMultiplier = speedMultiplier;
+        _maxSpeed = maxSpeed;
+        _aimPoint = aimPoint;
+        _firePoint = firePoint;
+        _rb = rb;
     }
     
-    public void Execute(Vector3 target)
+    public void Execute(Vector3 origin, Vector3 target)
     {
-        if (!projectilePrefab || !firePoint) return;
+        if (!_projectilePrefab || !_firePoint) return;
 
-        Vector2 cursorPosition = new Vector2(target.x, target.y);
+        var cursorPosition = new Vector2(target.x, target.y);
+        var originPosition = new Vector2(origin.x, origin.y);
+        
+        var dir = (cursorPosition - originPosition).normalized;
+        var distance = Vector2.Distance(cursorPosition, origin);
 
-        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-        float distance = Vector2.Distance(cursorPosition, firePoint.position);
+        var speed = Mathf.Clamp(distance * _speedMultiplier, 0, _maxSpeed);
 
-        float speed = Mathf.Clamp(distance * speedMultiplier, 0, maxSpeed);
+        var proj = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
 
-        GameObject proj = Object.Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-        Rigidbody2D rb_ = proj.GetComponent<Rigidbody2D>();
-        if (rb_)
+        var rb = proj.GetComponent<Rigidbody2D>();
+        if (rb)
         {
-            rb_.linearVelocity = dir * speed;
+            rb.linearVelocity = dir * speed;
         }
 
-        Collider2D tankCollider = firePoint.GetComponentInParent<Collider2D>();
-        IProjectile projectileScript = proj.GetComponent<IProjectile>();
-        if (projectileScript != null)
-        {
-            projectileScript.SetOwner(tankCollider);
-        }
+        var tankCollider = _firePoint.GetComponentInParent<Collider2D>();
+        var projectileScript = proj.GetComponent<IProjectile>();
+        projectileScript?.SetOwner(tankCollider);
     }
 
     public string GetName()
@@ -77,30 +75,30 @@ public class MissileAction : IAction
 
 public class JumpAction : IAction
 {
-    private Transform aimPoint;
-    private Rigidbody2D rb;
-    float forceMultiplier;
+    private readonly Transform _aimPoint;
+    private readonly Rigidbody2D _rb;
+    private readonly float _forceMultiplier;
     public JumpAction(
         float forceMultiplier,
         Transform  aimPoint,
         Rigidbody2D rb
     )
     {
-        this.forceMultiplier = forceMultiplier;
-        this.aimPoint = aimPoint;
-        this.rb = rb;
+        _forceMultiplier = forceMultiplier;
+        _aimPoint = aimPoint;
+        _rb = rb;
     }
-    public void Execute(Vector3 target)
+    public void Execute(Vector3 origin, Vector3 target)
     {
-        Vector2 cursorPosition = new Vector2(target.x, target.y);
+        var cursorPosition = new Vector2(target.x, target.y);
 
-        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-        float distance = Vector2.Distance(cursorPosition, aimPoint.position);
-        float clampedDistance = Mathf.Clamp(distance, 0f, 5f);
+        var dir = (cursorPosition - (Vector2)_aimPoint.position).normalized;
+        var distance = Vector2.Distance(cursorPosition, _aimPoint.position);
+        var clampedDistance = Mathf.Clamp(distance, 0f, 5f);
 
-        Vector2 force = dir * (clampedDistance * forceMultiplier);
+        var force = dir * (clampedDistance * _forceMultiplier);
 
-        rb.AddForce(force, ForceMode2D.Impulse);
+        _rb.AddForce(force, ForceMode2D.Impulse);
     }
 
     public string GetName()
@@ -116,10 +114,10 @@ public class JumpAction : IAction
 
 public class CrashAction : IAction
 {
-    private Transform aimPoint;
-    private Rigidbody2D rb;
-    float forceMultiplier;
-    private float damageMultiplier;
+    private readonly Transform _aimPoint;
+    private readonly Rigidbody2D _rb;
+    private readonly float _forceMultiplier;
+    private readonly float _damageMultiplier;
     public CrashAction(
         float forceMultiplier,
         Transform  aimPoint,
@@ -127,31 +125,31 @@ public class CrashAction : IAction
         float damageMultiplier
     )
     {
-        this.forceMultiplier = forceMultiplier;
-        this.aimPoint = aimPoint;
-        this.rb = rb;
-        this.damageMultiplier = damageMultiplier;
+        _forceMultiplier = forceMultiplier;
+        _aimPoint = aimPoint;
+        _rb = rb;
+        _damageMultiplier = damageMultiplier;
     }
-    public void Execute(Vector3 target)
+    public void Execute(Vector3 origin, Vector3 target)
     {
-        Vector2 cursorPosition = new Vector2(target.x, target.y);
+        var cursorPosition = new Vector2(target.x, target.y);
 
-        Vector2 dir = (cursorPosition - (Vector2)aimPoint.position).normalized;
-        float distance = Vector2.Distance(cursorPosition, aimPoint.position);
-        float clampedDistance = Mathf.Clamp(distance, 0f, 5f);
+        var dir = (cursorPosition - (Vector2)_aimPoint.position).normalized;
+        var distance = Vector2.Distance(cursorPosition, _aimPoint.position);
+        var clampedDistance = Mathf.Clamp(distance, 0f, 5f);
 
-        Vector2 force = dir * (clampedDistance * forceMultiplier);
+        var force = dir * (clampedDistance * _forceMultiplier);
         
 
-        rb.AddForce(force, ForceMode2D.Impulse);
+        _rb.AddForce(force, ForceMode2D.Impulse);
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        TankScript otherTank = collision.collider.GetComponent<TankScript>();
+        var otherTank = collision.collider.GetComponent<TankScript>();
         if (otherTank)
         {
-            float damage = damageMultiplier * collision.relativeVelocity.magnitude * rb.mass;
+            var damage = _damageMultiplier * collision.relativeVelocity.magnitude * _rb.mass;
             otherTank.ApplyDamage(damage);
         }
     }

@@ -1,20 +1,22 @@
-﻿using Actions;
-using Tank;
+﻿using Tank;
 using UnityEngine;
 
-using UnityEngine;
-
-public class ActionSelectorScript : MonoBehaviour
+namespace Actions
 {
-    [SerializeField] private TankScript tank;
-
-    public void SelectMissile() => SetAction(ActionType.Missile);
-    public void SelectJump() => SetAction(ActionType.Jump);
-    public void SelectCrash() => SetAction(ActionType.Crash);
-
-    private void SetAction(ActionType type)
+    public class ActionSelectorScript : MonoBehaviour
     {
-        if (!tank) return;
-        tank.SetAction(ActionFactory.Create(type, tank));
+        private TankScript _tank;
+    
+        public void SetTank(TankScript newTank) => this._tank = newTank;
+
+        public void SelectMissile() => SetAction(ActionType.Missile);
+        public void SelectJump() => SetAction(ActionType.Jump);
+        public void SelectCrash() => SetAction(ActionType.Crash);
+
+        private void SetAction(ActionType type)
+        {
+            if (!_tank) return;
+            _tank.SetAction(ActionFactory.Create(type, _tank));
+        }
     }
 }

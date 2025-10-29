@@ -116,7 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8992d615e72a41efaf3f7c47c54fd0ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActionSelectorScript
-  tank: {fileID: 0}
 --- !u!1 &1508362247068573919
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,7 +267,7 @@ GameObject:
   - component: {fileID: 8425829176466919404}
   - component: {fileID: 7527139850840459234}
   m_Layer: 5
-  m_Name: Weapon 2
+  m_Name: Missile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -376,8 +375,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ActionSelectorScript, Assembly-CSharp
+      - m_Target: {fileID: 9207465675726299485}
+        m_TargetAssemblyTypeName: Actions.ActionSelectorScript, Assembly-CSharp
         m_MethodName: SelectMissile
         m_Mode: 1
         m_Arguments:
@@ -537,7 +536,7 @@ GameObject:
   - component: {fileID: 2006709165942038413}
   - component: {fileID: 5867916749835112222}
   m_Layer: 5
-  m_Name: Weapon 1
+  m_Name: Jump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -645,8 +644,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ActionSelectorScript, Assembly-CSharp
+      - m_Target: {fileID: 9207465675726299485}
+        m_TargetAssemblyTypeName: Actions.ActionSelectorScript, Assembly-CSharp
         m_MethodName: SelectJump
         m_Mode: 1
         m_Arguments:

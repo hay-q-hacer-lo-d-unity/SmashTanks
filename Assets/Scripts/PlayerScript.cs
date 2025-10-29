@@ -2,13 +2,13 @@
 
 public class PlayerScript
 {
-    public int playerId;
-    public TankScript tank; // referencia al tanque en la escena
-    public PlayerAction pendingAction;
+    public readonly int PlayerId;
+    public readonly TankScript Tank;
+    public PlayerAction PendingAction;
 
     public PlayerScript(int id, TankScript assignedTank)
     {
-        playerId = id;
-        tank = assignedTank;
+        PlayerId = id;
+        Tank = assignedTank;
     }
 }

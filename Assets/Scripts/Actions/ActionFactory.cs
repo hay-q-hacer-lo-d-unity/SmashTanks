@@ -7,19 +7,17 @@ namespace Actions
     {
         public static IAction Create(ActionType type, TankScript tank)
         {
-            if (tank == null)
-            {
-                Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
-                return null;
-            }
+            if (tank != null)
+                return type switch
+                {
+                    ActionType.Missile => CreateMissileAction(tank),
+                    ActionType.Jump => CreateJumpAction(tank),
+                    ActionType.Crash => CreateCrashAction(tank),
+                    _ => null
+                };
+            Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
+            return null;
 
-            return type switch
-            {
-                ActionType.Missile => CreateMissileAction(tank),
-                ActionType.Jump => CreateJumpAction(tank),
-                ActionType.Crash => CreateCrashAction(tank),
-                _ => null
-            };
         }
 
         private static IAction CreateMissileAction(TankScript tank) =>

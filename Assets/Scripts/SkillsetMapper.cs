@@ -4,19 +4,19 @@ using UI;
 public class SkillsetMapper
 {
     // Jump
-    public float forceMultiplier;
-    public float forceMultiplierMultiplier;
-    public float maxForce;
+    public float ForceMultiplier = 20f;
+    private const float ForceMultiplierMultiplier = 2f;
+    public float MaxForce = 200f;
 
     // Mass
-    public float mass = 10;
-    public float massMultiplier = 0.2f;
-    public float health = 10;
+    public float Mass = 10;
+    private const float MassMultiplier = 0.2f;
+    public float Health = 10;
 
 
     // Accuracy
-    public float accuracy = 0.5f;
-    public float accuracyMultiplier = 0.05f;
+    public float Accuracy = 0.5f;
+    private const float AccuracyMultiplier = 0.05f;
 
 
     public SkillsetMapper(Skillset skillset)
@@ -28,19 +28,19 @@ public class SkillsetMapper
 
     private void MapJump(int level, bool compound = false)
     {
-        MapStat(ref forceMultiplier, level, forceMultiplierMultiplier, compound);
-        MapStat(ref maxForce, level, forceMultiplierMultiplier, compound);
+        MapStat(ref ForceMultiplier, level, ForceMultiplierMultiplier, compound);
+        MapStat(ref MaxForce, level, ForceMultiplierMultiplier, compound);
     }
     
     private void MapMass(int level, bool compound = false)
     {
-        MapStat(ref mass, level, massMultiplier, compound);
-        MapStat(ref health, level, massMultiplier, compound);
+        MapStat(ref Mass, level, MassMultiplier, compound);
+        MapStat(ref Health, level, MassMultiplier, compound);
     }
 
     private void MapAccuracy(int level, bool compound = false)
     {
-        MapStat(ref accuracy, level, accuracyMultiplier, compound);
+        MapStat(ref Accuracy, level, AccuracyMultiplier, compound);
     }
 
     private static void MapStat(ref float stat, int level, float multiplier, bool compound = false)

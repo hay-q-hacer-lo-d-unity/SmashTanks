@@ -1,21 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actions;
 using Tank;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Serialization;
 
 public class PlayerAction
 {
     public int PlayerId { get; }
     public string ActionType { get; }
     public Vector2 Target { get; }
+    public Vector2 Origin { get; }
 
-    public PlayerAction(int id, string type, Vector2 target)
+        public PlayerAction(int id, string type, Vector2 origin, Vector2 target)
     {
         PlayerId = id;
         ActionType = type;
         Target = target;
+        Origin = origin;
     }
 }
 
@@ -36,48 +40,65 @@ public class TurnManagerScript : MonoBehaviour
     private TurnPhase _currentPhase;
     private readonly Dictionary<int, PlayerAction> _actions = new();
     private readonly List<PlayerScript> _players = new();
+    [SerializeField] private ActionSelectorScript actionSelectorScript;
+
+    private int _currentPlayerIndex = 0;
+    private bool _gameStarted = false;
 
     private const float StationaryThreshold = 0.05f;
     private const float RequiredStationaryTime = 2f;
-    
-    private bool _gameStarted = false;
 
-    
+    private void Update()
+    {
+        if (_gameStarted)
+            UpdateTimer();
+    }
+
+    // ---------- GAME SETUP ----------
+
+    public void AssignIds(TankScript[] tanks)
+    {
+        _players.Clear();
+        for (int i = 0; i < tanks.Length; i++)
+            _players.Add(new PlayerScript(i, tanks[i]));
+
+        Debug.Log($"Asignados {_players.Count} jugadores a tanques.");
+    }
+
     public void StartGame()
     {
         _gameStarted = true;
         StartPlanningPhase();
     }
 
-    private void Update()
-    {
-        UpdateTimer();
-    }
-
-    // ---------- TURN SETUP ----------
-
-    public void AssignIds(TankScript[] tanks)
-    {
-        _players.Clear();
-        for (int i = 0; i < tanks.Length; i++)
-        {
-            var player = new PlayerScript(i, tanks[i]);
-            _players.Add(player);
-        }
-
-        Debug.Log($"Asignados {_players.Count} jugadores a tanques.");
-    }
-
     // ---------- PLANNING PHASE ----------
-    
-    public void StartPlanningPhase()
+
+    private void StartPlanningPhase()
     {
-        if (!_gameStarted) return; // prevent early start
+        if (!_gameStarted) return;
 
         Debug.Log("Fase de planificación comienza!");
         _currentPhase = TurnPhase.Planning;
-        _timer = turnDuration;
         _actions.Clear();
+        _currentPlayerIndex = 0;
+
+        StartNextPlayerTurn();
+    }
+
+    private void StartNextPlayerTurn()
+    {
+        if (_currentPlayerIndex >= _players.Count)
+        {
+            EndPlanningPhase();
+            return;
+        }
+
+        _timer = turnDuration;
+        var currentPlayer = _players[_currentPlayerIndex];
+        Debug.Log($"Turno del jugador {_currentPlayerIndex} comienza!");
+
+        actionSelectorScript.SetTank(currentPlayer.Tank);
+        currentPlayer.Tank.SetControlEnabled(true);
     }
 
     private void UpdateTimer()
@@ -89,25 +110,34 @@ public class TurnManagerScript : MonoBehaviour
         {
             _timer -= Time.deltaTime;
             if (_timer <= 0f)
-                EndPlanningPhase();
+                ConfirmCurrentPlayerAction();
         }
     }
 
-    public void RegisterAction(int playerId, string actionType, Vector2 target)
+    public void ConfirmCurrentPlayerAction()
     {
-        if (_currentPhase != TurnPhase.Planning)
-        {
-            Debug.LogWarning("No se pueden registrar acciones fuera de la fase de planificación");
-            return;
-        }
+        if (_currentPhase != TurnPhase.Planning) return;
+        if (_currentPlayerIndex >= _players.Count) return;
 
-        if (_actions.ContainsKey(playerId))
-        {
-            Debug.Log($"Jugador {playerId} ya tiene una acción registrada.");
-            return;
-        }
+        var currentPlayer = _players[_currentPlayerIndex];
+        currentPlayer.Tank.SetControlEnabled(false);
 
-        _actions[playerId] = new PlayerAction(playerId, actionType, target);
+        if (!_actions.ContainsKey(currentPlayer.PlayerId)) 
+            _actions[currentPlayer.PlayerId] = new PlayerAction(currentPlayer.PlayerId, "Idle", Vector2.zero, Vector2.zero);
+        
+
+        Debug.Log($"Jugador {_currentPlayerIndex} confirma acción.");
+        _currentPlayerIndex++;
+
+        StartNextPlayerTurn();
+    }
+
+    public void RegisterAction(int playerId, string actionType, Vector2 origin, Vector2 target)
+    {
+        if (_currentPhase != TurnPhase.Planning) return;
+        if (_players[_currentPlayerIndex].PlayerId != playerId) return;
+
+        _actions[playerId] = new PlayerAction(playerId, actionType, origin, target);
         Debug.Log($"Acción registrada para jugador {playerId}: {actionType} -> {target}");
     }
 
@@ -117,14 +147,14 @@ public class TurnManagerScript : MonoBehaviour
         _currentPhase = TurnPhase.Action;
 
         foreach (var player in _players)
-            player.tank?.HideTrajectory();
+            player.Tank?.HideTrajectory();
 
-        // assign actions
+        // Assign pending actions
         foreach (var (playerId, action) in _actions)
         {
-            var player = _players.FirstOrDefault(p => p.playerId == playerId);
+            var player = _players.FirstOrDefault(p => p.PlayerId == playerId);
             if (player != null)
-                player.pendingAction = action;
+                player.PendingAction = action;
         }
 
         StartCoroutine(ExecuteActionsPhase());
@@ -138,9 +168,9 @@ public class TurnManagerScript : MonoBehaviour
 
         foreach (var player in _players)
         {
-            if (player.pendingAction == null) continue;
-            player.tank.ExecuteAction(player.pendingAction);
-            player.pendingAction = null;
+            if (player.PendingAction == null) continue;
+            player.Tank.ExecuteAction(player.PendingAction);
+            player.PendingAction = null;
         }
 
         yield return WaitForStationaryState();
@@ -177,3 +207,4 @@ public class TurnManagerScript : MonoBehaviour
     public bool IsPlanningPhase() => _currentPhase == TurnPhase.Planning;
     public bool HasAction(int playerId) => _actions.ContainsKey(playerId);
 }
+

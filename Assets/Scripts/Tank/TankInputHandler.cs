@@ -32,7 +32,7 @@
                 Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 cursorPosition = new(mouseWorld.x, mouseWorld.y);
 
-                _turnManager.RegisterAction(_tank.ownerId, _tank.CurrentAction.GetName(), cursorPosition);
+                // _turnManager.RegisterAction(_tank.ownerId, _tank.CurrentAction.GetName(), cursorPosition);
                 _canon.canMove = false;
             }
         }
