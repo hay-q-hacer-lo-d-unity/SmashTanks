@@ -33,6 +33,7 @@
             _currentHealth = Mathf.Max(0, _currentHealth - dmg);
             _bar?.SetHealth(_currentHealth, _maxHealth);
             TotalDamageReceived += dmg;
+            Debug.Log($"Received {dmg} damage, total damage: {TotalDamageReceived}");
             if (_currentHealth <= 0)
             {
                 Object.Destroy(_tank.gameObject);

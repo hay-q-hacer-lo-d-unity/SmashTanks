@@ -116,7 +116,7 @@ namespace Manager
                 OnTankSpawned?.Invoke(newTank);
             }
 
-            Debug.Log($"[GameManager] Spawned {_tanks.Count} tanks.");
+            // Debug.Log($"[GameManager] Spawned {_tanks.Count} tanks.");
             OnAllTanksSpawned?.Invoke();
         }
 

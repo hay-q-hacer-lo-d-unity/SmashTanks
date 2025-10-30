@@ -88,7 +88,7 @@ namespace Tank
         public void SetAction(IAction newAction)
         {
             if (newAction == null) return;
-            Debug.Log($"Selected {newAction.GetName()} for tank {OwnerId}");
+            // Debug.Log($"Selected {newAction.GetName()} for tank {OwnerId}");
             _currentAction = newAction;
 
             if (newAction.LocksCannon())
@@ -111,21 +111,18 @@ namespace Tank
         {
             _canActThisTurn = newEnabled;
             if (!newEnabled) _trajectoryHandler.Hide();
-            else Debug.Log($"Tank {OwnerId} has control!");
+            // else Debug.Log($"Tank {OwnerId} has control!");
         }
         
         public void ApplyTurnStartEffects()
         {
             _health?.Heal(stats.mendingRate);
 
-            if (!stats.juggernaut) return;
-            const float maxBonus = SmashTanksConstants.JUGGERNAUT_MAX_BONUS;
-            const float softCap = SmashTanksConstants.JUGGERNAUT_SOFT_CAP;
-            var totalDamage = _health?.TotalDamageReceived ?? 0f;
-
-            var bonus = maxBonus * totalDamage / (totalDamage + softCap);
-
-            stats.damage += stats.baseDamage + bonus;
+            if (stats.juggernaut) stats.damage = SkillsUtils.CalculateJuggernautDamage(
+                stats.baseDamage,
+                _health?.TotalDamageReceived ?? 0f,
+                IncreaseType.Linear
+                );
         }
     }
 }

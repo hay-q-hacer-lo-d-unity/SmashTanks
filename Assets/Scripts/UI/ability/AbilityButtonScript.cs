@@ -9,41 +9,28 @@ namespace UI.ability
         [SerializeField] private Button button;
         [SerializeField] private GameObject backgroundImage;
 
+        public string AbilityName => name;
+
         private Ability _ability;
         private AbilityGroup _group;
-        private bool _isSelected;
 
         public void Initialize(Ability ability, AbilityGroup group, LegendScript legend)
         {
             _ability = ability;
             _group = group;
             Legend = legend;
-            _isSelected = false;
-            backgroundImage.SetActive(false);
 
-            button.onClick.AddListener(OnButtonClick);
+            // Subscribe to ability state changes
+            _ability.OnValueChanged += UpdateVisual;
+            UpdateVisual(_ability.Value);
+
+            button.onClick.AddListener(() => _group.TryToggle(_ability));
         }
 
-        private void OnButtonClick()
-        {
-            if (_group.TryToggle(_ability))
-            {
-                _isSelected = _ability.Active;
-                UpdateVisual();
-            }
-        }
-
-        private void UpdateVisual()
+        private void UpdateVisual(bool isActive)
         {
             if (backgroundImage)
-                backgroundImage.SetActive(_isSelected);
-        }
-
-        public void SetSelected(bool value)
-        {
-            _isSelected = value;
-            _ability.Active = value;
-            UpdateVisual();
+                backgroundImage.SetActive(isActive);
         }
 
         public new void ShowTooltip()

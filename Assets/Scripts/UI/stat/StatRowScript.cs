@@ -23,27 +23,22 @@ namespace UI.stat
             _group = group;
             Legend = legend;
 
-            // Update UI whenever the stat value changes
-            stat.OnValueChanged += UpdateUI;
-            UpdateUI(stat.Value);
+            _stat.OnValueChanged += UpdateUI;
+            UpdateUI(_stat.Value);
 
-            // Connect buttons to the group's logic
             increaseButton.onClick.AddListener(() => _group.TryIncrease(stat));
             decreaseButton.onClick.AddListener(() => _group.TryDecrease(stat));
         }
 
         private void UpdateUI(int value)
         {
-            if (valueTMP)
-                valueTMP.text = value.ToString();
+            if (valueTMP) valueTMP.text = value.ToString();
         }
 
         public void SetButtonsInteractable(bool canIncrease, bool canDecrease)
         {
-            if (increaseButton)
-                increaseButton.interactable = canIncrease;
-            if (decreaseButton)
-                decreaseButton.interactable = canDecrease;
+            if (increaseButton) increaseButton.interactable = canIncrease;
+            if (decreaseButton) decreaseButton.interactable = canDecrease;
         }
     }
 }

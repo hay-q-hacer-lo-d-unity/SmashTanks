@@ -9,7 +9,7 @@ namespace Actions
     {
         void Execute(Vector3 origin, Vector3 target);
 
-        String GetName();
+        string GetName();
 
         bool LocksCannon();
     }
@@ -65,15 +65,9 @@ namespace Actions
             projectileScript?.SetStats(_explosionRadius, _explosionForce, _damage);
         }
 
-        public string GetName()
-        {
-            return "Shoot";
-        }
+        public string GetName() => "Shoot";
 
-        public bool LocksCannon()
-        {
-            return false;
-        }
+        public bool LocksCannon() => false;
     }
 
     public class JumpAction : IAction
@@ -104,15 +98,9 @@ namespace Actions
             _rb.AddForce(force, ForceMode2D.Impulse);
         }
 
-        public string GetName()
-        {
-            return "Jump";
-        }
+        public string GetName() => "Jump";
 
-        public bool LocksCannon()
-        {
-            return true;
-        }
+        public bool LocksCannon() => true;
     }
 
     public class CrashAction : IAction
@@ -150,21 +138,13 @@ namespace Actions
         private void OnCollisionEnter2D(Collision2D collision)
         {
             var otherTank = collision.collider.GetComponent<TankScript>();
-            if (otherTank)
-            {
-                var damage = _damageMultiplier * collision.relativeVelocity.magnitude * _rb.mass;
-                otherTank.ApplyDamage(damage);
-            }
+            if (!otherTank) return;
+            var damage = _damageMultiplier * collision.relativeVelocity.magnitude * _rb.mass;
+            otherTank.ApplyDamage(damage);
         }
 
-        public string GetName()
-        {
-            return "Crash";
-        }
+        public string GetName() => "Crash";
 
-        public bool LocksCannon()
-        {
-            return true;
-        }
+        public bool LocksCannon() => true;
     }
 }

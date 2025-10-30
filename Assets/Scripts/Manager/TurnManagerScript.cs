@@ -56,7 +56,7 @@ namespace Manager
         public void AssignIds(TankScript[] tanks)
         {
             _players = tanks.Select((tank, i) => new PlayerScript(i, tank)).ToList();
-            Debug.Log($"Assigned {_players.Count} players to tanks.");
+            // Debug.Log($"Assigned {_players.Count} players to tanks.");
         }
 
         public void StartGame()
@@ -74,7 +74,6 @@ namespace Manager
                 player.Tank.ApplyTurnStartEffects();
             }
             _playerQueue = new Queue<PlayerScript>(_players);
-            Debug.Log("Planning phase begins!");
             StartNextPlayerTurn();
         }
 
@@ -91,8 +90,6 @@ namespace Manager
 
             actionSelectorScript.SetTank(_currentPlayer.Tank);
             _currentPlayer.Tank.SetControlEnabled(true);
-
-            Debug.Log($"Player {_currentPlayer.PlayerId} turn begins.");
         }
 
 
@@ -111,9 +108,7 @@ namespace Manager
             _currentPlayer.Tank.SetControlEnabled(false);
 
             _actions.TryAdd(_currentPlayer.PlayerId, null);
-
-            Debug.Log($"Player {_currentPlayer.PlayerId} confirms action.");
-
+            
             _currentPlayer = null;
             StartNextPlayerTurn();
         }
@@ -127,12 +122,12 @@ namespace Manager
             if (player == null) return;
 
             _actions[playerId] = new PlayerAction(playerId, actionType, origin, target);
-            Debug.Log($"Action registered for player {playerId}: {actionType} -> {target}");
+            // Debug.Log($"Action registered for player {playerId}: {actionType} -> {target}");
         }
 
         private void EndPlanningPhase()
         {
-            Debug.Log("Planning phase ends.");
+            // Debug.Log("Planning phase ends.");
             currentPhase = TurnPhase.Action;
 
             foreach (var (id, action) in _actions)
@@ -147,7 +142,7 @@ namespace Manager
 
         private IEnumerator ExecuteActionsPhase()
         {
-            Debug.Log("Action phase begins!");
+            // Debug.Log("Action phase begins!");
 
             foreach (var player in _players.Where(player => player.PendingAction != null))
             {
@@ -157,7 +152,7 @@ namespace Manager
 
             yield return WaitForStationaryState();
 
-            Debug.Log("Action phase ends.");
+            // Debug.Log("Action phase ends.");
             StartPlanningPhase();
         }
 

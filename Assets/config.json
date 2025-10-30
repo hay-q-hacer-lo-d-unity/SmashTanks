@@ -1,0 +1,40 @@
+﻿{
+  "Damage": {
+    "Base": 5.0,
+    "MultiplierPerLevel": 0.15
+  },
+  "Health": {
+    "Base": 10.0
+  },
+  "Mass": {
+    "Base": 10.0,
+    "MultiplierPerLevel": 0.2
+  },
+  "Accuracy": {
+    "Base": 0.5,
+    "MultiplierPerLevel": 0.05
+  },
+  "MendingRate": {
+    "Base": 0.5,
+    "MultiplierPerLevel": 0.1
+  },
+  "Jump": {
+    "BaseForceMultiplier": 10.0,
+    "ForceMultiplierMultiplierPerLevel": 2.0,
+    "BaseMaxForce": 200.0
+  },
+  "Juggernaut": {
+    "MaxBonus": 50.0,
+    "SoftCap": 0.7
+  },
+  "Missile": {
+    "SpeedMultiplier": 5.0,
+    "MaxSpeed": 20.0
+  },
+  "Explosion": {
+    "Force": 500.0,
+    "Radius": 3.0
+  },
+  "SkillPoints": 25.0,
+  "Gravity": -9.81
+}

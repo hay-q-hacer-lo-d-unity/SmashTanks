@@ -1,22 +1,14 @@
-﻿namespace UI
+﻿using UI.skill;
+
+namespace UI.ability
 {
-    public class Ability
+    public class Ability : Skill<bool>
     {
-        public string Name { get; }
-        public bool Active { get; internal set; }
+        public Ability(string name, bool active = false) : base(name, active) { }
 
-        public event System.Action<bool> OnValueChanged;
+        public void Toggle() => Value = !Value;
 
-        public Ability(string name, bool active = false)
-        {
-            Name = name;
-            Active = active;
-        }
-
-        public void Toggle()
-        {
-            Active = !Active;
-            OnValueChanged?.Invoke(Active);
-        }
+        public override void Reset() => Value = false;
     }
+
 }

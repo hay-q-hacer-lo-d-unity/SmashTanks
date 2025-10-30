@@ -11,8 +11,7 @@ namespace UI
         [SerializeField] protected new string name = "New Attribute";
         [TextArea(5, 20)] [SerializeField] protected string description = "Attribute description";
         protected LegendScript Legend;
-
-
+        
         public void ShowTooltip()
         {
             var background = GetComponentInChildren<Image>();
