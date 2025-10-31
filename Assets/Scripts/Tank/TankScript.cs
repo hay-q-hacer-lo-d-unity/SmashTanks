@@ -121,8 +121,8 @@ namespace Tank
             if (stats.juggernaut) stats.damage = SkillsUtils.CalculateJuggernautDamage(
                 stats.baseDamage,
                 _health?.TotalDamageReceived ?? 0f,
-                IncreaseType.Linear
-                );
+                IncreaseType.LinearHybrid
+            );
         }
     }
 }

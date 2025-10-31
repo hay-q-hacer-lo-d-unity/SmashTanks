@@ -19,14 +19,30 @@ public static class SmashTanksConstants
     public const float JUMP_FORCE_MULTIPLIER_MULTIPLIER_PER_LEVEL = 2f;
     public const float BASE_MAX_JUMP_FORCE = 200f;
     
-    public const float JUGGERNAUT_MAX_BONUS = 50f;
-    public const float JUGGERNAUT_SOFT_CAP = 10f;
-    public const float JUGGERNAUT_MULTIPLIER = 0.05f;
+    // Asymptotic (absolute)
+    public const float JUGGERNAUT_MAX_BONUS = 10f;             // absolute max bonus (non-base-scaled)
+    public const float JUGGERNAUT_SOFT_CAP = 50f;             // controls saturation speed
+
+    // Asymptotic (base-scaled)
+    public const float JUGGERNAUT_BASE_SCALED_MAX_FACTOR = 0.5f; // at large TDR, add up to 50% of baseDamage
+    public const float JUGGERNAUT_BASE_SCALED_SOFT_CAP = 50f;
+
+    // Linear
+    public const float JUGGERNAUT_MULTIPLIER = 0.02f;         // additive per TDR (non-base-scaled)
+    public const float JUGGERNAUT_SCALING_FACTOR = 0.002f;    // per-point *baseDamage* contribution for hybrid
+    public const float JUGGERNAUT_BASE_SCALED_MULTIPLIER = 0.002f; // base-scaled linear multiplier
+    
+    // Logarithmic
+    public const float JUGGERNAUT_LOG_MAX_BONUS = 5f;
+    public const float JUGGERNAUT_LOG_SOFT_CAP = 15f;
+    public const float JUGGERNAUT_LOG_BASE_SCALED_SOFT_CAP = 40f;
+    public const float JUGGERNAUT_LOG_MULTIPLIER = 0.12f;
+    public const float JUGGERNAUT_LOG_SCALING_FACTOR = 0.01f;
     
     public const float MISSILE_SPEED_MULTIPLIER = 5f;
     public const float MISSILE_MAX_SPEED = 20f;
     
-    public const float EXPLOSION_FORCE = 500f;
+    public const float EXPLOSION_FORCE = 1000f;
     public const float EXPLOSION_RADIUS = 3f;
 
     public const int STATPOINTS = 25;

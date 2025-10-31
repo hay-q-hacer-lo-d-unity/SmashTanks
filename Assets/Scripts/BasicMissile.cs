@@ -8,7 +8,7 @@ public class BasicMissile : MonoBehaviour, IProjectile
 
     [Header("Explosion Settings")]
     public float explosionRadius = 3f;
-    public float explosionForce = 500f;
+    public float explosionForce = 1000f;
     public float damage = 2f;
     public GameObject explosionEffectPrefab;
 
@@ -21,21 +21,38 @@ public class BasicMissile : MonoBehaviour, IProjectile
         var projectileCollider = GetComponent<Collider2D>();
 
         if (!_ownerCollider || !projectileCollider) return;
-        Physics2D.IgnoreCollision(_ownerCollider, projectileCollider, true);
 
-        // Stop any existing coroutine (in case SetOwner is called again)
+        // Get all colliders on the owner's hierarchy
+        var ownerColliders = _ownerCollider.GetComponentsInChildren<Collider2D>();
+
+        // Ignore collisions with all of them
+        foreach (var col in ownerColliders)
+        {
+            Debug.Log($"Ignoring collision between {col.name} and projectile.");
+            Physics2D.IgnoreCollision(col, projectileCollider, true);
+        }
+
+        // Stop any existing coroutine
         if (_reenableCollisionRoutine != null) StopCoroutine(_reenableCollisionRoutine);
 
         _reenableCollisionRoutine = StartCoroutine(
-            ReenableCollisionAfterDelay(_ownerCollider, projectileCollider, 0.25f)
+            ReenableCollisionAfterDelay(ownerColliders, projectileCollider, 0.25f)
         );
     }
 
-    private IEnumerator ReenableCollisionAfterDelay(Collider2D owner, Collider2D projectile, float delay)
+    private IEnumerator ReenableCollisionAfterDelay(Collider2D[] ownerColliders, Collider2D projectile, float delay)
     {
         yield return new WaitForSeconds(delay);
-        // Safely check if the projectile is still valid
-        if (owner && projectile) Physics2D.IgnoreCollision(owner, projectile, false);
+
+        if (projectile)
+        {
+            foreach (var col in ownerColliders)
+            {
+                if (col != null)
+                    Physics2D.IgnoreCollision(col, projectile, false);
+            }
+        }
+
         _reenableCollisionRoutine = null;
     }
 
@@ -47,6 +64,7 @@ public class BasicMissile : MonoBehaviour, IProjectile
     
     public void SetStats(float newExplosionRadius, float newExplosionForce, float newDamage)
     {
+        Debug.Log($"newExplosionRadius: {newExplosionRadius}\nnewExplosionForce: {newExplosionForce}\nnewDamage: {newDamage}");
         explosionRadius = newExplosionRadius;
         explosionForce = newExplosionForce;
         damage = newDamage;
