@@ -15,6 +15,7 @@ namespace Tank
         [SerializeField] private Transform aimPoint;
         [SerializeField] private TrajectoryDrawerScript trajectoryDrawer;
         [SerializeField] private GameObject healthBarPrefab;
+        [SerializeField] private GameObject magickaBarPrefab;
         [SerializeField] private CanonOrbitAndAim canonOrbitAndAim;
 
         [Header("Stats")]
@@ -25,6 +26,7 @@ namespace Tank
         private IAction _currentAction;
         private IAction _confirmedAction;
         private TankHealth _health;
+        private TankMagicka _magicka;
         private TankTrajectoryHandler _trajectoryHandler;
         private TankInputHandler _inputHandler;
 
@@ -50,6 +52,10 @@ namespace Tank
 
         private void Update()
         {
+            if (_health == null) return;
+            _health.Update();
+            if (_magicka == null) return;
+            _magicka.Update();
             if (!_canActThisTurn || !_inputHandler.CanAct()) return;
             _trajectoryHandler.UpdateTrajectory(_currentAction);
 
@@ -80,6 +86,9 @@ namespace Tank
 
             _health = new TankHealth(this, healthBarPrefab, stats.maxHealth);
             _health.SetHealth(stats.maxHealth);
+            
+            _magicka = new TankMagicka(this, magickaBarPrefab, stats.maxMagicka);
+            _magicka.SetMagicka(stats.maxMagicka);
         }
 
 
@@ -91,10 +100,8 @@ namespace Tank
             // Debug.Log($"Selected {newAction.GetName()} for tank {OwnerId}");
             _currentAction = newAction;
 
-            if (newAction.LocksCannon())
-                canonOrbitAndAim.LockCannonPosition();
-            else
-                canonOrbitAndAim.UnlockCannonPosition();
+            if (newAction.LocksCannon()) canonOrbitAndAim.LockCannonPosition();
+            else canonOrbitAndAim.UnlockCannonPosition();
         }
 
         public void ExecuteAction(PlayerAction action)
@@ -117,12 +124,21 @@ namespace Tank
         public void ApplyTurnStartEffects()
         {
             _health?.Heal(stats.mendingRate);
+            
+            _magicka.Regenerate(stats.magickaRegenRate);
 
             if (stats.juggernaut) stats.damage = SkillsUtils.CalculateJuggernautDamage(
                 stats.baseDamage,
                 _health?.TotalDamageReceived ?? 0f,
                 IncreaseType.LinearHybrid
             );
+        }
+
+        public void Kill()
+        {
+            _health?.DestroyBar();
+            _magicka?.DestroyBar();
+            Destroy(gameObject);
         }
     }
 }

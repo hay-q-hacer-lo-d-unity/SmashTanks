@@ -7,11 +7,12 @@ namespace Actions
     {
         private TankScript _tank;
     
-        public void SetTank(TankScript newTank) => this._tank = newTank;
+        public void SetTank(TankScript newTank) => _tank = newTank;
 
         public void SelectMissile() => SetAction(ActionType.Missile);
         public void SelectJump() => SetAction(ActionType.Jump);
         public void SelectCrash() => SetAction(ActionType.Crash);
+        public void SelectBeam() => SetAction(ActionType.Beam);
 
         private void SetAction(ActionType type)
         {

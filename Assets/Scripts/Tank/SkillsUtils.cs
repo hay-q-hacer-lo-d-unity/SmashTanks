@@ -36,7 +36,7 @@ namespace Tank
                 
                 IncreaseType.LinearHybrid => 
                     (multiplier + baseDamage * scalingFactor) * totalDamageReceived,
-                
+                  // componente constante + componente dependiente de baseDamage
                 IncreaseType.Logarithmic =>
                     logMaxBonus * Mathf.Log(1 + totalDamageReceived / logSoftCap),
 

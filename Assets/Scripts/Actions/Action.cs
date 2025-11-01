@@ -1,6 +1,7 @@
 using System;
 using Tank;
 using UnityEngine;
+using Weapons;
 using Object = UnityEngine.Object;
 
 namespace Actions
@@ -109,9 +110,10 @@ namespace Actions
         private readonly Rigidbody2D _rb;
         private readonly float _forceMultiplier;
         private readonly float _damageMultiplier;
+
         public CrashAction(
             float forceMultiplier,
-            Transform  aimPoint,
+            Transform aimPoint,
             Rigidbody2D rb,
             float damageMultiplier
         )
@@ -121,30 +123,60 @@ namespace Actions
             _rb = rb;
             _damageMultiplier = damageMultiplier;
         }
+
         public void Execute(Vector3 origin, Vector3 target)
         {
             var cursorPosition = new Vector2(target.x, target.y);
-
             var dir = (cursorPosition - (Vector2)_aimPoint.position).normalized;
             var distance = Vector2.Distance(cursorPosition, _aimPoint.position);
             var clampedDistance = Mathf.Clamp(distance, 0f, 5f);
 
             var force = dir * (clampedDistance * _forceMultiplier);
-        
 
             _rb.AddForce(force, ForceMode2D.Impulse);
-        }
-    
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            var otherTank = collision.collider.GetComponent<TankScript>();
-            if (!otherTank) return;
-            var damage = _damageMultiplier * collision.relativeVelocity.magnitude * _rb.mass;
-            otherTank.ApplyDamage(damage);
+
+            // Add temporary CrashHandler to detect collisions
+            var handler = _rb.gameObject.AddComponent<CrashHandlerScript>();
+            handler.rb = _rb;
+            handler.damageMultiplier = _damageMultiplier;
         }
 
         public string GetName() => "Crash";
 
         public bool LocksCannon() => true;
+    }
+    
+    public class BeamAction : IAction
+    {
+        private readonly GameObject _beamPrefab;
+        private readonly Transform _firePoint;
+        private readonly float _damage;
+        private readonly float _width = 0.2f;
+        private readonly float _maxDistance = 1000f;
+
+        public BeamAction(Transform firePoint, float intellect)
+        {
+            _firePoint = firePoint;
+            _damage = intellect * 5f;
+            Debug.Log("BeamAction created with damage: " + _damage);
+        }
+
+        public void Execute(Vector3 origin, Vector3 target)
+        {
+            if (!_beamPrefab || !_firePoint) return;
+
+            var beam = Object.Instantiate(_beamPrefab, origin, Quaternion.identity);
+
+            var beamScript = beam.GetComponent<BeamScript>();
+            if (!beamScript) return;
+            beamScript.SetStats(_damage);
+
+            var direction = (target - origin).normalized;
+            beam.transform.up = direction;
+        }
+
+        public string GetName() => "Beam";
+
+        public bool LocksCannon() => false;
     }
 }

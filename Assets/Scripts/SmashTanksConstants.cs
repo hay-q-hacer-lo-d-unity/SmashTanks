@@ -8,6 +8,14 @@ public static class SmashTanksConstants
     public const float BASE_MASS = 10f;
     public const float MASS_MULTIPLIER_PER_LEVEL = 0.2f;
     
+    public const float BASE_MAGICKA = 20f;
+    public const float MAX_MAGICKA_MULTIPLIER_PER_LEVEL = 0.2f;
+    
+    public const float MAGICKA_REGENERATION_RATE = 1f;
+    public const float MAGICKA_REGENERATION_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
+    
+    public const float BASE_INTELLECT = 1f;
+    
     public const float BASE_ACCURACY = 0.5f;
     public const float ACCURACY_MULTIPLIER_PER_LEVEL = 0.05f;
     
@@ -45,6 +53,8 @@ public static class SmashTanksConstants
     public const float EXPLOSION_FORCE = 1000f;
     public const float EXPLOSION_RADIUS = 3f;
 
+    public const float BEAM_DAMAGE_PER_INTELLECT = 0.5f;
+    
     public const int STATPOINTS = 25;
     public const bool USE_COMPOUND_INCREASE = false;
     public const float GRAVITY = -9.81f;

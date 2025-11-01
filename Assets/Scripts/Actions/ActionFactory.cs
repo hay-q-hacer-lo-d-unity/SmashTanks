@@ -13,6 +13,7 @@ namespace Actions
                     ActionType.Missile => CreateMissileAction(tank),
                     ActionType.Jump => CreateJumpAction(tank),
                     ActionType.Crash => CreateCrashAction(tank),
+                    ActionType.Beam => CreateBeamAction(tank),
                     _ => null
                 };
             Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
@@ -51,7 +52,16 @@ namespace Actions
                 stats.forceMultiplier,
                 tank.AimPoint,
                 tank.Rb,
-                0.1f
+                0.01f
+            );
+        }
+        
+        private static IAction CreateBeamAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new BeamAction(
+                tank.FirePoint,
+                stats.intellect
             );
         }
     }
@@ -60,6 +70,7 @@ namespace Actions
     {
         Missile,
         Jump,
-        Crash
+        Crash,
+        Beam
     }
 }

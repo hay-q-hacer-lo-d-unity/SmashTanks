@@ -13,6 +13,9 @@ namespace Tank
             MapJump(skillset.StatsMap["Jump Force"]);
             MapMending(skillset.StatsMap["Mending"]);
             MapDamage(skillset.StatsMap["Damage"]);
+            // MapMagicka(skillset.StatsMap["Magicka"]);
+            MapMagickaRegen(skillset.StatsMap["Magicka Regeneration"]);
+            // MapIntellect(skillset.StatsMap["Intellect"]);
             MapAbilities(skillset.AbilitiesMap);
         }
 
@@ -46,10 +49,26 @@ namespace Tank
         private const float MendingRateMultiplier = SmashTanksConstants.MENDING_RATE_MULTIPLIER_PER_LEVEL;
         private void MapMending(int level) => MapStat(ref MendingRate, level, MendingRateMultiplier);
         
+        
         /// ===== DAMAGE =====
         public float Damage = SmashTanksConstants.BASE_DAMAGE;
         private const float DamageMultiplier = SmashTanksConstants.DAMAGE_MULTIPLIER_PER_LEVEL;
         private void MapDamage(int level) => MapStat(ref Damage, level, DamageMultiplier);
+        
+        /// ===== MAGICKA =====
+        
+        public float MaxMagicka = SmashTanksConstants.BASE_MAGICKA; /*
+        private const float MaxMagickaMultiplier = SmashTanksConstants.MAX_MAGICKA_MULTIPLIER_PER_LEVEL;
+        private void MapMagicka(int level) => MapStat(ref MaxMagicka, level, MaxMagickaMultiplier);
+        */
+
+        /// ===== MAGICKA REGENERATION =====
+        public float MagickaRegenRate = SmashTanksConstants.MAGICKA_REGENERATION_RATE;
+        private const float MagickaRegenRateMultiplier = SmashTanksConstants.MAGICKA_REGENERATION_RATE_MULTIPLIER_PER_LEVEL;
+        private void MapMagickaRegen(int level) => MapStat(ref MagickaRegenRate, level, MagickaRegenRateMultiplier);
+
+        /// ===== INTELLECT =====
+        public float Intellect = SmashTanksConstants.BASE_INTELLECT;
         
         private static void MapStat(
             ref float stat,

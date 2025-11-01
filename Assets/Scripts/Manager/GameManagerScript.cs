@@ -18,7 +18,7 @@ namespace Manager
 
         [Header("Game Settings")]
         [SerializeField] private int playerCount = 2;
-        [SerializeField] private float spawnSpacing = 5f;
+        [SerializeField] private float spawnSpacing = 50f;
 
         private int _confirmedPlayers;
         private readonly List<Skillset> _pendingSkillsets = new();
@@ -58,11 +58,9 @@ namespace Manager
             OnTankConfirmed?.Invoke(_confirmedPlayers, playerCount);
             Debug.Log($"[GameManager] Confirmed tank {_confirmedPlayers}/{playerCount}");
 
-            if (_confirmedPlayers >= playerCount)
-            {
-                OnAllPlayersConfirmed?.Invoke();
-                StartGame();
-            }
+            if (_confirmedPlayers < playerCount) return;
+            OnAllPlayersConfirmed?.Invoke();
+            StartGame();
         }
 
         private void StartGame()

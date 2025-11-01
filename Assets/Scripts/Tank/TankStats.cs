@@ -16,6 +16,15 @@ namespace Tank
         [Header("Health Settings")]
         public float mass;
         public float maxHealth;
+        
+        [Header("Magicka Settings")]
+        public float maxMagicka;
+        
+        [Header("Magicka Regeneration Settings")]
+        public float magickaRegenRate;
+        
+        [Header("Intellect Settings")]
+        public float intellect;
 
         [Header("Accuracy Settings")]
         public float accuracy;
@@ -33,6 +42,7 @@ namespace Tank
         
         [Header("Abilities")]
         public bool juggernaut;
+        
 
         public void ApplySkillset(Skillset skillset)
         {
@@ -45,6 +55,9 @@ namespace Tank
             mendingRate = mapper.MendingRate;
             damage = mapper.Damage;
             baseDamage = mapper.Damage;
+            maxMagicka = mapper.MaxMagicka;
+            magickaRegenRate = mapper.MagickaRegenRate;
+            intellect = mapper.Intellect;
             juggernaut = mapper.Juggernaut;
         }
     }
