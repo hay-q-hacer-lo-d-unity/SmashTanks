@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 425e38532fd48a94999b23f5a5997cf1
+guid: af7fe1618a4df904ab353ce1bfe16046
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 101109044532740339
-    second: intelecto_0
+      213: 3981487691237994998
+    second: cuadrado_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,9 +46,9 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: intelecto_0
+      name: cuadrado_0
       rect:
         serializedVersion: 2
-        x: 235
-        y: 31
-        width: 541
-        height: 993
+        x: 0
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3f004fae326376100800000000000000
-      internalID: 101109044532740339
+      spriteID: 6f1b4d9d5f5114730800000000000000
+      internalID: 3981487691237994998
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      intelecto_0: 101109044532740339
+      cuadrado_0: 3981487691237994998
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

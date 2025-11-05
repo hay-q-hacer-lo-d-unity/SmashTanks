@@ -15,7 +15,7 @@ namespace Tank
             MapDamage(skillset.StatsMap["Damage"]);
             // MapMagicka(skillset.StatsMap["Magicka"]);
             MapMagickaRegen(skillset.StatsMap["Magicka Regeneration"]);
-            // MapIntellect(skillset.StatsMap["Intellect"]);
+            MapIntellect(skillset.StatsMap["Intellect"]);
             MapAbilities(skillset.AbilitiesMap);
         }
 
@@ -69,6 +69,7 @@ namespace Tank
 
         /// ===== INTELLECT =====
         public float Intellect = SmashTanksConstants.BASE_INTELLECT;
+        private void MapIntellect(int level) => Intellect = level;
         
         private static void MapStat(
             ref float stat,

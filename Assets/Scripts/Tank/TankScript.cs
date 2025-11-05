@@ -11,6 +11,7 @@ namespace Tank
     {
         [Header("References")]
         [SerializeField] private GameObject projectilePrefab;
+        [SerializeField] private GameObject beamPrefab;
         [SerializeField] private Transform firePoint;
         [SerializeField] private Transform aimPoint;
         [SerializeField] private TrajectoryDrawerScript trajectoryDrawer;
@@ -31,6 +32,7 @@ namespace Tank
         private TankInputHandler _inputHandler;
 
         private bool _canActThisTurn;
+        public bool isDead;
 
         public int OwnerId { get; private set; }
         public Rigidbody2D Rb => _rb;
@@ -39,8 +41,13 @@ namespace Tank
         public Transform AimPoint => aimPoint;
         public GameObject ProjectilePrefab => projectilePrefab;
 
+        public GameObject BeamPrefab => beamPrefab;
+        
+        public float Magicka => _magicka?.GetValue() ?? 0f;
+
         private void Start()
         {
+            isDead = false;
             _rb = GetComponent<Rigidbody2D>();
             _turnManager = FindObjectOfType<TurnManagerScript>();
 
@@ -57,7 +64,8 @@ namespace Tank
             if (_magicka == null) return;
             _magicka.Update();
             if (!_canActThisTurn || !_inputHandler.CanAct()) return;
-            _trajectoryHandler.UpdateTrajectory(_currentAction);
+            if (_currentAction.HasFalloff()) _trajectoryHandler.UpdateTrajectory(_currentAction);
+            else _trajectoryHandler.UpdateLinearTrajectory();
 
             if (!_inputHandler.TryGetActionTarget(out var target)) return;
             _confirmedAction = _currentAction;
@@ -85,10 +93,10 @@ namespace Tank
             }
 
             _health = new TankHealth(this, healthBarPrefab, stats.maxHealth);
-            _health.SetHealth(stats.maxHealth);
+            _health.SetValue(stats.maxHealth);
             
             _magicka = new TankMagicka(this, magickaBarPrefab, stats.maxMagicka);
-            _magicka.SetMagicka(stats.maxMagicka);
+            _magicka.SetValue(stats.maxMagicka);
         }
 
 
@@ -97,28 +105,22 @@ namespace Tank
         public void SetAction(IAction newAction)
         {
             if (newAction == null) return;
-            // Debug.Log($"Selected {newAction.GetName()} for tank {OwnerId}");
             _currentAction = newAction;
 
             if (newAction.LocksCannon()) canonOrbitAndAim.LockCannonPosition();
             else canonOrbitAndAim.UnlockCannonPosition();
         }
 
-        public void ExecuteAction(PlayerAction action)
-        {
-            _confirmedAction?.Execute(action.Origin, action.Target);
-        }
+        public void ExecuteAction(PlayerAction action) => _confirmedAction?.Execute(action.Origin, action.Target);
 
-        public void ApplyDamage(float damage)
-        {
-            _health?.ApplyDamage(damage);
-        }
+        public void ApplyDamage(float damage) => _health?.ApplyDamage(damage);
+        
+        public void SpendMagicka(float amount) => _magicka?.Spend(amount);
 
         public void SetControlEnabled(bool newEnabled)
         {
             _canActThisTurn = newEnabled;
             if (!newEnabled) _trajectoryHandler.Hide();
-            // else Debug.Log($"Tank {OwnerId} has control!");
         }
         
         public void ApplyTurnStartEffects()
@@ -138,6 +140,7 @@ namespace Tank
         {
             _health?.DestroyBar();
             _magicka?.DestroyBar();
+            isDead = true;
             Destroy(gameObject);
         }
     }

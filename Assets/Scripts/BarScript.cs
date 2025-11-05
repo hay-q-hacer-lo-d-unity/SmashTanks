@@ -10,7 +10,10 @@ public class BarScript : MonoBehaviour
     private void Awake()
     {
         _mainCamera = Camera.main;
+        Debug.Log($"{name} fillImage ID: {fillImage?.GetInstanceID()} parent: {fillImage?.transform.parent?.name}");
     }
+    
+    
 
     private void LateUpdate()
     {
@@ -20,5 +23,10 @@ public class BarScript : MonoBehaviour
     public void Set(float current, float max)
     {
         if (fillImage) fillImage.fillAmount = Mathf.Clamp01(current / max);
+    }
+    
+    public void DestroyBar()
+    {
+        Destroy(gameObject);
     }
 }

@@ -1,35 +1,22 @@
-﻿namespace Tank
+﻿using UnityEditor;
+
+namespace Tank
 {
     using UnityEngine;
 
     public static class TankPhysicsHelper
     {
-        public static Vector2 CalculateInitialVelocity(TankScript tank, string actionName)
+        public static Vector2 CalculateJumpForce(float maxForce, Vector2 origin, Vector2 target)
         {
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 cursorPos = new(mouseWorld.x, mouseWorld.y);
-            Transform aim = tank.transform.Find("AimPoint");
-            Transform fire = tank.transform.Find("FirePoint");
-            Rigidbody2D rb = tank.GetComponent<Rigidbody2D>();
+            var cursorPosition = new Vector2(target.x, target.y);
 
-            Vector2 dir = (cursorPos - (Vector2)aim.position).normalized;
-            float distance = Vector2.Distance(cursorPos, aim.position);
+            var dir = (cursorPosition - origin).normalized;
+            var distance = Vector2.Distance(cursorPosition, origin);
+            var clampedDistance = Mathf.Clamp(distance, 0f, 10f) / 10f;
 
-            switch (actionName)
-            {
-                case "Shoot":
-                    float shootSpeed = Mathf.Clamp(distance * 5f, 0, 20f);
-                    return dir * shootSpeed;
-
-                case "Jump":
-                case "Crash":
-                    float clamped = Mathf.Clamp(distance, 0f, 5f);
-                    Vector2 force = dir * (clamped * 5f);
-                    return force / rb.mass;
-
-                default:
-                    return Vector2.zero;
-            }
+            var forceMagnitude = Mathf.Clamp(clampedDistance * maxForce, 0, maxForce);
+            var force = dir * forceMagnitude;
+            return force;
         }
     }
 }

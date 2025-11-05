@@ -38,5 +38,20 @@ namespace Tank
             if (!_lineRenderer) return;
             _lineRenderer.positionCount = 0;
         }
+
+        public void DrawLine(Vector2 start, Vector2 end, float length = 1000f)
+        {
+            if (!_lineRenderer) return;
+
+            // Calculate direction
+            var direction = (end - start).normalized;
+
+            // Extend line in that direction for a long distance
+            var extendedEnd = start + direction * length;
+
+            _lineRenderer.positionCount = 2;
+            _lineRenderer.SetPosition(0, new Vector3(start.x, start.y, 0));
+            _lineRenderer.SetPosition(1, new Vector3(extendedEnd.x, extendedEnd.y, 0));
+        }
     }
 }

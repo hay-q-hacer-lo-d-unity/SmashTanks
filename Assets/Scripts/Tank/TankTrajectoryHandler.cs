@@ -14,22 +14,29 @@ namespace Tank
             _drawer = drawer;
         }
 
+        public void UpdateLinearTrajectory()
+        {
+            if (!_drawer) return;
+            var cursor = GetMouseWorld();
+            _drawer.DrawLine(_tank.FirePoint.position, cursor);
+        }
+
         public void UpdateTrajectory(IAction action)
         {
-            if (_drawer == null) return;
+            if (!_drawer) return;
 
-            Vector2 velocity = action switch
+            var velocity = action switch
             {
                 MissileAction => CalculateMissileVelocity(),
                 JumpAction or CrashAction => CalculateJumpVelocity(),
                 _ => Vector2.zero
             };
 
-            Vector3 origin = action switch
+            var origin = action switch
             {
                 MissileAction => _tank.FirePoint.position,
                 JumpAction or CrashAction => _tank.AimPoint.position,
-                _ => _tank.AimPoint.position
+                _ => Vector3.zero
             };
 
             _drawer.DrawParabola(origin, velocity, _tank.Stats.accuracy);
@@ -37,20 +44,18 @@ namespace Tank
 
         private Vector2 CalculateMissileVelocity()
         {
-            Vector2 cursor = GetMouseWorld();
-            Vector2 dir = (cursor - (Vector2)_tank.AimPoint.position).normalized;
-            float distance = Vector2.Distance(cursor, _tank.FirePoint.position);
-            float speed = Mathf.Clamp(distance * _tank.Stats.speedMultiplier, 0, _tank.Stats.maxSpeed);
+            var cursor = GetMouseWorld();
+            var dir = (cursor - (Vector2)_tank.AimPoint.position).normalized;
+            var distance = Vector2.Distance(cursor, _tank.FirePoint.position);
+            var speed = Mathf.Clamp(distance * _tank.Stats.speedMultiplier, 0, _tank.Stats.maxSpeed);
             return dir * speed;
         }
 
         private Vector2 CalculateJumpVelocity()
         {
-            Vector2 cursor = GetMouseWorld();
-            Vector2 dir = (cursor - (Vector2)_tank.AimPoint.position).normalized;
-            float distance = Vector2.Distance(cursor, _tank.AimPoint.position);
-            float clamped = Mathf.Clamp(distance, 0f, 5f);
-            Vector2 force = dir * (clamped * _tank.Stats.forceMultiplier);
+            var cursor = GetMouseWorld();
+            var force = TankPhysicsHelper.CalculateJumpForce(_tank.Stats.maxForce, _tank.AimPoint.position, cursor);
+            
             return force / _tank.Rb.mass;
         }
 

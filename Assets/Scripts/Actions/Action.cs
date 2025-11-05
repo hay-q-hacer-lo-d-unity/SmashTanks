@@ -12,6 +12,8 @@ namespace Actions
 
         string GetName();
 
+        bool HasFalloff();
+
         bool LocksCannon();
     }
 
@@ -67,6 +69,7 @@ namespace Actions
         }
 
         public string GetName() => "Shoot";
+        public bool HasFalloff() => true;
 
         public bool LocksCannon() => false;
     }
@@ -76,7 +79,9 @@ namespace Actions
         private readonly Transform _aimPoint;
         private readonly Rigidbody2D _rb;
         private readonly float _forceMultiplier;
+        private readonly float _maxForce;
         public JumpAction(
+            float maxForce,
             float forceMultiplier,
             Transform  aimPoint,
             Rigidbody2D rb
@@ -85,21 +90,18 @@ namespace Actions
             _forceMultiplier = forceMultiplier;
             _aimPoint = aimPoint;
             _rb = rb;
+            _maxForce = maxForce;
         }
         public void Execute(Vector3 origin, Vector3 target)
         {
-            var cursorPosition = new Vector2(target.x, target.y);
-
-            var dir = (cursorPosition - (Vector2)_aimPoint.position).normalized;
-            var distance = Vector2.Distance(cursorPosition, _aimPoint.position);
-            var clampedDistance = Mathf.Clamp(distance, 0f, 5f);
-
-            var force = dir * (clampedDistance * _forceMultiplier);
+            var force = TankPhysicsHelper.CalculateJumpForce(_maxForce, _aimPoint.position, target);
 
             _rb.AddForce(force, ForceMode2D.Impulse);
         }
 
         public string GetName() => "Jump";
+        
+        public bool HasFalloff() => true;
 
         public bool LocksCannon() => true;
     }
@@ -108,17 +110,17 @@ namespace Actions
     {
         private readonly Transform _aimPoint;
         private readonly Rigidbody2D _rb;
-        private readonly float _forceMultiplier;
+        private readonly float _maxForce;
         private readonly float _damageMultiplier;
 
         public CrashAction(
-            float forceMultiplier,
+            float maxForce,
             Transform aimPoint,
             Rigidbody2D rb,
             float damageMultiplier
         )
         {
-            _forceMultiplier = forceMultiplier;
+            _maxForce = maxForce;
             _aimPoint = aimPoint;
             _rb = rb;
             _damageMultiplier = damageMultiplier;
@@ -126,12 +128,7 @@ namespace Actions
 
         public void Execute(Vector3 origin, Vector3 target)
         {
-            var cursorPosition = new Vector2(target.x, target.y);
-            var dir = (cursorPosition - (Vector2)_aimPoint.position).normalized;
-            var distance = Vector2.Distance(cursorPosition, _aimPoint.position);
-            var clampedDistance = Mathf.Clamp(distance, 0f, 5f);
-
-            var force = dir * (clampedDistance * _forceMultiplier);
+            var force = TankPhysicsHelper.CalculateJumpForce(_maxForce, _aimPoint.position, target);
 
             _rb.AddForce(force, ForceMode2D.Impulse);
 
@@ -142,6 +139,8 @@ namespace Actions
         }
 
         public string GetName() => "Crash";
+        public bool HasFalloff() => true;
+
 
         public bool LocksCannon() => true;
     }
@@ -151,14 +150,14 @@ namespace Actions
         private readonly GameObject _beamPrefab;
         private readonly Transform _firePoint;
         private readonly float _damage;
-        private readonly float _width = 0.2f;
-        private readonly float _maxDistance = 1000f;
+        private readonly TankScript _tank;
 
-        public BeamAction(Transform firePoint, float intellect)
+        public BeamAction(GameObject beamPrefab, Transform firePoint, float intellect, TankScript tank)
         {
+            _beamPrefab = beamPrefab;
             _firePoint = firePoint;
-            _damage = intellect * 5f;
-            Debug.Log("BeamAction created with damage: " + _damage);
+            _damage = intellect * SmashTanksConstants.BEAM_DAMAGE_PER_INTELLECT;
+            _tank = tank;
         }
 
         public void Execute(Vector3 origin, Vector3 target)
@@ -166,7 +165,8 @@ namespace Actions
             if (!_beamPrefab || !_firePoint) return;
 
             var beam = Object.Instantiate(_beamPrefab, origin, Quaternion.identity);
-
+            _tank.SpendMagicka(SmashTanksConstants.BEAM_MAGICKA_COST);
+            
             var beamScript = beam.GetComponent<BeamScript>();
             if (!beamScript) return;
             beamScript.SetStats(_damage);
@@ -176,6 +176,7 @@ namespace Actions
         }
 
         public string GetName() => "Beam";
+        public bool HasFalloff() => false;
 
         public bool LocksCannon() => false;
     }

@@ -43,7 +43,7 @@ namespace Manager
         private bool _gameStarted;
 
         private const float StationaryThreshold = 0.05f;
-        private const float RequiredStationaryTime = 2f;
+        private const float RequiredStationaryTime = 1f;
         
         private PlayerScript _currentPlayer;
 
@@ -56,7 +56,6 @@ namespace Manager
         public void AssignIds(TankScript[] tanks)
         {
             _players = tanks.Select((tank, i) => new PlayerScript(i, tank)).ToList();
-            // Debug.Log($"Assigned {_players.Count} players to tanks.");
         }
 
         public void StartGame()
@@ -69,8 +68,13 @@ namespace Manager
         {
             currentPhase = TurnPhase.Planning;
             _actions.Clear();
-            foreach (var player in _players)
+            foreach (var player in _players.ToList())
             {
+                if (player.Tank.isDead)
+                {
+                    _players.Remove(player);
+                    continue;
+                }
                 player.Tank.ApplyTurnStartEffects();
             }
             _playerQueue = new Queue<PlayerScript>(_players);
@@ -170,6 +174,13 @@ namespace Manager
         {
             return FindObjectsByType<Rigidbody2D>(FindObjectsSortMode.None)
                 .All(rb => rb.linearVelocity.magnitude < StationaryThreshold);
+        }
+        
+        public void RemovePlayer(int playerId)
+        {
+            var player = _players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (player == null) return;
+            _players.Remove(player);
         }
 
         // ---------- Utilities ----------

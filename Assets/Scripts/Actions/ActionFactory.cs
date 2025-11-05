@@ -7,7 +7,7 @@ namespace Actions
     {
         public static IAction Create(ActionType type, TankScript tank)
         {
-            if (tank != null)
+            if (tank)
                 return type switch
                 {
                     ActionType.Missile => CreateMissileAction(tank),
@@ -39,6 +39,7 @@ namespace Actions
         {
             var stats = tank.Stats;
             return new JumpAction(
+                stats.maxForce,
                 stats.forceMultiplier,
                 tank.AimPoint,
                 tank.Rb
@@ -49,7 +50,7 @@ namespace Actions
         {
             var stats = tank.Stats;
             return new CrashAction(
-                stats.forceMultiplier,
+                stats.maxForce,
                 tank.AimPoint,
                 tank.Rb,
                 0.01f
@@ -60,8 +61,10 @@ namespace Actions
         {
             var stats = tank.Stats;
             return new BeamAction(
+                tank.BeamPrefab,
                 tank.FirePoint,
-                stats.intellect
+                stats.intellect,
+                tank
             );
         }
     }

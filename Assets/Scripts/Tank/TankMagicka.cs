@@ -2,58 +2,20 @@
 
 namespace Tank
 {
-    public class TankMagicka
+    public class TankMagicka : TankBarBase
     {
-        private readonly TankScript _tank;
-        private readonly BarScript _bar;
-        private readonly float _maxMagicka;
-        private float _currentMagicka;
-        
-        public TankMagicka(TankScript tank, GameObject barPrefab, float maxMagicka)
+        public TankMagicka(TankScript tank, GameObject prefab, float maxMagicka)
+            : base(tank, prefab, maxMagicka, Vector3.up * 2f) { }
+
+        public void Spend(float amount)
         {
-            _tank = tank;
-            _maxMagicka = maxMagicka;
-
-            if (!barPrefab) return;
-
-            var canvas = GameObject.FindObjectOfType<Canvas>();
-            if (canvas == null)
-            {
-                Debug.LogError("No Canvas found in scene!");
-                return;
-            }
-
-            var b = Object.Instantiate(barPrefab, canvas.transform);
-            _bar = b.GetComponent<BarScript>();
+            CurrentValue = Mathf.Max(0, CurrentValue - amount);
+            Bar?.Set(CurrentValue, MaxValue);
         }
 
-        public void Update()
+        public void Regenerate(float amount)
         {
-            if (!_bar || !_tank) return;
-
-            var screenPos = Camera.main.WorldToScreenPoint(_tank.transform.position + Vector3.up * 2f);
-            _bar.transform.position = screenPos;
+            SetValue(CurrentValue + amount);
         }
-        
-        public void DestroyBar()
-        {
-            if (_bar != null)
-                Object.Destroy(_bar.gameObject);
-        }
-
-        
-        public void SetMagicka(float value)
-        {
-            _currentMagicka = Mathf.Clamp(value, 0, _maxMagicka);
-            _bar?.Set(_currentMagicka, _maxMagicka);
-        }
-        
-        public void Spend(float dmg)
-        {
-            _currentMagicka = Mathf.Max(0, _currentMagicka - dmg);
-            _bar?.Set(_currentMagicka, _maxMagicka);
-        }
-        
-        public void Regenerate(float amount) => SetMagicka(_currentMagicka + amount);
     }
 }

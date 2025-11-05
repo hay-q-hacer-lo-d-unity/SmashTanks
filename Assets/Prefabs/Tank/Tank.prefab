@@ -657,11 +657,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   projectilePrefab: {fileID: 4481765794907147700, guid: e03a4bf1ed78320439bde0de637dbb29, type: 3}
+  beamPrefab: {fileID: 4470436920408959054, guid: 76d81c79e07e1fc48a1e79f278373a41, type: 3}
   firePoint: {fileID: 6238391092178404524}
   aimPoint: {fileID: 5454113432729398971}
   trajectoryDrawer: {fileID: 838390347669665156}
-  healthBarPrefab: {fileID: 5510066182759078694, guid: c6d934981471c814cb968dcdd1efe62e, type: 3}
-  magickaBarPrefab: {fileID: 5510066182759078694, guid: 0e2de2cfab152944fa78e2ba4a4aedba, type: 3}
+  healthBarPrefab: {fileID: 6873305847224659786, guid: c6d934981471c814cb968dcdd1efe62e, type: 3}
+  magickaBarPrefab: {fileID: 2742799704620585471, guid: 0e2de2cfab152944fa78e2ba4a4aedba, type: 3}
   canonOrbitAndAim: {fileID: 7281802776512893827}
   stats:
     speedMultiplier: 5
@@ -671,6 +672,8 @@ MonoBehaviour:
     mass: 0
     maxHealth: 0
     maxMagicka: 0
+    magickaRegenRate: 0
+    intellect: 0
     accuracy: 0
     mendingRate: 0
     damage: 0

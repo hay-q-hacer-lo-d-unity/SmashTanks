@@ -23,9 +23,9 @@ public static class SmashTanksConstants
     public const float BASE_MENDING_RATE_RELATIVE = BASE_HEALTH * 0.05f;
     public const float MENDING_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
     
-    public const float BASE_JUMP_FORCE_MULTIPLIER = 10f;
-    public const float JUMP_FORCE_MULTIPLIER_MULTIPLIER_PER_LEVEL = 2f;
-    public const float BASE_MAX_JUMP_FORCE = 200f;
+    public const float BASE_JUMP_FORCE_MULTIPLIER = 25f;
+    public const float JUMP_FORCE_MULTIPLIER_MULTIPLIER_PER_LEVEL = 0.1f;
+    public const float BASE_MAX_JUMP_FORCE = 100f;
     
     // Asymptotic (absolute)
     public const float JUGGERNAUT_MAX_BONUS = 10f;             // absolute max bonus (non-base-scaled)
@@ -54,6 +54,8 @@ public static class SmashTanksConstants
     public const float EXPLOSION_RADIUS = 3f;
 
     public const float BEAM_DAMAGE_PER_INTELLECT = 0.5f;
+    
+    public const float BEAM_MAGICKA_COST = 10f;
     
     public const int STATPOINTS = 25;
     public const bool USE_COMPOUND_INCREASE = false;
