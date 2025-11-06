@@ -1,26 +1,51 @@
 using Actions;
 using Manager;
 using UnityEngine;
-
 using UI;
 
 namespace Tank
 {
+    /// <summary>
+    /// Handles all gameplay behavior of a tank, including actions, health, magicka,
+    /// trajectory preview, and interaction with the turn-based system.
+    /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
     public class TankScript : MonoBehaviour
     {
+        #region Serialized Fields
+
         [Header("References")]
+        [Tooltip("Prefab of the projectile used for missile-type attacks.")]
         [SerializeField] private GameObject projectilePrefab;
+
+        [Tooltip("Prefab used for beam-type attacks (e.g., lasers).")]
         [SerializeField] private GameObject beamPrefab;
+
+        [Tooltip("Transform point where projectiles and effects are spawned.")]
         [SerializeField] private Transform firePoint;
+
+        [Tooltip("Transform used for aiming direction.")]
         [SerializeField] private Transform aimPoint;
+
+        [Tooltip("Component responsible for drawing the projectile trajectory.")]
         [SerializeField] private TrajectoryDrawerScript trajectoryDrawer;
+
+        [Tooltip("Prefab used to instantiate the tank's health bar UI.")]
         [SerializeField] private GameObject healthBarPrefab;
+
+        [Tooltip("Prefab used to instantiate the tank's magicka (mana) bar UI.")]
         [SerializeField] private GameObject magickaBarPrefab;
-        [SerializeField] private CanonOrbitAndAim canonOrbitAndAim;
+
+        [Tooltip("Component that controls cannon rotation and aiming lock state.")]
+        [SerializeField] private CannonOrbitAndAim cannonOrbitAndAim;
 
         [Header("Stats")]
+        [Tooltip("Base stats for this tank, including health, magicka, and damage.")]
         [SerializeField] private TankStats stats = new();
+
+        #endregion
+
+        #region Private Fields
 
         private Rigidbody2D _rb;
         private TurnManagerScript _turnManager;
@@ -32,46 +57,73 @@ namespace Tank
         private TankInputHandler _inputHandler;
 
         private bool _canActThisTurn;
-        public bool isDead;
+        public bool IsDead { get; private set; }
 
+        #endregion
+
+        #region Public Properties
+
+        /// <summary> Unique identifier of the player who owns this tank. </summary>
         public int OwnerId { get; private set; }
+
+        /// <summary> Rigidbody2D component controlling tank physics. </summary>
         public Rigidbody2D Rb => _rb;
+
+        /// <summary> Tank stats reference (mass, health, magicka, damage, etc.). </summary>
         public TankStats Stats => stats;
+
+        /// <summary> Firing point transform (projectile spawn position). </summary>
         public Transform FirePoint => firePoint;
+
+        /// <summary> Aiming reference transform (used for trajectory targeting). </summary>
         public Transform AimPoint => aimPoint;
+
+        /// <summary> Prefab for missile-based actions. </summary>
         public GameObject ProjectilePrefab => projectilePrefab;
 
+        /// <summary> Prefab for beam-based actions. </summary>
         public GameObject BeamPrefab => beamPrefab;
-        
+
+        /// <summary> Current magicka (mana) value. </summary>
         public float Magicka => _magicka?.GetValue() ?? 0f;
+
+        #endregion
+
+        #region Unity Lifecycle
 
         private void Start()
         {
-            isDead = false;
+            IsDead = false;
             _rb = GetComponent<Rigidbody2D>();
-            _turnManager = FindObjectOfType<TurnManagerScript>();
+            _turnManager = FindAnyObjectByType<TurnManagerScript>();
 
             _trajectoryHandler = new TankTrajectoryHandler(this, trajectoryDrawer);
             _inputHandler = new TankInputHandler(this, _turnManager);
 
+            // Default to missile action at turn start
             _currentAction = ActionFactory.Create(ActionType.Missile, this);
         }
 
         private void Update()
         {
-            if (_health == null) return;
-            _health.Update();
-            if (_magicka == null) return;
-            _magicka.Update();
-            if (!_canActThisTurn || !_inputHandler.CanAct()) return;
-            if (_currentAction.HasFalloff()) _trajectoryHandler.UpdateTrajectory(_currentAction);
-            else _trajectoryHandler.UpdateLinearTrajectory();
+            UpdateBars();
 
-            if (!_inputHandler.TryGetActionTarget(out var target)) return;
-            _confirmedAction = _currentAction;
-            _turnManager.RegisterAction(OwnerId, _currentAction.GetName(), firePoint.position, target);
+            // Skip input if not this tank's turn or input is disabled
+            if (!_canActThisTurn || !_inputHandler.CanAct()) return;
+
+            UpdateTrajectory();
+            TryRegisterAction();
         }
 
+        #endregion
+
+        #region Initialization
+
+        /// <summary>
+        /// Initializes the tank with a skillset, applying all stat modifiers,
+        /// setting up health and magicka bars, and ensuring base values are ready.
+        /// </summary>
+        /// <param name="skillset">Skillset defining the tank’s stat bonuses and traits.</param>
         public void Initialize(Skillset skillset)
         {
             if (stats == null)
@@ -80,10 +132,8 @@ namespace Tank
                 stats = new TankStats();
             }
 
-            if (_rb == null) _rb = GetComponent<Rigidbody2D>();
-
+            _rb ??= GetComponent<Rigidbody2D>();
             stats.ApplySkillset(skillset);
-
             _rb.mass = stats.mass;
 
             if (healthBarPrefab == null)
@@ -94,54 +144,135 @@ namespace Tank
 
             _health = new TankHealth(this, healthBarPrefab, stats.maxHealth);
             _health.SetValue(stats.maxHealth);
-            
+
             _magicka = new TankMagicka(this, magickaBarPrefab, stats.maxMagicka);
             _magicka.SetValue(stats.maxMagicka);
         }
 
+        #endregion
 
+        #region Turn and Action Logic
+
+        /// <summary> Assigns a player ID to this tank. </summary>
         public void SetOwnerId(int id) => OwnerId = id;
 
+        /// <summary>
+        /// Changes the current selected action (e.g., missile, beam, etc.)
+        /// and adjusts cannon lock state depending on the action type.
+        /// </summary>
         public void SetAction(IAction newAction)
         {
             if (newAction == null) return;
+
             _currentAction = newAction;
 
-            if (newAction.LocksCannon()) canonOrbitAndAim.LockCannonPosition();
-            else canonOrbitAndAim.UnlockCannonPosition();
+            if (newAction.LocksCannon())
+                cannonOrbitAndAim.LockCannonPosition();
+            else
+                cannonOrbitAndAim.UnlockCannonPosition();
         }
 
-        public void ExecuteAction(PlayerAction action) => _confirmedAction?.Execute(action.Origin, action.Target);
+        /// <summary>
+        /// Executes a confirmed player action (fired from the TurnManager during the Action phase).
+        /// </summary>
+        /// <param name="action">Action data including origin, target, and type.</param>
+        public void ExecuteAction(PlayerAction action) =>
+            _confirmedAction?.Execute(action.Origin, action.Target);
 
-        public void ApplyDamage(float damage) => _health?.ApplyDamage(damage);
-        
-        public void SpendMagicka(float amount) => _magicka?.Spend(amount);
-
+        /// <summary>
+        /// Enables or disables player control for this tank during the planning phase.
+        /// </summary>
         public void SetControlEnabled(bool newEnabled)
         {
             _canActThisTurn = newEnabled;
-            if (!newEnabled) _trajectoryHandler.Hide();
+            if (!newEnabled)
+                _trajectoryHandler.Hide();
         }
-        
+
+        /// <summary>
+        /// Applies per-turn passive effects like healing, magicka regen,
+        /// or stat recalculations for special traits (e.g., Juggernaut).
+        /// </summary>
         public void ApplyTurnStartEffects()
         {
             _health?.Heal(stats.mendingRate);
-            
-            _magicka.Regenerate(stats.magickaRegenRate);
+            _magicka?.Regenerate(stats.magickaRegenRate);
 
-            if (stats.juggernaut) stats.damage = SkillsUtils.CalculateJuggernautDamage(
-                stats.baseDamage,
-                _health?.TotalDamageReceived ?? 0f,
-                IncreaseType.LinearHybrid
-            );
+            if (stats.juggernaut)
+            {
+                stats.damage = SkillsUtils.CalculateJuggernautDamage(
+                    stats.baseDamage,
+                    _health?.TotalDamageReceived ?? 0f,
+                    IncreaseType.LinearHybrid
+                );
+            }
         }
 
+        #endregion
+
+        #region Combat and Resources
+
+        /// <summary> Applies damage to this tank, reducing health accordingly. </summary>
+        public void ApplyDamage(float damage) => _health?.ApplyDamage(damage);
+
+        /// <summary> Consumes a portion of the tank’s magicka. </summary>
+        public void SpendMagicka(float amount) => _magicka?.Spend(amount);
+
+        #endregion
+
+        #region Death Handling
+
+        /// <summary>
+        /// Handles death of the tank: destroys UI bars, marks as dead, and removes the GameObject.
+        /// </summary>
         public void Kill()
         {
             _health?.DestroyBar();
             _magicka?.DestroyBar();
-            isDead = true;
+            IsDead = true;
             Destroy(gameObject);
         }
+
+        #endregion
+
+        #region Internal Helpers
+
+        /// <summary> Updates health and magicka bars each frame. </summary>
+        private void UpdateBars()
+        {
+            _health?.Update();
+            _magicka?.Update();
+        }
+
+        /// <summary> Updates the trajectory preview depending on the current action. </summary>
+        private void UpdateTrajectory()
+        {
+            if (_currentAction.HasFalloff())
+                _trajectoryHandler.UpdateTrajectory(_currentAction);
+            else
+                _trajectoryHandler.UpdateLinearTrajectory();
+        }
+
+        /// <summary>
+        /// Checks player input and, if an action target is selected, registers the action
+        /// with the <see cref="TurnManagerScript"/> for later execution.
+        /// </summary>
+        private void TryRegisterAction()
+        {
+            if (_inputHandler.TryGetSkipTurn())
+            {
+                _confirmedAction = null;
+                _turnManager.RegisterAction(OwnerId, "Idle", Vector2.zero, Vector2.zero);
+                return;
+            }
+            if (!_inputHandler.TryGetActionTarget(out var target)) 
+                return;
+
+            _confirmedAction = _currentAction;
+            _turnManager.RegisterAction(OwnerId, _currentAction.GetName(), firePoint.position, target);
+        }
+
+
+        #endregion
     }
 }

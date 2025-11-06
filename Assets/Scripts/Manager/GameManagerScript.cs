@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Tank;
 using UI;
 using UnityEngine;
-using System;
-using System.Collections.Generic;
 
 namespace Manager
 {
@@ -31,11 +31,15 @@ namespace Manager
         public static event Action<TankScript> OnTankSpawned;
         public static event Action OnAllTanksSpawned;
 
+        // ---------- PROPERTIES ----------
+        public IReadOnlyList<TankScript> Tanks => _tanks.AsReadOnly();
+
+        // ---------- UNITY LIFECYCLE ----------
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Debug.LogWarning("[GameManager] Duplicate instance found, destroying new one.");
+                Debug.LogWarning("[GameManager] Duplicate instance found. Destroying new one.");
                 Destroy(gameObject);
                 return;
             }
@@ -44,6 +48,7 @@ namespace Manager
             gameplayRoot?.SetActive(false);
         }
 
+        // ---------- PLAYER CONFIRMATION ----------
         public void ConfirmTank(Skillset skillset)
         {
             if (skillset == null)
@@ -63,14 +68,10 @@ namespace Manager
             StartGame();
         }
 
+        // ---------- GAME INITIALIZATION ----------
         private void StartGame()
         {
-            if (!tankPrefab || !gameplayRoot || !turnManager)
-            {
-                Debug.LogError("[GameManager] Missing references! Cannot start game.");
-                return;
-            }
-
+            if (!ValidateReferences()) return;
             if (_pendingSkillsets.Count != playerCount)
             {
                 Debug.LogError("[GameManager] Skillset count does not match player count.");
@@ -84,11 +85,11 @@ namespace Manager
             _pendingSkillsets.Clear();
 
             turnManager.AssignIds(_tanks.ToArray());
-
             OnGameStarted?.Invoke();
             turnManager.StartGame();
         }
 
+        // ---------- SPAWNING ----------
         private void SpawnTanks()
         {
             _tanks.Clear();
@@ -98,7 +99,7 @@ namespace Manager
 
             for (var i = 0; i < playerCount; i++)
             {
-                var spawnPos = new Vector3(startX + i * spawnSpacing, 0f, 0f);
+                Vector3 spawnPos = new(startX + i * spawnSpacing, 0f, 0f);
                 var tankGo = Instantiate(tankPrefab, spawnPos, Quaternion.identity, gameplayRoot.transform);
 
                 if (!tankGo.TryGetComponent(out TankScript newTank))
@@ -114,10 +115,16 @@ namespace Manager
                 OnTankSpawned?.Invoke(newTank);
             }
 
-            // Debug.Log($"[GameManager] Spawned {_tanks.Count} tanks.");
             OnAllTanksSpawned?.Invoke();
         }
 
-        public IReadOnlyList<TankScript> Tanks => _tanks.AsReadOnly();
+        // ---------- VALIDATION ----------
+        private bool ValidateReferences()
+        {
+            if (tankPrefab && gameplayRoot && turnManager) return true;
+
+            Debug.LogError("[GameManager] Missing critical references! Cannot start game.");
+            return false;
+        }
     }
 }

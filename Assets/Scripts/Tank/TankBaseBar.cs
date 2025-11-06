@@ -8,14 +8,14 @@ namespace Tank
         protected readonly BarScript Bar;
         protected readonly float MaxValue;
         protected float CurrentValue;
-        protected readonly Vector3 Offset;
+        private readonly Vector3 _offset;
 
         protected TankBarBase(TankScript tank, GameObject prefab, float maxValue, Vector3 offset)
         {
             Tank = tank;
             MaxValue = maxValue;
             CurrentValue = maxValue;
-            Offset = offset;
+            _offset = offset;
 
             if (prefab == null)
             {
@@ -23,7 +23,6 @@ namespace Tank
                 return;
             }
 
-            // ✅ Always attach to the correct canvas
             var uiCanvas = GameObject.Find("UserInterface")?.GetComponent<Canvas>();
             if (uiCanvas == null)
             {
@@ -31,41 +30,31 @@ namespace Tank
                 return;
             }
 
-            // ✅ Instantiate and parent under UI
             var instance = Object.Instantiate(prefab, uiCanvas.transform);
-            instance.transform.SetAsLastSibling(); // ensures proper draw order
+            instance.transform.SetAsLastSibling();
 
             Bar = instance.GetComponent<BarScript>();
-            if (Bar == null)
-            {
-                Debug.LogError($"{GetType().Name}: Prefab is missing BarScript component!");
-                return;
-            }
+            if (Bar == null) return;
 
             UpdateBarPosition();
-            Bar.Set(CurrentValue, MaxValue);
-
-            Debug.Log($"{tank.name} -> {GetType().Name} bar created successfully!");
+            Bar.Set(CurrentValue, MaxValue); 
         }
 
         public virtual void Update()
         {
-            if (Bar == null || Tank == null)
-                return;
-
+            if (!Bar || !Tank) return;
             UpdateBarPosition();
         }
 
-        protected void UpdateBarPosition()
+        private void UpdateBarPosition()
         {
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(Tank.transform.position + Offset);
+            var screenPos = Camera.main.WorldToScreenPoint(Tank.transform.position + _offset);
             Bar.transform.position = screenPos;
         }
 
         public virtual void DestroyBar()
         {
-            if (Bar != null)
-                Bar.DestroyBar();
+            if (Bar != null) Bar.DestroyBar();
         }
 
         public virtual void SetValue(float value)

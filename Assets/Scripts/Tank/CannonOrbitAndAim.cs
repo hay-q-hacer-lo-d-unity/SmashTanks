@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Tank
 {
-    public class CanonOrbitAndAim : MonoBehaviour
+    public class CannonOrbitAndAim : MonoBehaviour
     {
         [SerializeField] Transform tank;         // arrastrá tu Tank
         [SerializeField] Transform canonSprite;  // arrastrá el objeto "Canon"

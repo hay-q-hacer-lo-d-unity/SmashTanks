@@ -10,7 +10,6 @@ namespace Tank
         public float maxSpeed = SmashTanksConstants.MISSILE_MAX_SPEED;
 
         [Header("Jump Settings")]
-        public float forceMultiplier;
         public float maxForce;
 
         [Header("Health Settings")]
@@ -37,8 +36,8 @@ namespace Tank
         public float baseDamage;
 
         [Header("Explosion Settings")] 
-        public float explosionRadius = SmashTanksConstants.EXPLOSION_RADIUS;
-        public float explosionForce = SmashTanksConstants.EXPLOSION_FORCE;
+        public float explosionRadius;
+        public float explosionForce;
         
         [Header("Abilities")]
         public bool juggernaut;
@@ -46,10 +45,11 @@ namespace Tank
 
         public void ApplySkillset(Skillset skillset)
         {
+            explosionRadius = SmashTanksConstants.EXPLOSION_RADIUS;
+            explosionForce = SmashTanksConstants.EXPLOSION_FORCE;
             SkillsetMapper mapper = new(skillset);
             mass = mapper.Mass;
             maxHealth = mapper.Health;
-            forceMultiplier = mapper.ForceMultiplier;
             maxForce = mapper.MaxForce;
             accuracy = mapper.Accuracy;
             mendingRate = mapper.MendingRate;

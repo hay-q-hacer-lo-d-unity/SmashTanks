@@ -40,7 +40,6 @@ namespace Actions
             var stats = tank.Stats;
             return new JumpAction(
                 stats.maxForce,
-                stats.forceMultiplier,
                 tank.AimPoint,
                 tank.Rb
             );

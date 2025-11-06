@@ -3132,8 +3132,8 @@ PrefabInstance:
       value: "For each point granted to Intellect, all thy magical arts grow in potency.
         Spells that smite shall smite harder, and those that heal shall mend with
         greater grace. Every arcane attack, every sacred blessing, every mystic art
-        bendeth to thy sharpened mind \u2014 proof that even the keenest blade is
-        dull beside a brilliant brain."
+        bendeth to thy sharpened mind \u2014 proof that even the keenest blade doth
+        dull against a brilliant mind."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

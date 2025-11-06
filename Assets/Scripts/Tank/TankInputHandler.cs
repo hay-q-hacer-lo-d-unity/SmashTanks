@@ -29,6 +29,8 @@ namespace Tank
             target = GetMouseWorld();
             return true;
         }
+        
+        public bool TryGetSkipTurn() => Input.GetMouseButtonDown(1);
 
         private static Vector2 GetMouseWorld()
         {

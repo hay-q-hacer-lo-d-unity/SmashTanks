@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 8864350955896784591}
   - component: {fileID: 7281802776512893827}
   m_Layer: 0
-  m_Name: CanonPivot
+  m_Name: CannonPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -663,11 +663,10 @@ MonoBehaviour:
   trajectoryDrawer: {fileID: 838390347669665156}
   healthBarPrefab: {fileID: 6873305847224659786, guid: c6d934981471c814cb968dcdd1efe62e, type: 3}
   magickaBarPrefab: {fileID: 2742799704620585471, guid: 0e2de2cfab152944fa78e2ba4a4aedba, type: 3}
-  canonOrbitAndAim: {fileID: 7281802776512893827}
+  cannonOrbitAndAim: {fileID: 7281802776512893827}
   stats:
     speedMultiplier: 5
     maxSpeed: 20
-    forceMultiplier: 0
     maxForce: 0
     mass: 0
     maxHealth: 0
@@ -678,8 +677,8 @@ MonoBehaviour:
     mendingRate: 0
     damage: 0
     baseDamage: 0
-    explosionRadius: 3
-    explosionForce: 2000
+    explosionRadius: 0
+    explosionForce: 0
     juggernaut: 0
 --- !u!114 &9205678515018744357
 MonoBehaviour:
@@ -863,7 +862,7 @@ GameObject:
   - component: {fileID: 8752992355831249291}
   - component: {fileID: 8389924432434978541}
   m_Layer: 0
-  m_Name: Canon
+  m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
