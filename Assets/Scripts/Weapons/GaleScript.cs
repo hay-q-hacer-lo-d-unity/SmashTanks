@@ -32,7 +32,7 @@ namespace Actions
             _force = force;
             _ownerCollider = ownerCollider;
 
-            _computedDuration = MaxDistance / Speed; // used only for fading logic
+            _computedDuration = MaxDistance / Speed;
 
             // Set initial state
             _startPosition = transform.position;
@@ -85,11 +85,8 @@ namespace Actions
 
                 // Only affect objects in front (same semicircle as direction)
                 if (dot <= 0f) continue;
-
-                // Apply force with falloff by distance
-                var distance = toTarget.magnitude;
-                var falloff = Mathf.Clamp01(1f - (distance / Radius));
-                hit.attachedRigidbody.AddForce(_direction * (_force * falloff), ForceMode2D.Force);
+                
+                hit.attachedRigidbody.AddForce(_direction * _force, ForceMode2D.Force);
             }
         }
 

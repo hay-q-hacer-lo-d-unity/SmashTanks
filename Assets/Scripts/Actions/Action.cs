@@ -315,7 +315,7 @@ namespace Actions
     {
         private readonly GameObject _galePrefab;
         private readonly Transform _firePoint;
-        private readonly float _force;
+        private readonly float _force = SmashTanksConstants.GALE_BASE_FORCE;
 
         protected override float MagickaCost => SmashTanksConstants.GALE_MAGICKA_COST;
 
@@ -324,7 +324,7 @@ namespace Actions
         {
             _galePrefab = galePrefab;
             _firePoint = firePoint;
-            _force = 150f + intellect * 15f;
+            _force += intellect * SmashTanksConstants.GALE_FORCE_MULTIPLIER_PER_INTELLECT;
         }
 
         protected override void Cast(Vector3 origin, Vector3 target)

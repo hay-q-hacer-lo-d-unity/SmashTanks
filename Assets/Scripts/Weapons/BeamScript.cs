@@ -9,17 +9,16 @@ namespace Weapons
     public class BeamScript : MonoBehaviour
     {
         [Header("Beam Settings")]
-        public float width = 2f;                  // Grosor visual del rayo
-        public float damage = 1f;                 // Daño base
-        public float maxDistance = 50f;           // Alcance máximo
-        public float fadeDuration = 1f;         // Duración del fade-out
-        public GameObject beamEffectPrefab;       // Efecto visual opcional
+        public float width;
+        public float damage;
+        public float maxDistance = 1000f;
+        public float fadeDuration = 1f;
+        public GameObject beamEffectPrefab;
 
         private LineRenderer _lineRenderer;
 
-        void Start()
+        private void Start()
         {
-            // Crear o configurar el LineRenderer
             _lineRenderer = gameObject.GetComponent<LineRenderer>();
             if (_lineRenderer == null)
                 _lineRenderer = gameObject.AddComponent<LineRenderer>();
@@ -34,12 +33,11 @@ namespace Weapons
             FireBeam();
         }
 
-        void FireBeam()
+        private void FireBeam()
         {
             Vector2 origin = transform.position;
             Vector2 direction = transform.up;
-
-            // Detectar todos los impactos
+            
             var hits = Physics2D.RaycastAll(origin, direction, maxDistance);
             var sortedHits = hits.OrderBy(h => h.distance).ToArray();
 
@@ -52,18 +50,15 @@ namespace Weapons
                 var tank = hit.collider.GetComponent<TankScript>();
                 if (tank == null) continue;
                 tank.ApplyDamage(currentDamage);
-                currentDamage *= 2f; // ⚡ Duplicar daño por cada tanque atravesado
+                currentDamage *= 2f;
             }
-
-            // Dibujar el rayo hasta el máximo alcance
+            
             var points = new List<Vector3> { origin, origin + direction * maxDistance };
             _lineRenderer.SetPositions(points.ToArray());
-
-            // Instanciar efecto opcional
+            
             if (beamEffectPrefab != null)
                 Instantiate(beamEffectPrefab, origin, Quaternion.identity);
-
-            // Iniciar desvanecimiento
+            
             StartCoroutine(FadeOutAndDestroy());
         }
 

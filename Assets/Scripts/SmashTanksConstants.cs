@@ -6,7 +6,7 @@ public static class SmashTanksConstants
     public const float EXPLOSION_FORCE = 25f;
     public const float EXPLOSION_RADIUS = 5f;
     
-    public const float BASE_HEALTH = 10f;
+    public const float BASE_HEALTH = 15f;
     public const float BASE_MASS = 10f;
     public const float MASS_MULTIPLIER_PER_LEVEL = 0.2f;
     
@@ -25,7 +25,6 @@ public static class SmashTanksConstants
     public const float BASE_MENDING_RATE_RELATIVE = BASE_HEALTH * 0.05f;
     public const float MENDING_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
     
-    public const float BASE_JUMP_FORCE_MULTIPLIER = 25f;
     public const float JUMP_FORCE_MULTIPLIER_PER_LEVEL = 0.2f;
     public const float BASE_MAX_JUMP_FORCE = 100f;
     
@@ -59,6 +58,9 @@ public static class SmashTanksConstants
     public const float GALE_RADIUS = 3f;
     public const float GALE_SPEED = 25f;
     public const float GALE_DISTANCE = 25f;
+    public const float GALE_BASE_FORCE = 100f;
+    public const float GALE_FORCE_MULTIPLIER_PER_INTELLECT = 0.2f;
+    public const float GALE_FORCE_PER_INTELLECT = 20f;
     
     public const float MISSILE_RECOIL_FORCE = 50f;
     

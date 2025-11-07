@@ -17,8 +17,8 @@ namespace Manager
         [SerializeField] private TurnManagerScript turnManager;
 
         [Header("Game Settings")]
-        [SerializeField] private int playerCount = 2;
-        [SerializeField] private float spawnSpacing = 50f;
+        [SerializeField] private int playerCount;
+        [SerializeField] private float spawnSpacing;
 
         private int _confirmedPlayers;
         private readonly List<Skillset> _pendingSkillsets = new();
