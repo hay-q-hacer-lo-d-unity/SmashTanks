@@ -658,6 +658,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   projectilePrefab: {fileID: 4481765794907147700, guid: e03a4bf1ed78320439bde0de637dbb29, type: 3}
   beamPrefab: {fileID: 4470436920408959054, guid: 76d81c79e07e1fc48a1e79f278373a41, type: 3}
+  galePrefab: {fileID: 8433505035259395599, guid: 4593b3d3399ab7d4297a3a5312b57f7c, type: 3}
   firePoint: {fileID: 6238391092178404524}
   aimPoint: {fileID: 5454113432729398971}
   trajectoryDrawer: {fileID: 838390347669665156}
@@ -665,8 +666,7 @@ MonoBehaviour:
   magickaBarPrefab: {fileID: 2742799704620585471, guid: 0e2de2cfab152944fa78e2ba4a4aedba, type: 3}
   cannonOrbitAndAim: {fileID: 7281802776512893827}
   stats:
-    speedMultiplier: 5
-    maxSpeed: 20
+    missileMaxSpeed: 20
     maxForce: 0
     mass: 0
     maxHealth: 0
@@ -1567,5 +1567,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b5c864959e4114b33595c6c6a26c55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DefaultNamespace.TrajectoryDrawerScript
-  points: 50
+  segments: 50
   gravity: -9.81

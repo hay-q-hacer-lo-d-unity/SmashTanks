@@ -7,13 +7,14 @@ namespace Actions
     {
         public static IAction Create(ActionType type, TankScript tank)
         {
-            if (tank)
-                return type switch
+            if (tank) return type switch
                 {
                     ActionType.Missile => CreateMissileAction(tank),
                     ActionType.Jump => CreateJumpAction(tank),
                     ActionType.Crash => CreateCrashAction(tank),
                     ActionType.Beam => CreateBeamAction(tank),
+                    ActionType.Teleport => CreateTeleportAction(tank),
+                    ActionType.Gale => CreateGaleAction(tank),
                     _ => null
                 };
             Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
@@ -26,8 +27,7 @@ namespace Actions
             var stats = tank.Stats;
             return new MissileAction(
                 tank.ProjectilePrefab,
-                stats.speedMultiplier,
-                stats.maxSpeed,
+                stats.missileMaxSpeed,
                 tank.FirePoint,
                 stats.damage,
                 stats.explosionRadius,
@@ -52,7 +52,7 @@ namespace Actions
                 stats.maxForce,
                 tank.AimPoint,
                 tank.Rb,
-                0.01f
+                0.025f
             );
         }
         
@@ -66,6 +66,26 @@ namespace Actions
                 tank
             );
         }
+        
+        private static IAction CreateTeleportAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new TeleportAction(
+                tank,
+                stats.intellect
+            );
+        }
+        
+        private static IAction CreateGaleAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new GaleAction(
+                tank.GalePrefab,
+                stats.intellect,
+                tank.FirePoint,
+                tank
+            );
+        }
     }
 
     public enum ActionType
@@ -73,6 +93,8 @@ namespace Actions
         Missile,
         Jump,
         Crash,
-        Beam
+        Beam,
+        Teleport,
+        Gale,
     }
 }

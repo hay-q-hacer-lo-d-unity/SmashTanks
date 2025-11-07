@@ -49,12 +49,16 @@ public static class SmashTanksConstants
     public const float JUGGERNAUT_LOG_MULTIPLIER = 0.12f;
     public const float JUGGERNAUT_LOG_SCALING_FACTOR = 0.01f;
     
-    public const float MISSILE_SPEED_MULTIPLIER = 5f;
     public const float MISSILE_MAX_SPEED = 20f;
 
     public const float BEAM_DAMAGE_PER_INTELLECT = 0.5f;
     
     public const float BEAM_MAGICKA_COST = 10f;
+    public const float TELEPORT_MAGICKA_COST = 5f;
+    public const float GALE_MAGICKA_COST = 7f;
+    public const float GALE_RADIUS = 3f;
+    public const float GALE_SPEED = 25f;
+    public const float GALE_DISTANCE = 25f;
     
     public const float MISSILE_RECOIL_FORCE = 50f;
     

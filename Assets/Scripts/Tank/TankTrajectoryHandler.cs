@@ -14,14 +14,27 @@ namespace Tank
             _drawer = drawer;
         }
 
-        public void UpdateLinearTrajectory()
+        public void HalfLineTrajectory()
         {
             if (!_drawer) return;
             var cursor = GetMouseWorld();
-            _drawer.DrawLine(_tank.FirePoint.position, cursor);
+            _drawer.DrawHalfLine(_tank.FirePoint.position, cursor);
+        }
+        
+        public void SegmentTrajectory()
+        {
+            if (!_drawer) return;
+            var cursor = GetMouseWorld();
+            _drawer.DrawSegment(_tank.FirePoint.position, cursor);
         }
 
-        public void UpdateTrajectory(IAction action)
+        public void CircularArea(ICircularAreaAction action)
+        {
+            var cursor = GetMouseWorld();
+            _drawer.DrawCircle(cursor, action.Radius);
+        }
+
+        public void ParabolicTrajectory(IAction action)
         {
             if (!_drawer) return;
 
@@ -41,14 +54,22 @@ namespace Tank
 
             _drawer.DrawParabola(origin, velocity, _tank.Stats.accuracy);
         }
+        
+        public void GaleTrajectory()
+        {
+            if (!_drawer) return;
+            var cursor = GetMouseWorld();
+            var dir = (cursor - (Vector2)_tank.FirePoint.position).normalized;
+            var target = _tank.FirePoint.position + (Vector3)dir * SmashTanksConstants.GALE_DISTANCE;
+            _drawer.DrawGaleZone(_tank.FirePoint.position, target);
+        }
+        
+        public void Hide() => _drawer?.ClearParabola();
 
         private Vector2 CalculateMissileVelocity()
         {
             var cursor = GetMouseWorld();
-            var dir = (cursor - (Vector2)_tank.AimPoint.position).normalized;
-            var distance = Vector2.Distance(cursor, _tank.FirePoint.position);
-            var speed = Mathf.Clamp(distance * _tank.Stats.speedMultiplier, 0, _tank.Stats.maxSpeed);
-            return dir * speed;
+            return TankPhysicsHelper.CalculateMissileSpeed(_tank.Stats.missileMaxSpeed, _tank.FirePoint.position, cursor);
         }
 
         private Vector2 CalculateJumpVelocity()
@@ -58,9 +79,7 @@ namespace Tank
             
             return force / _tank.Rb.mass;
         }
-
-        public void Hide() => _drawer?.ClearParabola();
-
+        
         private static Vector2 GetMouseWorld()
         {
             var mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);

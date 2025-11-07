@@ -33,7 +33,7 @@ namespace Actions
         public void SetTank(TankScript newTank)
         {
             _tank = newTank;
-            SelectAction(ActionType.Missile); // Default action
+            SelectAction(ActionType.Missile);
             UpdateButtons();
         }
 

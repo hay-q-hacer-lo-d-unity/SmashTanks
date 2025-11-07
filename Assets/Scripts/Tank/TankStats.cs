@@ -6,8 +6,8 @@ namespace Tank
     [System.Serializable]
     public class TankStats
     {
-        [Header("Shot Settings")] public float speedMultiplier = SmashTanksConstants.MISSILE_SPEED_MULTIPLIER;
-        public float maxSpeed = SmashTanksConstants.MISSILE_MAX_SPEED;
+        [Header("Shot Settings")] 
+        public float missileMaxSpeed = SmashTanksConstants.MISSILE_MAX_SPEED;
 
         [Header("Jump Settings")]
         public float maxForce;

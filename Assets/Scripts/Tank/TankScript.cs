@@ -1,3 +1,4 @@
+using System;
 using Actions;
 using Manager;
 using UnityEngine;
@@ -18,8 +19,11 @@ namespace Tank
         [Tooltip("Prefab of the projectile used for missile-type attacks.")]
         [SerializeField] private GameObject projectilePrefab;
 
-        [Tooltip("Prefab used for beam-type attacks (e.g., lasers).")]
+        [Tooltip("Prefab used for the beam attack")]
         [SerializeField] private GameObject beamPrefab;
+        
+        [Tooltip("Prefab used for the gale spell")]
+        [SerializeField] private GameObject galePrefab;
 
         [Tooltip("Transform point where projectiles and effects are spawned.")]
         [SerializeField] private Transform firePoint;
@@ -83,6 +87,9 @@ namespace Tank
 
         /// <summary> Prefab for beam-based actions. </summary>
         public GameObject BeamPrefab => beamPrefab;
+        
+        /// <summary> Prefab for gale-based actions. </summary>
+        public GameObject GalePrefab => galePrefab;
 
         /// <summary> Current magicka (mana) value. </summary>
         public float Magicka => _magicka?.GetValue() ?? 0f;
@@ -247,10 +254,28 @@ namespace Tank
         /// <summary> Updates the trajectory preview depending on the current action. </summary>
         private void UpdateTrajectory()
         {
-            if (_currentAction.HasFalloff())
-                _trajectoryHandler.UpdateTrajectory(_currentAction);
-            else
-                _trajectoryHandler.UpdateLinearTrajectory();
+            switch (_currentAction.AimType())
+            {
+                case AimType.HalfLine:
+                    _trajectoryHandler.HalfLineTrajectory();
+                    break;
+                case AimType.Parabolic:
+                    _trajectoryHandler.ParabolicTrajectory(_currentAction);
+                    break;
+                case AimType.CircularArea:
+                    _trajectoryHandler.CircularArea(_currentAction as ICircularAreaAction);
+                    break;
+                case AimType.Point:
+                    break;
+                case AimType.Segment:
+                    _trajectoryHandler.SegmentTrajectory();
+                    break;
+                case AimType.GaleZone:
+                    _trajectoryHandler.GaleTrajectory();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         /// <summary>

@@ -10,7 +10,6 @@ public class BarScript : MonoBehaviour
     private void Awake()
     {
         _mainCamera = Camera.main;
-        Debug.Log($"{name} fillImage ID: {fillImage?.GetInstanceID()} parent: {fillImage?.transform.parent?.name}");
     }
     
     
