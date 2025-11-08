@@ -264,7 +264,7 @@ PrefabInstance:
       objectReference: {fileID: 1593205434}
     - target: {fileID: 7654494757496313115, guid: 4eeab1aa512edc643b66e3e5b07453f6, type: 3}
       propertyPath: turnDuration
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7654494757496313115, guid: 4eeab1aa512edc643b66e3e5b07453f6, type: 3}
       propertyPath: actionSelector
@@ -2093,7 +2093,7 @@ PrefabInstance:
         With each point, thy targeting line stretcheth farther, granting thee the
         foresight of a hawk. Let not thy shots wander astray, but strike thine enemies
         with divine precision.\nFor each point devoted to Accuracy, thy trajectory
-        prediction extendeth 0.1s farther."
+        prediction extendeth 0.2s farther."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
