@@ -26,6 +26,8 @@ namespace Actions
         /// Indicates how the action aims thus how the trajectory should be drawn.
         /// </summary>
         AimType AimType();
+        
+        int Cooldown { get;  }
 
         /// <summary>
         /// Indicates whether this action locks the tank's cannon while executing.
@@ -60,6 +62,8 @@ namespace Actions
         private readonly float _damage;
         private readonly float _explosionRadius;
         private readonly float _explosionForce;
+        int IAction.Cooldown => 0;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MissileAction"/> class.
@@ -107,7 +111,6 @@ namespace Actions
 
         /// <inheritdoc />
         public AimType AimType() => Actions.AimType.Parabolic;
-
         /// <inheritdoc />
         public bool LocksCannon() => false;
     }
@@ -122,6 +125,9 @@ namespace Actions
         private readonly Transform _aimPoint;
         private readonly Rigidbody2D _rb;
         private readonly float _maxForce;
+        int IAction.Cooldown => 0;
+
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JumpAction"/> class.
@@ -161,6 +167,8 @@ namespace Actions
         private readonly Rigidbody2D _rb;
         private readonly float _maxForce;
         private readonly float _damageMultiplier;
+        int IAction.Cooldown => 2;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CrashAction"/> class.
@@ -204,6 +212,7 @@ namespace Actions
     {
         protected readonly TankScript Tank;
         protected readonly float Intellect;
+        public abstract int Cooldown { get; }
 
         protected Magic(TankScript tank, float intellect)
         {
@@ -245,7 +254,7 @@ namespace Actions
         private readonly GameObject _beamPrefab;
         private readonly Transform _firePoint;
         private readonly float _damage;
-
+        public override int Cooldown => 3;
         protected override float MagickaCost => SmashTanksConstants.BEAM_MAGICKA_COST;
 
         public BeamAction(GameObject beamPrefab, Transform firePoint, float intellect, TankScript tank)
@@ -283,6 +292,8 @@ namespace Actions
         public float Radius { get; }
 
         protected override float MagickaCost => SmashTanksConstants.TELEPORT_MAGICKA_COST;
+        public override int Cooldown => 2;
+
 
         public TeleportAction(TankScript tank, float intellect)
             : base(tank, intellect)
@@ -316,6 +327,8 @@ namespace Actions
         private readonly GameObject _galePrefab;
         private readonly Transform _firePoint;
         private readonly float _force = SmashTanksConstants.GALE_BASE_FORCE;
+        public override int Cooldown => 3;
+
 
         protected override float MagickaCost => SmashTanksConstants.GALE_MAGICKA_COST;
 

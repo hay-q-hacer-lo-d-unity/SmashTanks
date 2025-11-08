@@ -19,7 +19,7 @@ public static class SmashTanksConstants
     public const float BASE_INTELLECT = 1f;
     
     public const float BASE_ACCURACY = 0.5f;
-    public const float ACCURACY_MULTIPLIER_PER_LEVEL = 0.2f;
+    public const float ACCURACY_MULTIPLIER_PER_LEVEL = 0.4f;
     
     public const float BASE_MENDING_RATE_ABSOLUTE = 0.5f;
     public const float BASE_MENDING_RATE_RELATIVE = BASE_HEALTH * 0.05f;

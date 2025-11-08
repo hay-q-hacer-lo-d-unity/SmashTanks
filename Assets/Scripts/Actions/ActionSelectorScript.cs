@@ -33,7 +33,7 @@ namespace Actions
         public void SetTank(TankScript newTank)
         {
             _tank = newTank;
-            SelectAction(ActionType.Missile);
+            SelectAction(ActionType.Shoot);
             UpdateButtons();
         }
 
@@ -45,9 +45,16 @@ namespace Actions
             if (!_tank) return;
 
             var currentMagicka = _tank.Magicka;
+            var cooldowns = _tank.currentCooldowns;
             foreach (var action in actionButtons)
             {
-                action.button.interactable = currentMagicka >= action.magickaCost;
+                var checkMagicka = currentMagicka >= action.magickaCost;
+                var checkCooldown = true;
+                if (cooldowns.TryGetValue(action.type.ToString(), out var remainingCooldown))
+                {
+                    checkCooldown = remainingCooldown <= 0;
+                }
+                action.button.interactable = checkMagicka && checkCooldown;
             }
         }
 

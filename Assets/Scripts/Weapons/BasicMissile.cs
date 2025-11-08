@@ -12,6 +12,13 @@ namespace Weapons
     [RequireComponent(typeof(Collider2D))]
     public class BasicMissile : MonoBehaviour, IProjectile
     {
+        [Header("Animation Settings")]
+        public Sprite[] animationFrames;
+        public float frameRate = 10f; // Frames per second
+        private SpriteRenderer _spriteRenderer;
+        private int _currentFrame;
+        private float _frameTimer;
+        
         private Rigidbody2D _rb;
 
         [Header("Explosion Settings")]
@@ -72,7 +79,11 @@ namespace Weapons
 
         #region Unity Callbacks
 
-        private void Start() => _rb = GetComponent<Rigidbody2D>();
+        private void Start()
+        {
+            _rb = GetComponent<Rigidbody2D>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+        }
 
         private void Update()
         {
@@ -80,7 +91,21 @@ namespace Weapons
 
             var angle = Mathf.Atan2(_rb.linearVelocity.y, _rb.linearVelocity.x) * Mathf.Rad2Deg + 90f;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            AnimateSprite();
         }
+        
+        private void AnimateSprite()
+        {
+            if (animationFrames == null || animationFrames.Length == 0)
+                return;
+
+            _frameTimer += Time.deltaTime;
+            if (!(_frameTimer >= 1f / frameRate)) return;
+            _frameTimer = 0f;
+            _currentFrame = (_currentFrame + 1) % animationFrames.Length;
+            _spriteRenderer.sprite = animationFrames[_currentFrame];
+        }
+
 
         private void OnCollisionEnter2D() => Explode();
 

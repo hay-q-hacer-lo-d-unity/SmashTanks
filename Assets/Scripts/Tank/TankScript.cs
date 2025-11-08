@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Actions;
 using Manager;
 using UnityEngine;
@@ -91,8 +93,10 @@ namespace Tank
         /// <summary> Prefab for gale-based actions. </summary>
         public GameObject GalePrefab => galePrefab;
 
-        /// <summary> Current magicka (mana) value. </summary>
+        /// <summary> Current magicka value. </summary>
         public float Magicka => _magicka?.GetValue() ?? 0f;
+        
+        public Dictionary<string, int> currentCooldowns = new();
 
         #endregion
 
@@ -108,7 +112,7 @@ namespace Tank
             _inputHandler = new TankInputHandler(this, _turnManager);
 
             // Default to missile action at turn start
-            _currentAction = ActionFactory.Create(ActionType.Missile, this);
+            _currentAction = ActionFactory.Create(ActionType.Shoot, this);
         }
 
         private void Update()
@@ -183,8 +187,11 @@ namespace Tank
         /// Executes a confirmed player action (fired from the TurnManager during the Action phase).
         /// </summary>
         /// <param name="action">Action data including origin, target, and type.</param>
-        public void ExecuteAction(PlayerAction action) =>
+        public void ExecuteAction(PlayerAction action)
+        {
             _confirmedAction?.Execute(action.Origin, action.Target);
+            currentCooldowns[_currentAction.GetName()] = _currentAction.Cooldown;
+        }
 
         /// <summary>
         /// Enables or disables player control for this tank during the planning phase.
@@ -202,6 +209,10 @@ namespace Tank
         /// </summary>
         public void ApplyTurnStartEffects()
         {
+            foreach (var key in new List<string>(currentCooldowns.Keys).Where(key => currentCooldowns[key] > 0))
+            {
+                currentCooldowns[key]--;
+            }
             _health?.Heal(stats.mendingRate);
             _magicka?.Regenerate(stats.magickaRegenRate);
 

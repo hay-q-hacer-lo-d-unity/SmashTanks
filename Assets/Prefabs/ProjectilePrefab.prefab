@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b5d6f8580d321824cb4e78710d5909ed, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -169,6 +169,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11efe5166ac80554196a6d6d28f2b65e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  animationFrames:
+  - {fileID: 21300000, guid: b5d6f8580d321824cb4e78710d5909ed, type: 3}
+  - {fileID: 21300000, guid: 45a6fb6012013594884c00613b387dad, type: 3}
+  - {fileID: 21300000, guid: 43fd4e5701122b345b8822908fc5cf39, type: 3}
+  - {fileID: 21300000, guid: f6cb16b2f0e59784e9feda3c5b7e28e9, type: 3}
+  frameRate: 10
   explosionRadius: 3
   explosionForce: 500
   damage: 2

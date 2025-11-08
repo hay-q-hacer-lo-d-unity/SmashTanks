@@ -9,7 +9,7 @@ namespace Actions
         {
             if (tank) return type switch
                 {
-                    ActionType.Missile => CreateMissileAction(tank),
+                    ActionType.Shoot => CreateMissileAction(tank),
                     ActionType.Jump => CreateJumpAction(tank),
                     ActionType.Crash => CreateCrashAction(tank),
                     ActionType.Beam => CreateBeamAction(tank),
@@ -90,7 +90,7 @@ namespace Actions
 
     public enum ActionType
     {
-        Missile,
+        Shoot,
         Jump,
         Crash,
         Beam,
