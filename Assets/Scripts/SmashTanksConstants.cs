@@ -25,7 +25,7 @@ public static class SmashTanksConstants
     public const float BASE_MENDING_RATE_RELATIVE = BASE_HEALTH * 0.05f;
     public const float MENDING_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
     
-    public const float JUMP_FORCE_MULTIPLIER_PER_LEVEL = 0.2f;
+    public const float JUMP_FORCE_MULTIPLIER_PER_LEVEL = 0.3f;
     public const float BASE_MAX_JUMP_FORCE = 100f;
     
     // Asymptotic (absolute)

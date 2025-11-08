@@ -24,21 +24,21 @@ public class DamageOnCrashScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Rigidbody2D otherRb = collision.collider.attachedRigidbody;
+        var otherRb = collision.collider.attachedRigidbody;
         if (!otherRb) return;
 
-        ContactPoint2D contact = collision.GetContact(0);
+        var contact = collision.GetContact(0);
         
-        float relativeAlongNormal = Vector2.Dot(collision.relativeVelocity, contact.normal);
-        float impactSpeed = Mathf.Abs(relativeAlongNormal); // positive scalar
+        var relativeAlongNormal = Vector2.Dot(collision.relativeVelocity, contact.normal);
+        var impactSpeed = Mathf.Abs(relativeAlongNormal); // positive scalar
 
         if (impactSpeed < minImpactSpeed) return; // too soft, ignore
 
-        float m1 = rb.mass;
+        var m1 = rb.mass;
 
-        float energy = 0.5f * m1 * impactSpeed;
+        var energy = 0.5f * m1 * impactSpeed;
 
-        float damage = energy * damageScale;
+        var damage = energy * damageScale;
 
 
         var otherTank = collision.collider.GetComponent<TankScript>();
