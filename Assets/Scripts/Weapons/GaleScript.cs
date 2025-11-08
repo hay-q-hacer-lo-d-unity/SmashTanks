@@ -58,19 +58,23 @@ namespace Actions
             _timer += Time.deltaTime;
             _distanceTraveled += delta;
 
-            // Move the gale
+            // Move the gale (visual)
             transform.position += (Vector3)_direction * delta;
 
             // Fade effects based on computed duration
             UpdateAlpha();
 
-            // Apply forces
-            ApplyWindForces();
-
             // Check if traveled full distance
             if (_distanceTraveled >= MaxDistance)
                 Destroy(gameObject);
         }
+
+        private void FixedUpdate()
+        {
+            // Apply physics at a fixed timestep
+            ApplyWindForces();
+        }
+
 
         private void ApplyWindForces()
         {
