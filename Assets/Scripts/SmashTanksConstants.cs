@@ -58,11 +58,17 @@ public static class SmashTanksConstants
     public const float GALE_RADIUS = 3f;
     public const float GALE_SPEED = 25f;
     public const float GALE_DISTANCE = 25f;
+    
     public const float GALE_BASE_FORCE = 100f;
-    public const float GALE_FORCE_MULTIPLIER_PER_INTELLECT = 0.2f;
-    public const float GALE_FORCE_PER_INTELLECT = 20f;
+    public const float GALE_DOUBLING_LEVEL = 10f;
+    public const float GALE_FORCE_MULTIPLIER_PER_INTELLECT = 1f / GALE_DOUBLING_LEVEL;
+    public const float GALE_INCREASE_PER_INTELLECT = GALE_BASE_FORCE * GALE_FORCE_MULTIPLIER_PER_INTELLECT;
+
+    public const float GALE_FORCE_PER_INTELLECT = 50f;
     
     public const float MISSILE_RECOIL_FORCE = 50f;
+    public const float BOUNCY_MISSILE_RECOIL_FORCE = 25f;
+    public const float BOUNCY_MISSILE_FUSE_TIME = 8f;
     
     public const int STATPOINTS = 25;
     public const bool USE_COMPOUND_INCREASE = false;

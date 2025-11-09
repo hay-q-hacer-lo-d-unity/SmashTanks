@@ -19,18 +19,16 @@ namespace Actions
         private float _computedDuration; // Derived from distance / speed
         private float _timer;
 
-        private Collider2D _ownerCollider;
         private SpriteRenderer[] _renderers;
         private Vector3 _startPosition;
 
         /// <summary>
         /// Initializes the gale with direction, force, and owner collider.
         /// </summary>
-        public void Initialize(Vector2 direction, float force, Collider2D ownerCollider)
+        public void Initialize(Vector2 direction, float force)
         {
             _direction = direction.normalized;
             _force = force;
-            _ownerCollider = ownerCollider;
 
             _computedDuration = MaxDistance / Speed;
 
@@ -82,7 +80,6 @@ namespace Actions
             foreach (var hit in hits)
             {
                 if (!hit.attachedRigidbody) continue;
-                if (hit == _ownerCollider) continue;
 
                 Vector2 toTarget = (hit.transform.position - transform.position);
                 var dot = Vector2.Dot(toTarget.normalized, _direction);

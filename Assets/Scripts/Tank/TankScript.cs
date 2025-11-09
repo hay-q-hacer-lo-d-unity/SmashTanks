@@ -5,6 +5,7 @@ using Actions;
 using Manager;
 using UnityEngine;
 using UI;
+using UnityEngine.Serialization;
 
 namespace Tank
 {
@@ -17,9 +18,12 @@ namespace Tank
     {
         #region Serialized Fields
 
+        [FormerlySerializedAs("projectilePrefab")]
         [Header("References")]
         [Tooltip("Prefab of the projectile used for missile-type attacks.")]
-        [SerializeField] private GameObject projectilePrefab;
+        [SerializeField] private GameObject missilePrefab;
+        
+        [SerializeField] private GameObject bouncyMissilePrefab;
 
         [Tooltip("Prefab used for the beam attack")]
         [SerializeField] private GameObject beamPrefab;
@@ -53,7 +57,6 @@ namespace Tank
 
         #region Private Fields
 
-        private Rigidbody2D _rb;
         private TurnManagerScript _turnManager;
         private IAction _currentAction;
         private IAction _confirmedAction;
@@ -73,7 +76,10 @@ namespace Tank
         public int OwnerId { get; private set; }
 
         /// <summary> Rigidbody2D component controlling tank physics. </summary>
-        public Rigidbody2D Rb => _rb;
+        public Rigidbody2D Rb { get; private set; }
+
+        /// <summary> Collider2D component of the tank. </summary>
+        public Collider2D Collider { get; private set; }
 
         /// <summary> Tank stats reference (mass, health, magicka, damage, etc.). </summary>
         public TankStats Stats => stats;
@@ -85,7 +91,10 @@ namespace Tank
         public Transform AimPoint => aimPoint;
 
         /// <summary> Prefab for missile-based actions. </summary>
-        public GameObject ProjectilePrefab => projectilePrefab;
+        public GameObject MissilePrefab => missilePrefab;
+        
+        /// <summary> Prefab for bouncy projectile-based actions. </summary>
+        public GameObject BouncyMissilePrefab => bouncyMissilePrefab;
 
         /// <summary> Prefab for beam-based actions. </summary>
         public GameObject BeamPrefab => beamPrefab;
@@ -105,7 +114,8 @@ namespace Tank
         private void Start()
         {
             IsDead = false;
-            _rb = GetComponent<Rigidbody2D>();
+            Rb = GetComponent<Rigidbody2D>();
+            Collider = GetComponent<Collider2D>();
             _turnManager = FindAnyObjectByType<TurnManagerScript>();
 
             _trajectoryHandler = new TankTrajectoryHandler(this, trajectoryDrawer);
@@ -143,9 +153,9 @@ namespace Tank
                 stats = new TankStats();
             }
 
-            _rb ??= GetComponent<Rigidbody2D>();
+            Rb ??= GetComponent<Rigidbody2D>();
             stats.ApplySkillset(skillset);
-            _rb.mass = stats.mass;
+            Rb.mass = stats.mass;
 
             if (healthBarPrefab == null)
             {

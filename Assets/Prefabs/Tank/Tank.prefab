@@ -739,7 +739,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14f15b5ccc21f164b88a338dfd0c7a51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  projectilePrefab: {fileID: 4481765794907147700, guid: e03a4bf1ed78320439bde0de637dbb29, type: 3}
+  missilePrefab: {fileID: 4481765794907147700, guid: e03a4bf1ed78320439bde0de637dbb29, type: 3}
+  bouncyMissilePrefab: {fileID: 6017356574454321282, guid: 9fdc55f59f610944e87ca099d1d9fd2d, type: 3}
   beamPrefab: {fileID: 4470436920408959054, guid: 76d81c79e07e1fc48a1e79f278373a41, type: 3}
   galePrefab: {fileID: 8433505035259395599, guid: 4593b3d3399ab7d4297a3a5312b57f7c, type: 3}
   firePoint: {fileID: 6238391092178404524}

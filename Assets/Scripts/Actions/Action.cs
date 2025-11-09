@@ -59,6 +59,8 @@ namespace Actions
         private readonly GameObject _projectilePrefab;
         private readonly float _maxSpeed;
         private readonly Transform _firePoint;
+        private readonly Rigidbody2D _tankRb;
+        private readonly Collider2D _tankCollider;
         private readonly float _damage;
         private readonly float _explosionRadius;
         private readonly float _explosionForce;
@@ -72,6 +74,8 @@ namespace Actions
             GameObject projectilePrefab,
             float maxSpeed,
             Transform firePoint,
+            Rigidbody2D tankRb,
+            Collider2D tankCollider,
             float damage,
             float explosionRadius,
             float explosionForce
@@ -80,6 +84,8 @@ namespace Actions
             _projectilePrefab = projectilePrefab;
             _maxSpeed = maxSpeed;
             _firePoint = firePoint;
+            _tankRb = tankRb;
+            _tankCollider = tankCollider;
             _damage = damage;
             _explosionRadius = explosionRadius;
             _explosionForce = explosionForce;
@@ -94,17 +100,11 @@ namespace Actions
             var speed = TankPhysicsHelper.CalculateMissileSpeed(_maxSpeed, origin, target);
 
             var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
-            if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
-                rb.linearVelocity = speed;
-
-            var tankRb = _firePoint.GetComponentInParent<Rigidbody2D>();
-            if (tankRb) tankRb.AddForce(-direction * SmashTanksConstants.MISSILE_RECOIL_FORCE, ForceMode2D.Impulse);
-
-            var tankCollider = _firePoint.GetComponentInParent<Collider2D>();
-            if (!tankCollider || !projectile.TryGetComponent<IProjectile>(out var projectileScript)) return;
-            projectileScript.SetOwner(tankCollider);
-            projectileScript.SetStats(_explosionRadius, _explosionForce, _damage);
+            if (!projectile.TryGetComponent<ExplosiveProjectile>(out var proj)) return;
+            proj.Initialize(_tankCollider, speed, _explosionRadius, _explosionForce, _damage);
+            _tankRb.AddForce(-direction * SmashTanksConstants.MISSILE_RECOIL_FORCE, ForceMode2D.Impulse);
         }
+        
 
         /// <inheritdoc />
         public string GetName() => "Shoot";
@@ -114,6 +114,65 @@ namespace Actions
         /// <inheritdoc />
         public bool LocksCannon() => false;
     }
+    #endregion
+
+    #region Bouncy Missile Action
+    /// <summary>
+    /// Launches a bouncy missile projectile toward a target point.
+    /// </summary>
+    public class BouncyMissileAction : IAction
+    {
+        private readonly GameObject _projectilePrefab;
+        private readonly float _maxSpeed;
+        private readonly Transform _firePoint;
+        private readonly Rigidbody2D _tankRb;
+        private readonly Collider2D _tankCollider;
+        private readonly float _damage;
+        private readonly float _explosionRadius;
+        private readonly float _explosionForce;
+        public BouncyMissileAction(
+            GameObject projectilePrefab,
+            float maxSpeed,
+            Transform firePoint,
+            Rigidbody2D tankRb,
+            Collider2D tankCollider,
+            float damage,
+            float explosionRadius,
+            float explosionForce
+        )
+        {
+            _projectilePrefab = projectilePrefab;
+            _maxSpeed = maxSpeed;
+            _firePoint = firePoint;
+            _tankRb = tankRb;
+            _tankCollider = tankCollider;
+            _damage = damage;
+            _explosionRadius = explosionRadius;
+            _explosionForce = explosionForce;
+        }
+        
+        public void Execute(Vector3 origin, Vector3 target)
+        {
+            if (!_projectilePrefab || !_firePoint) return;
+
+            var direction = (target - origin).normalized;
+            var speed = TankPhysicsHelper.CalculateMissileSpeed(_maxSpeed, origin, target);
+
+            var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
+            if (!projectile.TryGetComponent<ExplosiveProjectile>(out var proj)) return;
+            proj.Initialize(_tankCollider, speed, _explosionRadius, _explosionForce, _damage);
+            _tankRb.AddForce(-direction * SmashTanksConstants.BOUNCY_MISSILE_RECOIL_FORCE, ForceMode2D.Impulse);
+        }
+
+        public string GetName() => "Bouncy";
+
+        public AimType AimType() => Actions.AimType.Parabolic;
+
+        int IAction.Cooldown => 1;
+        public bool LocksCannon() => false;
+    }
+
+
     #endregion
 
     #region Jump Action
@@ -270,10 +329,8 @@ namespace Actions
             if (!_beamPrefab || !_firePoint) return;
 
             var beam = Object.Instantiate(_beamPrefab, origin, Quaternion.identity);
-            if (beam.TryGetComponent<BeamScript>(out var beamScript))
-                beamScript.SetStats(_damage);
-
-            beam.transform.up = (target - origin).normalized;
+            if (!beam.TryGetComponent<BeamScript>(out var beamScript)) return;
+            beamScript.Initialize(_damage, (target - origin).normalized);
         }
 
         public override string GetName() => "Beam";
@@ -337,7 +394,7 @@ namespace Actions
         {
             _galePrefab = galePrefab;
             _firePoint = firePoint;
-            _force += intellect * SmashTanksConstants.GALE_FORCE_MULTIPLIER_PER_INTELLECT;
+            _force += intellect * SmashTanksConstants.GALE_INCREASE_PER_INTELLECT;
         }
 
         protected override void Cast(Vector3 origin, Vector3 target)
@@ -348,8 +405,7 @@ namespace Actions
             var gale = Object.Instantiate(_galePrefab, origin, Quaternion.identity);
 
             if (!gale.TryGetComponent<GaleScript>(out var galeScript)) return;
-            var ownerCollider = _firePoint.GetComponentInParent<Collider2D>();
-            galeScript.Initialize(direction, _force, ownerCollider);
+            galeScript.Initialize(direction, _force);
         }
 
         public override string GetName() => "Gale";

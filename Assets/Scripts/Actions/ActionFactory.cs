@@ -15,6 +15,7 @@ namespace Actions
                     ActionType.Beam => CreateBeamAction(tank),
                     ActionType.Teleport => CreateTeleportAction(tank),
                     ActionType.Gale => CreateGaleAction(tank),
+                    ActionType.Bouncy => CreateBouncyMissileAction(tank),
                     _ => null
                 };
             Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
@@ -26,9 +27,26 @@ namespace Actions
         {
             var stats = tank.Stats;
             return new MissileAction(
-                tank.ProjectilePrefab,
+                tank.MissilePrefab,
                 stats.missileMaxSpeed,
                 tank.FirePoint,
+                tank.Rb,
+                tank.Collider,
+                stats.damage,
+                stats.explosionRadius,
+                stats.explosionForce
+            );
+        }
+        
+        private static IAction CreateBouncyMissileAction(TankScript tank)
+        {
+            var stats = tank.Stats;
+            return new BouncyMissileAction(
+                tank.BouncyMissilePrefab,
+                stats.missileMaxSpeed,
+                tank.FirePoint,
+                tank.Rb,
+                tank.Collider,
                 stats.damage,
                 stats.explosionRadius,
                 stats.explosionForce
@@ -96,5 +114,6 @@ namespace Actions
         Beam,
         Teleport,
         Gale,
+        Bouncy
     }
 }

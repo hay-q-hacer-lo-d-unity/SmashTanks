@@ -10,7 +10,7 @@ namespace Weapons
     {
         [Header("Beam Settings")]
         public float width;
-        public float damage;
+        private float _damage;
         public float maxDistance = 1000f;
         public float fadeDuration = 1f;
         public GameObject beamEffectPrefab;
@@ -32,6 +32,12 @@ namespace Weapons
 
             FireBeam();
         }
+        
+        public void Initialize(float damage, Vector3 direction)
+        {
+            _damage = damage;
+            gameObject.transform.up = direction;
+        }
 
         private void FireBeam()
         {
@@ -41,7 +47,7 @@ namespace Weapons
             var hits = Physics2D.RaycastAll(origin, direction, maxDistance);
             var sortedHits = hits.OrderBy(h => h.distance).ToArray();
 
-            var currentDamage = damage;
+            var currentDamage = _damage;
 
             foreach (var hit in sortedHits)
             {
@@ -87,11 +93,6 @@ namespace Weapons
             }
 
             Destroy(gameObject);
-        }
-
-        public void SetStats(float newDamage)
-        {
-            damage = newDamage;
         }
     }
 }

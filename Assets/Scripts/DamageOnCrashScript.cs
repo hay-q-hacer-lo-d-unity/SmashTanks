@@ -30,9 +30,9 @@ public class DamageOnCrashScript : MonoBehaviour
         var contact = collision.GetContact(0);
         
         var relativeAlongNormal = Vector2.Dot(collision.relativeVelocity, contact.normal);
-        var impactSpeed = Mathf.Abs(relativeAlongNormal); // positive scalar
+        var impactSpeed = Mathf.Abs(relativeAlongNormal);
 
-        if (impactSpeed < minImpactSpeed) return; // too soft, ignore
+        if (impactSpeed < minImpactSpeed) return;
 
         var m1 = rb.mass;
 
