@@ -40,6 +40,7 @@ namespace Tank
 
             var velocity = action switch
             {
+                BouncyMissileAction => CalculateBouncyMissileVelocity(),
                 MissileAction => CalculateMissileVelocity(),
                 JumpAction or CrashAction => CalculateJumpVelocity(),
                 _ => Vector2.zero
@@ -47,7 +48,7 @@ namespace Tank
 
             var origin = action switch
             {
-                MissileAction => _tank.FirePoint.position,
+                MissileAction or BouncyMissileAction=> _tank.FirePoint.position,
                 JumpAction or CrashAction => _tank.AimPoint.position,
                 _ => Vector3.zero
             };
@@ -70,6 +71,12 @@ namespace Tank
         {
             var cursor = GetMouseWorld();
             return TankPhysicsHelper.CalculateMissileSpeed(_tank.Stats.missileMaxSpeed, _tank.FirePoint.position, cursor);
+        }
+        
+        private Vector2 CalculateBouncyMissileVelocity()
+        {
+            var cursor = GetMouseWorld();
+            return TankPhysicsHelper.CalculateMissileSpeed(_tank.Stats.bouncyMissileMaxSpeed, _tank.FirePoint.position, cursor);
         }
 
         private Vector2 CalculateJumpVelocity()

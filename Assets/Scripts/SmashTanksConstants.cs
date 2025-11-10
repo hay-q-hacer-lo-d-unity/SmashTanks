@@ -49,6 +49,7 @@ public static class SmashTanksConstants
     public const float JUGGERNAUT_LOG_SCALING_FACTOR = 0.01f;
     
     public const float MISSILE_MAX_SPEED = 20f;
+    public const float BOUNCY_MISSILE_MAX_SPEED = 30f;
 
     public const float BEAM_DAMAGE_PER_INTELLECT = 0.5f;
     

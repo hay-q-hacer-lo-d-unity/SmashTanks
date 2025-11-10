@@ -8,6 +8,7 @@ namespace Tank
     {
         [Header("Shot Settings")] 
         public float missileMaxSpeed = SmashTanksConstants.MISSILE_MAX_SPEED;
+        public float bouncyMissileMaxSpeed = SmashTanksConstants.BOUNCY_MISSILE_MAX_SPEED;
 
         [Header("Jump Settings")]
         public float maxForce;

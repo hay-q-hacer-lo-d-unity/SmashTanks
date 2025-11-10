@@ -43,7 +43,7 @@ namespace Actions
             var stats = tank.Stats;
             return new BouncyMissileAction(
                 tank.BouncyMissilePrefab,
-                stats.missileMaxSpeed,
+                stats.bouncyMissileMaxSpeed,
                 tank.FirePoint,
                 tank.Rb,
                 tank.Collider,
