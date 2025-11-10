@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using UI;
+using SkillsetUI;
 
 namespace Tank
 {
@@ -73,8 +73,7 @@ namespace Tank
         // ============================================================
 
         public float Damage = SmashTanksConstants.BASE_DAMAGE;
-        private const float DamageMultiplier = SmashTanksConstants.DAMAGE_MULTIPLIER_PER_LEVEL;
-        private void MapDamage(int level) => MapStat(ref Damage, level, DamageMultiplier);
+        private void MapDamage(int level) => Damage = level;
 
         // ============================================================
         // ================= MAGICKA SETTINGS =========================

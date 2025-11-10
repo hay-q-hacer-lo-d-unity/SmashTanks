@@ -1,4 +1,4 @@
-﻿using UI;
+﻿using SkillsetUI;
 using UnityEngine;
 
 namespace Tank
@@ -46,8 +46,8 @@ namespace Tank
 
         public void ApplySkillset(Skillset skillset)
         {
-            explosionRadius = SmashTanksConstants.EXPLOSION_RADIUS;
-            explosionForce = SmashTanksConstants.EXPLOSION_FORCE;
+            explosionRadius = SmashTanksConstants.MISSILE_EXPLOSION_RADIUS;
+            explosionForce = SmashTanksConstants.MISSILE_EXPLOSION_FORCE;
             SkillsetMapper mapper = new(skillset);
             mass = mapper.Mass;
             maxHealth = mapper.Health;

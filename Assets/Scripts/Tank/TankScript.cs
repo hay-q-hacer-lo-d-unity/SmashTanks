@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Actions;
 using Manager;
+using SkillsetUI;
 using UnityEngine;
-using UI;
 using UnityEngine.Serialization;
 
 namespace Tank
@@ -122,7 +122,7 @@ namespace Tank
             _inputHandler = new TankInputHandler(this, _turnManager);
 
             // Default to missile action at turn start
-            _currentAction = ActionFactory.Create(ActionType.Shoot, this);
+            _currentAction = ActionFactory.Create("Missile", this);
         }
 
         private void Update()
@@ -219,7 +219,7 @@ namespace Tank
         /// </summary>
         public void ApplyTurnStartEffects()
         {
-            foreach (var key in new List<string>(currentCooldowns.Keys).Where(key => currentCooldowns[key] > 0))
+            foreach (var key in new List<string>(currentCooldowns.Keys).Where(key => currentCooldowns[key] >= 0))
             {
                 currentCooldowns[key]--;
             }

@@ -41,15 +41,15 @@ namespace Tank
             var velocity = action switch
             {
                 BouncyMissileAction => CalculateBouncyMissileVelocity(),
-                MissileAction => CalculateMissileVelocity(),
-                JumpAction or CrashAction => CalculateJumpVelocity(),
+                Actions.Missile => CalculateMissileVelocity(),
+                Jump or Crash => CalculateJumpVelocity(),
                 _ => Vector2.zero
             };
 
             var origin = action switch
             {
-                MissileAction or BouncyMissileAction=> _tank.FirePoint.position,
-                JumpAction or CrashAction => _tank.AimPoint.position,
+                Actions.Missile or BouncyMissileAction=> _tank.FirePoint.position,
+                Jump or Crash => _tank.AimPoint.position,
                 _ => Vector3.zero
             };
 

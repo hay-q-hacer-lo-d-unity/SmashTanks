@@ -5,39 +5,42 @@ namespace Actions
 {
     public static class ActionFactory
     {
-        public static IAction Create(ActionType type, TankScript tank)
+        public static IAction Create(string actionId, TankScript tank)
         {
-            if (tank) return type switch
-                {
-                    ActionType.Shoot => CreateMissileAction(tank),
-                    ActionType.Jump => CreateJumpAction(tank),
-                    ActionType.Crash => CreateCrashAction(tank),
-                    ActionType.Beam => CreateBeamAction(tank),
-                    ActionType.Teleport => CreateTeleportAction(tank),
-                    ActionType.Gale => CreateGaleAction(tank),
-                    ActionType.Bouncy => CreateBouncyMissileAction(tank),
-                    _ => null
-                };
-            Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
-            return null;
+            if (!tank)
+            {
+                Debug.LogWarning("ActionFactory: Tank reference is null. Cannot create action.");
+                return null;
+            }
 
+            switch (actionId.ToLowerInvariant())
+            {
+                case "missile":       return CreateMissileAction(tank);
+                case "jump":        return CreateJumpAction(tank);
+                case "crash":       return CreateCrashAction(tank);
+                case "beam":        return CreateBeamAction(tank);
+                case "teleport":    return CreateTeleportAction(tank);
+                case "gale":        return CreateGaleAction(tank);
+                case "bouncy missile":      return CreateBouncyMissileAction(tank);
+                default:
+                    Debug.LogWarning($"ActionFactory: Unknown action ID '{actionId}'.");
+                    return null;
+            }
         }
 
         private static IAction CreateMissileAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new MissileAction(
+            return new Missile(
                 tank.MissilePrefab,
                 stats.missileMaxSpeed,
                 tank.FirePoint,
                 tank.Rb,
                 tank.Collider,
-                stats.damage,
-                stats.explosionRadius,
-                stats.explosionForce
+                stats.damage
             );
         }
-        
+
         private static IAction CreateBouncyMissileAction(TankScript tank)
         {
             var stats = tank.Stats;
@@ -47,73 +50,38 @@ namespace Actions
                 tank.FirePoint,
                 tank.Rb,
                 tank.Collider,
-                stats.damage,
-                stats.explosionRadius,
-                stats.explosionForce
+                stats.damage
             );
         }
 
         private static IAction CreateJumpAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new JumpAction(
-                stats.maxForce,
-                tank.AimPoint,
-                tank.Rb
-            );
+            return new Jump(stats.maxForce, tank.AimPoint, tank.Rb);
         }
 
         private static IAction CreateCrashAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new CrashAction(
-                stats.maxForce,
-                tank.AimPoint,
-                tank.Rb,
-                0.025f
-            );
+            return new Crash(stats.maxForce, tank.AimPoint, tank.Rb, stats.damage);
         }
-        
+
         private static IAction CreateBeamAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new BeamAction(
-                tank.BeamPrefab,
-                tank.FirePoint,
-                stats.intellect,
-                tank
-            );
+            return new Beam(tank.BeamPrefab, tank.FirePoint, stats.intellect, tank);
         }
-        
+
         private static IAction CreateTeleportAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new TeleportAction(
-                tank,
-                stats.intellect
-            );
+            return new Teleport(tank, stats.intellect);
         }
-        
+
         private static IAction CreateGaleAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new GaleAction(
-                tank.GalePrefab,
-                stats.intellect,
-                tank.FirePoint,
-                tank
-            );
+            return new Gale(tank.GalePrefab, stats.intellect, tank.FirePoint, tank);
         }
-    }
-
-    public enum ActionType
-    {
-        Shoot,
-        Jump,
-        Crash,
-        Beam,
-        Teleport,
-        Gale,
-        Bouncy
     }
 }

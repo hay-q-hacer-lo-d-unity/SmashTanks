@@ -1,11 +1,6 @@
 ﻿
 public static class SmashTanksConstants
 {
-    public const float BASE_DAMAGE = 2f;
-    public const float DAMAGE_MULTIPLIER_PER_LEVEL = 0.15f;
-    public const float EXPLOSION_FORCE = 25f;
-    public const float EXPLOSION_RADIUS = 5f;
-    
     public const float BASE_HEALTH = 15f;
     public const float BASE_MASS = 10f;
     public const float MASS_MULTIPLIER_PER_LEVEL = 0.2f;
@@ -17,6 +12,7 @@ public static class SmashTanksConstants
     public const float MAGICKA_REGENERATION_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
     
     public const float BASE_INTELLECT = 1f;
+    public const float BASE_DAMAGE = 1f;
     
     public const float BASE_ACCURACY = 0.5f;
     public const float ACCURACY_MULTIPLIER_PER_LEVEL = 0.4f;
@@ -51,6 +47,7 @@ public static class SmashTanksConstants
     public const float MISSILE_MAX_SPEED = 20f;
     public const float BOUNCY_MISSILE_MAX_SPEED = 30f;
 
+    public const float BEAM_BASE_DAMAGE = 0f;
     public const float BEAM_DAMAGE_PER_INTELLECT = 0.5f;
     
     public const float BEAM_MAGICKA_COST = 10f;
@@ -60,10 +57,30 @@ public static class SmashTanksConstants
     public const float GALE_SPEED = 25f;
     public const float GALE_DISTANCE = 25f;
     
-    public const float GALE_BASE_FORCE = 100f;
-    public const float GALE_DOUBLING_LEVEL = 10f;
+    public const float MISSILE_BASE_DAMAGE = 2f;
+    public const float MISSILE_DOUBLING_LEVEL = 10f;
+    public const float MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE = 1f / MISSILE_DOUBLING_LEVEL;
+    public const float MISSILE_DAMAGE_INCREASE_PER_DAMAGE = MISSILE_BASE_DAMAGE * MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE;
+    public const float MISSILE_EXPLOSION_FORCE = 25f;
+    public const float MISSILE_EXPLOSION_RADIUS = 5f;
+    
+    public const float BOUNCY_MISSILE_BASE_DAMAGE = 3f;
+    public const float BOUNCY_MISSILE_DOUBLING_LEVEL = 8f;
+    public const float BOUNCY_MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE = 1f / BOUNCY_MISSILE_DOUBLING_LEVEL;
+    public const float BOUNCY_MISSILE_DAMAGE_INCREASE_PER_DAMAGE = BOUNCY_MISSILE_BASE_DAMAGE * BOUNCY_MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE;
+    public const float BOUNCY_MISSILE_EXPLOSION_FORCE = 35f;
+    public const float BOUNCY_MISSILE_EXPLOSION_RADIUS = 7f;
+    
+    
+    public const float CRASH_BASE_DAMAGE_MULTIPLIER = 0.025f;
+    public const float CRASH_DOUBLING_LEVEL = 10f;
+    public const float CRASH_DAMAGE_MULTIPLIER_PER_DAMAGE = 1f / CRASH_DOUBLING_LEVEL;
+    public const float CRASH_DAMAGE_MULTIPLIER_INCREASE_PER_DAMAGE = 0f;
+    
+    public const float GALE_BASE_FORCE = 150f;
+    public const float GALE_DOUBLING_LEVEL = 6f;
     public const float GALE_FORCE_MULTIPLIER_PER_INTELLECT = 1f / GALE_DOUBLING_LEVEL;
-    public const float GALE_INCREASE_PER_INTELLECT = GALE_BASE_FORCE * GALE_FORCE_MULTIPLIER_PER_INTELLECT;
+    public const float GALE_FORCE_INCREASE_PER_INTELLECT = GALE_BASE_FORCE * GALE_FORCE_MULTIPLIER_PER_INTELLECT;
 
     public const float GALE_FORCE_PER_INTELLECT = 50f;
     

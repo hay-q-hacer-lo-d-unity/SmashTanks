@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using SkillsetUI;
 using Tank;
-using UI;
 using UnityEngine;
 
 namespace Manager
