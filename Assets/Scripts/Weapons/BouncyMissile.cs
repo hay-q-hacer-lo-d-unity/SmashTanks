@@ -5,7 +5,7 @@ namespace Weapons
 {
     public class BouncyMissile : ExplosiveProjectile
     {
-        [SerializeField] private float fuseTime = SmashTanksConstants.BOUNCY_MISSILE_FUSE_TIME;
+        [SerializeField] private float fuseTime = SmashTanksConstants.BouncyMissile.FuseTime;
         [Header("Animation Settings")] public Sprite[] animationFrames;
 
         private SpriteRenderer _spriteRenderer;

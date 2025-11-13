@@ -17,7 +17,7 @@ namespace SkillsetUI
 
         [Header("Stats")]
         [SerializeField] private List<StatRowScript> statRows;
-        [SerializeField] private int totalStatPoints = SmashTanksConstants.STATPOINTS;
+        [SerializeField] private int totalStatPoints = SmashTanksConstants.Config.Statpoints;
 
         [Header("Abilities")]
         [SerializeField] private List<AbilityButtonScript> abilityButtons;

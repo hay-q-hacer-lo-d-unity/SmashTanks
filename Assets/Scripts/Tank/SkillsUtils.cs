@@ -7,18 +7,18 @@ namespace Tank
     {
         public static float CalculateJuggernautDamage(float baseDamage, float totalDamageReceived, IncreaseType increaseType)
         {
-            const float maxBonus = SmashTanksConstants.JUGGERNAUT_MAX_BONUS;
-            const float softCap = SmashTanksConstants.JUGGERNAUT_SOFT_CAP;
-            const float baseScaledSoftCap = SmashTanksConstants.JUGGERNAUT_BASE_SCALED_SOFT_CAP;
-            const float baseScaledMaxFactor = SmashTanksConstants.JUGGERNAUT_BASE_SCALED_MAX_FACTOR;
-            const float multiplier = SmashTanksConstants.JUGGERNAUT_MULTIPLIER;
-            const float baseScaledMultiplier = SmashTanksConstants.JUGGERNAUT_BASE_SCALED_MULTIPLIER;
-            const float scalingFactor = SmashTanksConstants.JUGGERNAUT_SCALING_FACTOR;
-            const float logMaxBonus = SmashTanksConstants.JUGGERNAUT_LOG_MAX_BONUS;
-            const float logSoftCap = SmashTanksConstants.JUGGERNAUT_LOG_SOFT_CAP;
-            const float logBaseScaledSoftCap = SmashTanksConstants.JUGGERNAUT_LOG_BASE_SCALED_SOFT_CAP;
-            const float logMultiplier = SmashTanksConstants.JUGGERNAUT_LOG_MULTIPLIER;
-            const float logScalingFactor = SmashTanksConstants.JUGGERNAUT_LOG_SCALING_FACTOR;
+            const float maxBonus = SmashTanksConstants.Juggernaut.MaxBonus;
+            const float softCap = SmashTanksConstants.Juggernaut.SoftCap;
+            const float baseScaledSoftCap = SmashTanksConstants.Juggernaut.BaseScaledSoftCap;
+            const float baseScaledMaxFactor = SmashTanksConstants.Juggernaut.BaseScaledMaxFactor;
+            const float multiplier = SmashTanksConstants.Juggernaut.Multiplier;
+            const float baseScaledMultiplier = SmashTanksConstants.Juggernaut.BaseScaledMultiplier;
+            const float scalingFactor = SmashTanksConstants.Juggernaut.ScalingFactor;
+            const float logMaxBonus = SmashTanksConstants.Juggernaut.LOGMaxBonus;
+            const float logSoftCap = SmashTanksConstants.Juggernaut.LOGSoftCap;
+            const float logBaseScaledSoftCap = SmashTanksConstants.Juggernaut.LOGBaseScaledSoftCap;
+            const float logMultiplier = SmashTanksConstants.Juggernaut.LOGMultiplier;
+            const float logScalingFactor = SmashTanksConstants.Juggernaut.LOGScalingFactor;
 
             return baseDamage + increaseType switch
             {
@@ -35,8 +35,8 @@ namespace Tank
                     baseDamage * baseScaledMultiplier * totalDamageReceived,
                 
                 IncreaseType.LinearHybrid => 
+                    // componente constante + componente dependiente de baseDamage
                     (multiplier + baseDamage * scalingFactor) * totalDamageReceived,
-                  // componente constante + componente dependiente de baseDamage
                 IncreaseType.Logarithmic =>
                     logMaxBonus * Mathf.Log(1 + totalDamageReceived / logSoftCap),
 

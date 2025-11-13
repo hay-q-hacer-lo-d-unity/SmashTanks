@@ -5,7 +5,7 @@ namespace Tank
     public class TrajectoryDrawerScript : MonoBehaviour
     {
         public int segments = 50;
-        public float gravity = SmashTanksConstants.GRAVITY;
+        public float gravity = SmashTanksConstants.Physics.Gravity;
 
         private LineRenderer _lineRenderer;
 
@@ -93,7 +93,7 @@ namespace Tank
             // Prepare vertex array
             var totalPoints = segments * 2; // one semicircle per point set
             var points = new Vector3[totalPoints];
-            const float radius = SmashTanksConstants.GALE_RADIUS;
+            const float radius = SmashTanksConstants.Gale.Radius;
 
             // --- Draw semicircle at origin ---
             for (var i = 0; i < segments; i++)

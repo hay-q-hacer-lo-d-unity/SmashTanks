@@ -10,12 +10,12 @@ namespace Actions
     {
         private Vector2 _direction;
         private float _force;
-        private const float Radius = SmashTanksConstants.GALE_RADIUS;
-        private const float Speed = SmashTanksConstants.GALE_SPEED;
+        private const float Radius = SmashTanksConstants.Gale.Radius;
+        private const float Speed = SmashTanksConstants.Gale.Speed;
         private const float FadeFraction = 0.2f;
 
         private float _distanceTraveled;
-        private const float MaxDistance = SmashTanksConstants.GALE_DISTANCE; // The total distance this gale should travel
+        private const float MaxDistance = SmashTanksConstants.Gale.Distance; // The total distance this gale should travel
         private float _computedDuration; // Derived from distance / speed
         private float _timer;
 

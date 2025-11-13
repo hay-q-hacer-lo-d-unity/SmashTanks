@@ -1,0 +1,1365 @@
+fileFormatVersion: 2
+guid: 63362839b6ba6044d949fd6266d7dfa1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4587019543689467149
+    second: atmes_0
+  - first:
+      213: -2902337143904998885
+    second: atmes_1
+  - first:
+      213: 1288936076454109903
+    second: atmes_2
+  - first:
+      213: 1907315992298871160
+    second: atmes_3
+  - first:
+      213: 8834704128874173539
+    second: atmes_4
+  - first:
+      213: 4392028493659941316
+    second: atmes_5
+  - first:
+      213: 2617413235049699608
+    second: atmes_6
+  - first:
+      213: 5937488738969742028
+    second: atmes_7
+  - first:
+      213: 8495334193373724688
+    second: atmes_8
+  - first:
+      213: 4333691514160773799
+    second: atmes_9
+  - first:
+      213: 6923163565232994184
+    second: atmes_10
+  - first:
+      213: 4026212780734811589
+    second: atmes_11
+  - first:
+      213: 5946284774662130884
+    second: atmes_12
+  - first:
+      213: 7519419264201330087
+    second: atmes_13
+  - first:
+      213: 6922342458504486666
+    second: atmes_14
+  - first:
+      213: -7138327981489598394
+    second: atmes_15
+  - first:
+      213: -2106748256665540606
+    second: atmes_16
+  - first:
+      213: -5059264795415840017
+    second: atmes_17
+  - first:
+      213: -3878156918835302297
+    second: atmes_18
+  - first:
+      213: -7185507865029204426
+    second: atmes_19
+  - first:
+      213: 3429264636538906200
+    second: atmes_20
+  - first:
+      213: -4619895267510734815
+    second: atmes_21
+  - first:
+      213: 7842012973984264431
+    second: atmes_22
+  - first:
+      213: 8057797763950030525
+    second: atmes_23
+  - first:
+      213: -1316924442196055020
+    second: atmes_24
+  - first:
+      213: 3301957900972307291
+    second: atmes_25
+  - first:
+      213: -5775739884308893254
+    second: atmes_26
+  - first:
+      213: -2051446706842647631
+    second: atmes_27
+  - first:
+      213: -6213766282897267396
+    second: atmes_28
+  - first:
+      213: -1401142867489996432
+    second: atmes_29
+  - first:
+      213: 5459410050983418924
+    second: atmes_30
+  - first:
+      213: -9208915007140245744
+    second: atmes_31
+  - first:
+      213: -861419810613176655
+    second: atmes_32
+  - first:
+      213: -1685069657956930678
+    second: atmes_33
+  - first:
+      213: 2951890234827165464
+    second: atmes_34
+  - first:
+      213: -1565244593136536686
+    second: atmes_35
+  - first:
+      213: -2503343158125437714
+    second: atmes_36
+  - first:
+      213: -7683098263981709301
+    second: atmes_37
+  - first:
+      213: -2590693664472598366
+    second: atmes_38
+  - first:
+      213: 8838238346577959532
+    second: atmes_39
+  - first:
+      213: 7449201268704912043
+    second: atmes_40
+  - first:
+      213: -6167458177761331669
+    second: atmes_41
+  - first:
+      213: -5997148682162395176
+    second: atmes_42
+  - first:
+      213: 3854510632770976480
+    second: atmes_43
+  - first:
+      213: -4041923760124493021
+    second: atmes_44
+  - first:
+      213: -1495784137667917372
+    second: atmes_45
+  - first:
+      213: 1762127485590486866
+    second: atmes_46
+  - first:
+      213: -466132149874396521
+    second: atmes_47
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: atmes_0
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 920
+        width: 21
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fa6d903702a750c0800000000000000
+      internalID: -4587019543689467149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_1
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 955
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1aee1faeb3d8b7d0800000000000000
+      internalID: -2902337143904998885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_2
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 915
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc2ab3f488833e110800000000000000
+      internalID: 1288936076454109903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_3
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 902
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87955632ac5287a10800000000000000
+      internalID: 1907315992298871160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_4
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 967
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 364d831d89c2b9a70800000000000000
+      internalID: 8834704128874173539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_5
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 877
+        width: 29
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c9aeff15ae93fc30800000000000000
+      internalID: 4392028493659941316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_6
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 976
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8191b89387be25420800000000000000
+      internalID: 2617413235049699608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_7
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 981
+        width: 23
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cca6c28cc82366250800000000000000
+      internalID: 5937488738969742028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_8
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 867
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 010454c407d75e570800000000000000
+      internalID: 8495334193373724688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_9
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 977
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aa7da3a87d542c30800000000000000
+      internalID: 4333691514160773799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_10
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 952
+        width: 31
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 887b3a30594041060800000000000000
+      internalID: 6923163565232994184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_11
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 862
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cd06d9313bffd730800000000000000
+      internalID: 4026212780734811589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_12
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 857
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cccc0f6f72758250800000000000000
+      internalID: 5946284774662130884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_13
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 848
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ad03ff2bf75a5860800000000000000
+      internalID: 7519419264201330087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_14
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 835
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0f93c43ac9111060800000000000000
+      internalID: 6922342458504486666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_15
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 940
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 640d41575809fec90800000000000000
+      internalID: -7138327981489598394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_16
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 821
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 208e6426f9353c2e0800000000000000
+      internalID: -2106748256665540606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_17
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 936
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fea79944971e9c9b0800000000000000
+      internalID: -5059264795415840017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_18
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 901
+        width: 60
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 760399564d40e2ac0800000000000000
+      internalID: -3878156918835302297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_19
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 811
+        width: 17
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 636a82ecaa2f74c90800000000000000
+      internalID: -7185507865029204426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_20
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 805
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 856e5b59402379f20800000000000000
+      internalID: 3429264636538906200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_21
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 798
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 120b3804bb5d2efb0800000000000000
+      internalID: -4619895267510734815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_22
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 894
+        width: 47
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe03656404d64dc60800000000000000
+      internalID: 7842012973984264431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_23
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 800
+        width: 50
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbead20df5c03df60800000000000000
+      internalID: 8057797763950030525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_24
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 803
+        width: 82
+        height: 201
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41cefda723859bde0800000000000000
+      internalID: -1316924442196055020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_25
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 954
+        width: 16
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53bfb66739e2dd20800000000000000
+      internalID: 3301957900972307291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_26
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 781
+        width: 29
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab176b82d2378dfa0800000000000000
+      internalID: -5775739884308893254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_27
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 924
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b3cff2d61cc783e0800000000000000
+      internalID: -2051446706842647631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_28
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 927
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c35eb96dc7444c9a0800000000000000
+      internalID: -6213766282897267396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_29
+      rect:
+        serializedVersion: 2
+        x: 714
+        y: 810
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 071cfaf4cf32e8ce0800000000000000
+      internalID: -1401142867489996432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_30
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 932
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2c50142488b3cb40800000000000000
+      internalID: 5459410050983418924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_31
+      rect:
+        serializedVersion: 2
+        x: 726
+        y: 823
+        width: 31
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01f44a8879c533080800000000000000
+      internalID: -9208915007140245744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_32
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 945
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b6dae90f3f9b04f0800000000000000
+      internalID: -861419810613176655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_33
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 952
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8b20bfe21e6d98e0800000000000000
+      internalID: -1685069657956930678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_34
+      rect:
+        serializedVersion: 2
+        x: 756
+        y: 851
+        width: 41
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81f41de578837f820800000000000000
+      internalID: 2951890234827165464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_35
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 960
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 293fe77e552274ae0800000000000000
+      internalID: -1565244593136536686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_36
+      rect:
+        serializedVersion: 2
+        x: 772
+        y: 974
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eec570539a6524dd0800000000000000
+      internalID: -2503343158125437714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_37
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 980
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0823f0f5d6206590800000000000000
+      internalID: -7683098263981709301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_38
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 984
+        width: 23
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a8714796d10c0cd0800000000000000
+      internalID: -2590693664472598366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_39
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 890
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6ad30003fab7aa70800000000000000
+      internalID: 8838238346577959532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_40
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 897
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba2ab891611e06760800000000000000
+      internalID: 7449201268704912043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_41
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 974
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b263573c679c86aa0800000000000000
+      internalID: -6167458177761331669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_42
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 910
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d7228e3c09d5cca0800000000000000
+      internalID: -5997148682162395176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_43
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 952
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eab7499ff8fd7530800000000000000
+      internalID: 3854510632770976480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_44
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 927
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 323819451c338e7c0800000000000000
+      internalID: -4041923760124493021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_45
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 939
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c9c3a57048ed3be0800000000000000
+      internalID: -1495784137667917372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_46
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 170
+        width: 1024
+        height: 630
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25fb29bac95547810800000000000000
+      internalID: 1762127485590486866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: atmes_47
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 791
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 792f8548747f789f0800000000000000
+      internalID: -466132149874396521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      atmes_0: -4587019543689467149
+      atmes_1: -2902337143904998885
+      atmes_10: 6923163565232994184
+      atmes_11: 4026212780734811589
+      atmes_12: 5946284774662130884
+      atmes_13: 7519419264201330087
+      atmes_14: 6922342458504486666
+      atmes_15: -7138327981489598394
+      atmes_16: -2106748256665540606
+      atmes_17: -5059264795415840017
+      atmes_18: -3878156918835302297
+      atmes_19: -7185507865029204426
+      atmes_2: 1288936076454109903
+      atmes_20: 3429264636538906200
+      atmes_21: -4619895267510734815
+      atmes_22: 7842012973984264431
+      atmes_23: 8057797763950030525
+      atmes_24: -1316924442196055020
+      atmes_25: 3301957900972307291
+      atmes_26: -5775739884308893254
+      atmes_27: -2051446706842647631
+      atmes_28: -6213766282897267396
+      atmes_29: -1401142867489996432
+      atmes_3: 1907315992298871160
+      atmes_30: 5459410050983418924
+      atmes_31: -9208915007140245744
+      atmes_32: -861419810613176655
+      atmes_33: -1685069657956930678
+      atmes_34: 2951890234827165464
+      atmes_35: -1565244593136536686
+      atmes_36: -2503343158125437714
+      atmes_37: -7683098263981709301
+      atmes_38: -2590693664472598366
+      atmes_39: 8838238346577959532
+      atmes_4: 8834704128874173539
+      atmes_40: 7449201268704912043
+      atmes_41: -6167458177761331669
+      atmes_42: -5997148682162395176
+      atmes_43: 3854510632770976480
+      atmes_44: -4041923760124493021
+      atmes_45: -1495784137667917372
+      atmes_46: 1762127485590486866
+      atmes_47: -466132149874396521
+      atmes_5: 4392028493659941316
+      atmes_6: 2617413235049699608
+      atmes_7: 5937488738969742028
+      atmes_8: 8495334193373724688
+      atmes_9: 4333691514160773799
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

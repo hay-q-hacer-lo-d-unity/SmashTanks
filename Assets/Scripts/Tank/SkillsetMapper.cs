@@ -33,18 +33,18 @@ namespace Tank
         // ==================== JUMP SETTINGS =========================
         // ============================================================
 
-        private const float ForceMultiplier = SmashTanksConstants.JUMP_FORCE_MULTIPLIER_PER_LEVEL;
-        public float MaxForce = SmashTanksConstants.BASE_MAX_JUMP_FORCE;
+        private const float MaxForceMultiplier = SmashTanksConstants.Jump.MaxForceMultiplierPerLevel;
+        public float MaxForce = SmashTanksConstants.Jump.MaxForceMultiplierPerLevel;
 
-        private void MapJump(int level) => MapStat(ref MaxForce, level, ForceMultiplier);
+        private void MapJump(int level) => MapStat(ref MaxForce, level, MaxForceMultiplier);
 
         // ============================================================
         // ================= MASS & HEALTH SETTINGS ==================
         // ============================================================
 
-        public float Mass = SmashTanksConstants.BASE_MASS;
-        public float Health = SmashTanksConstants.BASE_HEALTH;
-        private const float MassMultiplier = SmashTanksConstants.MASS_MULTIPLIER_PER_LEVEL;
+        public float Mass = SmashTanksConstants.Stats.BaseMass;
+        public float Health = SmashTanksConstants.Stats.BaseHealth;
+        private const float MassMultiplier = SmashTanksConstants.Stats.MassMultiplierPerLevel;
 
         private void MapMass(int level)
         {
@@ -56,23 +56,23 @@ namespace Tank
         // =================== ACCURACY SETTINGS ======================
         // ============================================================
 
-        public float Accuracy = SmashTanksConstants.BASE_ACCURACY;
-        private const float AccuracyMultiplier = SmashTanksConstants.ACCURACY_MULTIPLIER_PER_LEVEL;
+        public float Accuracy = SmashTanksConstants.Stats.BaseAccuracy;
+        private const float AccuracyMultiplier = SmashTanksConstants.Stats.AccuracyMultiplierPerLevel;
         private void MapAccuracy(int level) => MapStat(ref Accuracy, level, AccuracyMultiplier);
 
         // ============================================================
         // =================== MENDING SETTINGS =======================
         // ============================================================
 
-        public float MendingRate = SmashTanksConstants.BASE_MENDING_RATE_ABSOLUTE;
-        private const float MendingRateMultiplier = SmashTanksConstants.MENDING_RATE_MULTIPLIER_PER_LEVEL;
+        public float MendingRate = SmashTanksConstants.Stats.BaseMendingRateAbsolute;
+        private const float MendingRateMultiplier = SmashTanksConstants.Stats.MendingRateMultiplierPerLevel;
         private void MapMending(int level) => MapStat(ref MendingRate, level, MendingRateMultiplier);
 
         // ============================================================
         // ==================== DAMAGE SETTINGS =======================
         // ============================================================
 
-        public float Damage = SmashTanksConstants.BASE_DAMAGE;
+        public float Damage = SmashTanksConstants.Stats.BaseDamage;
         private void MapDamage(int level) => Damage = level;
 
         // ============================================================
@@ -82,7 +82,7 @@ namespace Tank
         /// <summary>
         /// The tank’s maximum magicka capacity. Currently not scaled per level.
         /// </summary>
-        public float MaxMagicka = SmashTanksConstants.BASE_MAGICKA;
+        public float MaxMagicka = SmashTanksConstants.Stats.BaseMagicka;
 
         /*
         private const float MaxMagickaMultiplier = SmashTanksConstants.MAX_MAGICKA_MULTIPLIER_PER_LEVEL;
@@ -93,15 +93,15 @@ namespace Tank
         // ================ MAGICKA REGEN SETTINGS ====================
         // ============================================================
 
-        public float MagickaRegenRate = SmashTanksConstants.MAGICKA_REGENERATION_RATE;
-        private const float MagickaRegenRateMultiplier = SmashTanksConstants.MAGICKA_REGENERATION_RATE_MULTIPLIER_PER_LEVEL;
+        public float MagickaRegenRate = SmashTanksConstants.Stats.MagickaRegenerationRate;
+        private const float MagickaRegenRateMultiplier = SmashTanksConstants.Stats.MagickaRegenerationRateMultiplierPerLevel;
         private void MapMagickaRegen(int level) => MapStat(ref MagickaRegenRate, level, MagickaRegenRateMultiplier);
 
         // ============================================================
         // ==================== INTELLECT SETTINGS ====================
         // ============================================================
 
-        public float Intellect = SmashTanksConstants.BASE_INTELLECT;
+        public float Intellect = SmashTanksConstants.Stats.BaseIntellect;
         private void MapIntellect(int level) => Intellect = level;
 
         // ============================================================
@@ -143,7 +143,7 @@ namespace Tank
         /// If true, applies compound growth (exponential).
         /// Otherwise, applies linear scaling.
         /// </param>
-        private static void MapStat(ref float stat, int level, float multiplier, bool compound = SmashTanksConstants.USE_COMPOUND_INCREASE)
+        private static void MapStat(ref float stat, int level, float multiplier, bool compound = SmashTanksConstants.Config.UseCompoundIncrease)
         {
             stat = compound
                 ? stat * (float)Math.Pow(1 + multiplier, level)

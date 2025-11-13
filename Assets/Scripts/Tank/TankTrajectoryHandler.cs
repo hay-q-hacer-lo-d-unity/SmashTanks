@@ -61,7 +61,7 @@ namespace Tank
             if (!_drawer) return;
             var cursor = GetMouseWorld();
             var dir = (cursor - (Vector2)_tank.FirePoint.position).normalized;
-            var target = _tank.FirePoint.position + (Vector3)dir * SmashTanksConstants.GALE_DISTANCE;
+            var target = _tank.FirePoint.position + (Vector3)dir * SmashTanksConstants.Gale.Distance;
             _drawer.DrawGaleZone(_tank.FirePoint.position, target);
         }
         

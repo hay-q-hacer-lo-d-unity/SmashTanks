@@ -29,7 +29,7 @@ namespace Actions
         /// </summary>
         AimType AimType();
         
-        int Cooldown { get;  }
+        int Cooldown { get; }
 
         /// <summary>
         /// Indicates whether this action locks the tank's cannon while executing.
@@ -145,17 +145,17 @@ namespace Actions
             proj.Initialize(
                 _tankCollider,
                 initialSpeed,
-                SmashTanksConstants.MISSILE_EXPLOSION_RADIUS,
-                SmashTanksConstants.MISSILE_EXPLOSION_FORCE,
+                SmashTanksConstants.Missile.ExplosionRadius,
+                SmashTanksConstants.Missile.ExplosionForce,
                 damage
             );
 
-            _tankRb.AddForce(-direction * SmashTanksConstants.MISSILE_RECOIL_FORCE, ForceMode2D.Impulse);
+            _tankRb.AddForce(-direction * SmashTanksConstants.Missile.RecoilForce, ForceMode2D.Impulse);
         }
 
         public override string GetName() => "Shoot";
         public override AimType AimType() => Actions.AimType.Parabolic;
-        public override int Cooldown => 0;
+        public override int Cooldown => SmashTanksConstants.Missile.Cooldown;
     }
 
     #endregion
@@ -200,18 +200,18 @@ namespace Actions
             proj.Initialize(
                 _tankCollider, 
                 initialSpeed, 
-                SmashTanksConstants.BOUNCY_MISSILE_EXPLOSION_RADIUS, 
-                SmashTanksConstants.BOUNCY_MISSILE_EXPLOSION_FORCE, 
+                SmashTanksConstants.BouncyMissile.ExplosionRadius, 
+                SmashTanksConstants.BouncyMissile.ExplosionForce, 
                 damage
                 );
-            _tankRb.AddForce(-direction * SmashTanksConstants.BOUNCY_MISSILE_RECOIL_FORCE, ForceMode2D.Impulse);
+            _tankRb.AddForce(-direction * SmashTanksConstants.BouncyMissile.RecoilForce, ForceMode2D.Impulse);
         }
 
         public override string GetName() => "Bouncy";
 
         public override AimType AimType() => Actions.AimType.Parabolic;
         
-        public override int Cooldown => 1;
+        public override int Cooldown => SmashTanksConstants.BouncyMissile.Cooldown;
         public new bool LocksCannon() => false;
     }
     
@@ -226,7 +226,7 @@ namespace Actions
         private readonly Transform _aimPoint;
         private readonly Rigidbody2D _rb;
         private readonly float _maxForce;
-        int IAction.Cooldown => 0;
+        int IAction.Cooldown => SmashTanksConstants.Jump.Cooldown;
 
         
 
@@ -267,7 +267,7 @@ namespace Actions
         private readonly Transform _aimPoint;
         private readonly Rigidbody2D _rb;
         private readonly float _maxForce;
-        public override int Cooldown => 2;
+        public override int Cooldown => SmashTanksConstants.Crash.Cooldown;
 
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Actions
             Transform aimPoint,
             Rigidbody2D rb,
             float damageLevel
-            ) : base(damageLevel, StatMapper.MapCrashDamageMultiplier)
+            ) : base(damageLevel, StatMapper.MapCrash)
         {
             _maxForce = maxForce;
             _aimPoint = aimPoint;
@@ -352,8 +352,8 @@ namespace Actions
     {
         private readonly GameObject _beamPrefab;
         private readonly Transform _firePoint;
-        public override int Cooldown => 3;
-        protected override float MagickaCost => SmashTanksConstants.BEAM_MAGICKA_COST;
+        public override int Cooldown => SmashTanksConstants.Beam.Cooldown;
+        protected override float MagickaCost => SmashTanksConstants.Beam.MagickaCost;
 
         public Beam(GameObject beamPrefab, Transform firePoint, float intellectLevel, TankScript tank)
             : base(tank, intellectLevel, StatMapper.MapBeamDamage)
@@ -387,8 +387,8 @@ namespace Actions
     {
         public float Radius { get; }
 
-        protected override float MagickaCost => SmashTanksConstants.TELEPORT_MAGICKA_COST;
-        public override int Cooldown => 2;
+        protected override float MagickaCost => SmashTanksConstants.Teleport.MagickaCost;
+        public override int Cooldown => SmashTanksConstants.Teleport.Cooldown;
 
 
         public Teleport(TankScript tank, float intellectLevel)
@@ -420,10 +420,10 @@ namespace Actions
         private readonly GameObject _galePrefab;
         private readonly Transform _firePoint;
         private readonly float _force;
-        public override int Cooldown => 3;
+        public override int Cooldown => SmashTanksConstants.Gale.Cooldown;
 
 
-        protected override float MagickaCost => SmashTanksConstants.GALE_MAGICKA_COST;
+        protected override float MagickaCost => SmashTanksConstants.Gale.MagickaCost;
 
         public Gale(GameObject galePrefab, float intellectLevel, Transform firePoint, TankScript tank)
             : base(tank, intellectLevel, StatMapper.MapGaleForce)

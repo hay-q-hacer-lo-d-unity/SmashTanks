@@ -3,48 +3,44 @@ using UnityEngine;
 
 namespace Actions
 {
-    public class StatMapper
+    public static class StatMapper
     {
         public static float MapMissileDamage(float damageLevel) => MapByIncrease(
-            SmashTanksConstants.MISSILE_BASE_DAMAGE,
+            SmashTanksConstants.Missile.BaseDamage,
             damageLevel, 
-            SmashTanksConstants.MISSILE_DAMAGE_INCREASE_PER_DAMAGE
+            SmashTanksConstants.Missile.DamageIncreasePerDamage
             );
         
         public static float MapBouncyMissileDamage(float damageLevel) => MapByIncrease(
-            SmashTanksConstants.BOUNCY_MISSILE_BASE_DAMAGE,
+            SmashTanksConstants.BouncyMissile.BaseDamage,
             damageLevel, 
-            SmashTanksConstants.BOUNCY_MISSILE_DAMAGE_INCREASE_PER_DAMAGE
+            SmashTanksConstants.BouncyMissile.DamageIncreasePerDamage
             );
         
-        public static float MapCrashDamageMultiplier(float damageLevel) => MapByIncrease(
-            SmashTanksConstants.CRASH_BASE_DAMAGE_MULTIPLIER,
+        public static float MapCrash(float damageLevel) => MapByIncrease(
+            SmashTanksConstants.Crash.BaseDamageMultiplier,
             damageLevel,
-            SmashTanksConstants.CRASH_DAMAGE_MULTIPLIER_INCREASE_PER_DAMAGE
+            SmashTanksConstants.Crash.DamageMultiplierIncreasePerDamage
             );
 
         public static float MapGaleForce(float intellectLevel) =>
             MapByIncrease(
-                SmashTanksConstants.GALE_BASE_FORCE,
+                SmashTanksConstants.Gale.BaseForce,
                 intellectLevel,
-                SmashTanksConstants.GALE_FORCE_INCREASE_PER_INTELLECT
+                SmashTanksConstants.Gale.ForceIncreasePerIntellect
             );
 
         public static float MapBeamDamage(float intellectLevel) => MapByIncrease(
-            SmashTanksConstants.BEAM_BASE_DAMAGE,
+            SmashTanksConstants.Beam.BaseDamage,
             intellectLevel,
-            SmashTanksConstants.BEAM_DAMAGE_PER_INTELLECT
+            SmashTanksConstants.Beam.DamagePerIntellect
             );
 
-        public static float MapTeleportRadius(float intellectLevel)
-        {
-            const float minRadius = 2f;
-            const float maxRadius = 20f;
-            const float decayRate = (maxRadius - minRadius) / (SmashTanksConstants.STATPOINTS + 1);
-            return maxRadius - intellectLevel * decayRate;
-        }
+        public static float MapTeleportRadius(float intellectLevel) => 
+            SmashTanksConstants.Teleport.MaxRadius - intellectLevel * SmashTanksConstants.Teleport.DecayRate;
+        
 
-        private static float MapStat(float stat, float level, float multiplier, bool compound = SmashTanksConstants.USE_COMPOUND_INCREASE)
+        private static float MapStat(float stat, float level, float multiplier, bool compound = SmashTanksConstants.Config.UseCompoundIncrease)
         {
             return compound
                 ? stat * (float)Math.Pow(1 + multiplier, level)

@@ -9,9 +9,11 @@ namespace SkillsetUI
     {
         [SerializeField] private GameObject legendPanel;
         [SerializeField] private TMP_Text titleTMP;
-        [SerializeField] private TMP_Text legendTMP;
+        [SerializeField] private TMP_Text descriptionTMP;
+        [SerializeField] private TMP_Text cooldownTMP;
+        [SerializeField] private TMP_Text magickaCostTMP;
         [SerializeField] private Image backgroundImage;
-        [SerializeField] private float fadeDuration = 0.5f;
+        [SerializeField] private float fadeDuration;
 
         private CanvasGroup _canvasGroup;
         private Coroutine _fadeCoroutine;
@@ -28,20 +30,52 @@ namespace SkillsetUI
 
             _canvasGroup.alpha = 0f;
             legendPanel.SetActive(false);
+            
         }
 
         // Show with title, text, and optional background sprite
-        public void Show(string title, string body, Sprite background = null, float? cooldown = null)
+        public void Show(
+            string title,
+            string body,
+            Sprite background = null,
+            float? magickaCost = null,
+            int? cooldown = null
+            )
         {
             if (legendPanel == null) return;
             legendPanel.SetActive(true);
 
             titleTMP.text = title;
-            legendTMP.text = body;
+            descriptionTMP.text = body;
 
-            if (cooldown.HasValue)
-                legendTMP.text += $"\n<color=#FFA500>Cooldown: {cooldown:F1}s</color>";
-
+            if (cooldown != 0)
+            {
+                if (cooldownTMP != null)
+                {
+                    cooldownTMP.text = $"Cooldown: {cooldown} turn" + (cooldown == 1 ? "" : "s");
+                    cooldownTMP.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (cooldownTMP != null)
+                    cooldownTMP.gameObject.SetActive(false);
+            }
+            
+            if (magickaCost != 0)
+            {
+                if (magickaCostTMP != null)
+                {
+                    magickaCostTMP.text = $"Magicka Cost: {magickaCost:F1}";
+                    magickaCostTMP.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                if (magickaCostTMP != null)
+                    magickaCostTMP.gameObject.SetActive(false);
+            }
+            
             if (backgroundImage)
             {
                 backgroundImage.sprite = background;
@@ -52,7 +86,7 @@ namespace SkillsetUI
             _fadeCoroutine = StartCoroutine(FadeCanvasGroup(1f));
         }
 
-        public void Hide()
+        public new void Hide()
         {
             if (legendPanel == null) return;
 

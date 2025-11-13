@@ -11,7 +11,6 @@ namespace Tank
 
         public void ApplyDamage(float dmg)
         {
-            Debug.Log("Applying Damage: " + dmg);
             CurrentValue = Mathf.Max(0, CurrentValue - dmg);
             Bar?.Set(CurrentValue, MaxValue);
             TotalDamageReceived += dmg;

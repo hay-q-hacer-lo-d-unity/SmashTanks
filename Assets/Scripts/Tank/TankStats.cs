@@ -7,8 +7,8 @@ namespace Tank
     public class TankStats
     {
         [Header("Shot Settings")] 
-        public float missileMaxSpeed = SmashTanksConstants.MISSILE_MAX_SPEED;
-        public float bouncyMissileMaxSpeed = SmashTanksConstants.BOUNCY_MISSILE_MAX_SPEED;
+        public float missileMaxSpeed = SmashTanksConstants.Missile.MaxInitialSpeed;
+        public float bouncyMissileMaxSpeed = SmashTanksConstants.BouncyMissile.MaxInitialSpeed;
 
         [Header("Jump Settings")]
         public float maxForce;
@@ -46,8 +46,8 @@ namespace Tank
 
         public void ApplySkillset(Skillset skillset)
         {
-            explosionRadius = SmashTanksConstants.MISSILE_EXPLOSION_RADIUS;
-            explosionForce = SmashTanksConstants.MISSILE_EXPLOSION_FORCE;
+            explosionRadius = SmashTanksConstants.Missile.ExplosionRadius;
+            explosionForce = SmashTanksConstants.Missile.ExplosionForce;
             SkillsetMapper mapper = new(skillset);
             mass = mapper.Mass;
             maxHealth = mapper.Health;

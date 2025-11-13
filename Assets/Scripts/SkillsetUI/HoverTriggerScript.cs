@@ -11,7 +11,6 @@ namespace SkillsetUI
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (!tooltipable) return;
-            Debug.Log("HoverTriggerScript: OnPointerEnter called for " + tooltipable.name);
             tooltipable.ShowTooltip();
         }
 

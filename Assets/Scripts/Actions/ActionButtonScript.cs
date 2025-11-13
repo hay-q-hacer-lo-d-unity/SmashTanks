@@ -10,7 +10,7 @@ namespace Actions
     public class ActionButtonScript : Tooltipable
     {
         public float magickaCost;
-
+        public int cooldown;
         private Button _button;
         private TankScript _tank;
         private ActionSelectorScript _selector;
@@ -55,10 +55,13 @@ namespace Actions
         
         public override void ShowTooltip()
         {
-            // Override default tooltip to include magicka info
-            var fullDescription = $"{description}\n\n<color=#00FFFF>Cost: {magickaCost} MP</color>";
-
-            Legend?.Show(name, fullDescription, iconImage ? iconImage.sprite : null);
+            Legend?.Show(
+                name,
+                description,
+                iconImage ? iconImage.sprite : null,
+                magickaCost,
+                cooldown
+                );
         }
     }
 }

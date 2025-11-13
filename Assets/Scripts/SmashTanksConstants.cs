@@ -1,96 +1,146 @@
 ﻿
 public static class SmashTanksConstants
 {
-    public const float BASE_HEALTH = 15f;
-    public const float BASE_MASS = 10f;
-    public const float MASS_MULTIPLIER_PER_LEVEL = 0.2f;
-    
-    public const float BASE_MAGICKA = 20f;
-    public const float MAX_MAGICKA_MULTIPLIER_PER_LEVEL = 0.2f;
-    
-    public const float MAGICKA_REGENERATION_RATE = 1f;
-    public const float MAGICKA_REGENERATION_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
-    
-    public const float BASE_INTELLECT = 1f;
-    public const float BASE_DAMAGE = 1f;
-    
-    public const float BASE_ACCURACY = 0.5f;
-    public const float ACCURACY_MULTIPLIER_PER_LEVEL = 0.4f;
-    
-    public const float BASE_MENDING_RATE_ABSOLUTE = 0.5f;
-    public const float BASE_MENDING_RATE_RELATIVE = BASE_HEALTH * 0.05f;
-    public const float MENDING_RATE_MULTIPLIER_PER_LEVEL = 0.1f;
-    
-    public const float JUMP_FORCE_MULTIPLIER_PER_LEVEL = 0.3f;
-    public const float BASE_MAX_JUMP_FORCE = 100f;
-    
-    // Asymptotic (absolute)
-    public const float JUGGERNAUT_MAX_BONUS = 10f;             // absolute max bonus (non-base-scaled)
-    public const float JUGGERNAUT_SOFT_CAP = 50f;             // controls saturation speed
 
-    // Asymptotic (base-scaled)
-    public const float JUGGERNAUT_BASE_SCALED_MAX_FACTOR = 0.5f; // at large TDR, add up to 50% of baseDamage
-    public const float JUGGERNAUT_BASE_SCALED_SOFT_CAP = 50f;
+    public static class Stats
+    {
+        public const float BaseHealth = 15f;
+        public const float BaseMass = 10f;
+        public const float MassMultiplierPerLevel = 0.2f;
 
-    // Linear
-    public const float JUGGERNAUT_MULTIPLIER = 0.02f;         // additive per TDR (non-base-scaled)
-    public const float JUGGERNAUT_SCALING_FACTOR = 0.002f;    // per-point *baseDamage* contribution for hybrid
-    public const float JUGGERNAUT_BASE_SCALED_MULTIPLIER = 0.002f; // base-scaled linear multiplier
-    
-    // Logarithmic
-    public const float JUGGERNAUT_LOG_MAX_BONUS = 5f;
-    public const float JUGGERNAUT_LOG_SOFT_CAP = 15f;
-    public const float JUGGERNAUT_LOG_BASE_SCALED_SOFT_CAP = 40f;
-    public const float JUGGERNAUT_LOG_MULTIPLIER = 0.12f;
-    public const float JUGGERNAUT_LOG_SCALING_FACTOR = 0.01f;
-    
-    public const float MISSILE_MAX_SPEED = 20f;
-    public const float BOUNCY_MISSILE_MAX_SPEED = 30f;
+        public const float BaseMagicka = 20f;
+        public const float MaxMagickaMultiplierPerLevel = 0.2f;
 
-    public const float BEAM_BASE_DAMAGE = 0f;
-    public const float BEAM_DAMAGE_PER_INTELLECT = 0.5f;
-    
-    public const float BEAM_MAGICKA_COST = 10f;
-    public const float TELEPORT_MAGICKA_COST = 5f;
-    public const float GALE_MAGICKA_COST = 7f;
-    public const float GALE_RADIUS = 3f;
-    public const float GALE_SPEED = 25f;
-    public const float GALE_DISTANCE = 25f;
-    
-    public const float MISSILE_BASE_DAMAGE = 2f;
-    public const float MISSILE_DOUBLING_LEVEL = 10f;
-    public const float MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE = 1f / MISSILE_DOUBLING_LEVEL;
-    public const float MISSILE_DAMAGE_INCREASE_PER_DAMAGE = MISSILE_BASE_DAMAGE * MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE;
-    public const float MISSILE_EXPLOSION_FORCE = 25f;
-    public const float MISSILE_EXPLOSION_RADIUS = 5f;
-    
-    public const float BOUNCY_MISSILE_BASE_DAMAGE = 3f;
-    public const float BOUNCY_MISSILE_DOUBLING_LEVEL = 8f;
-    public const float BOUNCY_MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE = 1f / BOUNCY_MISSILE_DOUBLING_LEVEL;
-    public const float BOUNCY_MISSILE_DAMAGE_INCREASE_PER_DAMAGE = BOUNCY_MISSILE_BASE_DAMAGE * BOUNCY_MISSILE_DAMAGE_MULTIPLIER_PER_DAMAGE;
-    public const float BOUNCY_MISSILE_EXPLOSION_FORCE = 35f;
-    public const float BOUNCY_MISSILE_EXPLOSION_RADIUS = 7f;
-    
-    
-    public const float CRASH_BASE_DAMAGE_MULTIPLIER = 0.025f;
-    public const float CRASH_DOUBLING_LEVEL = 10f;
-    public const float CRASH_DAMAGE_MULTIPLIER_PER_DAMAGE = 1f / CRASH_DOUBLING_LEVEL;
-    public const float CRASH_DAMAGE_MULTIPLIER_INCREASE_PER_DAMAGE = 0f;
-    
-    public const float GALE_BASE_FORCE = 150f;
-    public const float GALE_DOUBLING_LEVEL = 6f;
-    public const float GALE_FORCE_MULTIPLIER_PER_INTELLECT = 1f / GALE_DOUBLING_LEVEL;
-    public const float GALE_FORCE_INCREASE_PER_INTELLECT = GALE_BASE_FORCE * GALE_FORCE_MULTIPLIER_PER_INTELLECT;
+        public const float MagickaRegenerationRate = 1f;
+        public const float MagickaRegenerationRateMultiplierPerLevel = 0.1f;
 
-    public const float GALE_FORCE_PER_INTELLECT = 50f;
+        public const float BaseIntellect = 1f;
+        public const float BaseDamage = 1f;
+
+        public const float BaseAccuracy = 0.5f;
+        public const float AccuracyMultiplierPerLevel = 0.4f;
+
+        public const float BaseMendingRateAbsolute = 0.5f;
+        public const float BaseMendingRateRelative = BaseHealth * 0.05f;
+        public const float MendingRateMultiplierPerLevel = 0.1f;
+    }
+
+    public static class Juggernaut
+    {
+        // Asymptotic (absolute)
+        public const float MaxBonus = 10f; // absolute max bonus (non-base-scaled)
+        public const float SoftCap = 50f; // controls saturation speed
+
+        // Asymptotic (base-scaled)
+        public const float BaseScaledMaxFactor = 0.5f; // at large TDR, add up to 50% of baseDamage
+        public const float BaseScaledSoftCap = 50f;
+
+        // Linear
+        public const float Multiplier = 0.02f; // additive per TDR (non-base-scaled)
+        public const float ScalingFactor = 0.002f; // per-point *baseDamage* contribution for hybrid
+        public const float BaseScaledMultiplier = 0.002f; // base-scaled linear multiplier
+
+        // Logarithmic
+        public const float LOGMaxBonus = 5f;
+        public const float LOGSoftCap = 15f;
+        public const float LOGBaseScaledSoftCap = 40f;
+        public const float LOGMultiplier = 0.12f;
+        public const float LOGScalingFactor = 0.01f;
+    }
+
+    #region Weapons / Actions
+
+    public static class Jump
+    {
+        public const float MaxForceMultiplierPerLevel = 0.3f;
+        public const float BaseMaxForce = 100f;
+        public const int Cooldown = 0;
+    }
+
+    public static class Missile
+    {
+        public const float BaseDamage = 2f;
+        private const float DoublingLevel = 10f;
+        private const float DamageMultiplierPerDamage = 1f / DoublingLevel;
+
+        public const float DamageIncreasePerDamage =
+            BaseDamage * DamageMultiplierPerDamage;
+
+        public const float ExplosionForce = 25f;
+        public const float ExplosionRadius = 5f;
+        public const float RecoilForce = 50f;
+        public const float MaxInitialSpeed = 20f;
+        public const int Cooldown = 0;
+    }
+
+    public static class BouncyMissile
+    {
+        public const float BaseDamage = 3f;
+        private const float DoublingLevel = 8f;
+        private const float DamageMultiplierPerDamage = 1f / DoublingLevel;
+
+        public const float DamageIncreasePerDamage =
+            BaseDamage * DamageMultiplierPerDamage;
+
+        public const float ExplosionForce = 35f;
+        public const float ExplosionRadius = 7f;
+        public const float RecoilForce = 25f;
+        public const float FuseTime = 8f;
+        public const float MaxInitialSpeed = 30f;
+        public const int Cooldown = 1;
+    }
     
-    public const float MISSILE_RECOIL_FORCE = 50f;
-    public const float BOUNCY_MISSILE_RECOIL_FORCE = 25f;
-    public const float BOUNCY_MISSILE_FUSE_TIME = 8f;
-    
-    public const int STATPOINTS = 25;
-    public const bool USE_COMPOUND_INCREASE = false;
-    public const float GRAVITY = -9.81f;
+    public static class Crash
+    {
+        public const float BaseDamageMultiplier = 0.025f;
+        private const float DoublingLevel = 10f;
+        public const float DamageMultiplierPerDamage = 1f / DoublingLevel;
+        public const float DamageMultiplierIncreasePerDamage = 0f;
+        public const int Cooldown = 2;
+    }
+
+    public static class Gale
+    {
+        public const float BaseForce = 150f;
+        private const float DoublingLevel = 6f;
+        private const float ForceMultiplierPerIntellect = 1f / DoublingLevel;
+        public const float ForceIncreasePerIntellect = BaseForce * ForceMultiplierPerIntellect;
+        public const float Radius = 3f;
+        public const float Speed = 25f;
+        public const float Distance = 25f;
+        public const float MagickaCost = 7f;
+        public const int Cooldown = 3;
+    }
+
+    public static class Beam
+    {
+        public const float BaseDamage = 0f;
+        public const float DamagePerIntellect = 0.5f;
+        public const float MagickaCost = 10f;
+        public const int Cooldown = 3;
+    }
+
+    public static class Teleport
+    {
+        public const float MagickaCost = 5f;
+        private const float MinRadius = 2f;
+        public const float MaxRadius = 20f;
+        public const float DecayRate = (MaxRadius - MinRadius) / (Config.Statpoints + 1);
+        public const int Cooldown = 2;
+    }
+
+    #endregion
+
+    public static class Config
+    {
+        public const int Statpoints = 25;
+        public const bool UseCompoundIncrease = false;
+    }
+
+    public static class Physics
+    {
+        public const float Gravity = -9.81f;
+    }
 }
 
 
