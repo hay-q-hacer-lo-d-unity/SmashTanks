@@ -261,7 +261,7 @@ namespace Actions
     #region Crash
     /// <summary>
     /// Makes the tank jump toward a target location and applies collision damage when it impacts another object.
-    /// </summary>
+    /// </summary> XOAQUEARE XOAQUEARAS XOAQUARA OTRA VEZ QUE LOS ASTROS TE VAN A VEEEERERRRERER
     public class Crash : DamageScaledAction
     {
         private readonly Transform _aimPoint;
