@@ -12,6 +12,7 @@ namespace Manager
 
         [Header("References")]
         [SerializeField] private GameObject tankPrefab;
+        [SerializeField] private GameObject playerQuantityScreen;
         [SerializeField] private GameObject skillsetScreen;
         [SerializeField] private GameObject gameplayRoot;
         [SerializeField] private GameOverPanelScript gameOverPanel;
@@ -47,6 +48,7 @@ namespace Manager
             Instance = this;
             gameOverPanel.playAgainButton.onClick.AddListener(HandlePlayAgain);
             gameplayRoot?.SetActive(false);
+            skillsetScreen?.SetActive(false);
         }
 
         // ---------- PLAYER CONFIRMATION ----------
@@ -156,6 +158,18 @@ namespace Manager
             {
                 Debug.LogWarning($"[GameManager] No tank found with ID {tankId} to apply damage.");
             }
+        }
+        
+        // ---------- SETTINGS ----------
+        public void SetPlayerCount(int count)
+        {
+            playerCount = count;
+        }
+
+        public void ShowSkillsetScreen()
+        {
+            playerQuantityScreen?.SetActive(false);
+            skillsetScreen?.SetActive(true);
         }
     }
 }
