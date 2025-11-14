@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Manager;
 using Tank;
 using UnityEngine;
 
@@ -85,13 +86,13 @@ namespace Weapons
                 var distance = direction.magnitude;
                 var normalizedDistance = Mathf.Clamp01(distance / ExplosionRadius);
 
-                // Quadratic falloff for smoother attenuation
+                // Quadratic falloff
                 var attenuation = 1f - normalizedDistance * normalizedDistance;
                 var force = ExplosionForce * attenuation;
                 var damageAmount = Damage * attenuation;
 
                 if (col.TryGetComponent<TankScript>(out var tank))
-                    tank.ApplyDamage(damageAmount);
+                    GameManagerScript.Instance.ApplyDamage(tank.OwnerId, damageAmount);
 
                 rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
             }

@@ -34,8 +34,7 @@ namespace Tank
         // ============================================================
 
         private const float MaxForceMultiplier = SmashTanksConstants.Jump.MaxForceMultiplierPerLevel;
-        public float MaxForce = SmashTanksConstants.Jump.MaxForceMultiplierPerLevel;
-
+        public float MaxForce = SmashTanksConstants.Jump.BaseMaxForce;
         private void MapJump(int level) => MapStat(ref MaxForce, level, MaxForceMultiplier);
 
         // ============================================================

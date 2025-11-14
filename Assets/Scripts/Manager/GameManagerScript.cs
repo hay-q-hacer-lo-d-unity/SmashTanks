@@ -14,6 +14,7 @@ namespace Manager
         [SerializeField] private GameObject tankPrefab;
         [SerializeField] private GameObject skillsetScreen;
         [SerializeField] private GameObject gameplayRoot;
+        [SerializeField] private GameOverPanelScript gameOverPanel;
         [SerializeField] private TurnManagerScript turnManager;
 
         [Header("Game Settings")]
@@ -24,13 +25,13 @@ namespace Manager
         private readonly List<Skillset> _pendingSkillsets = new();
         private readonly List<TankScript> _tanks = new();
 
-        // ---------- EVENTS ----------
+        #region Events
         public static event Action<int, int> OnTankConfirmed;
         public static event Action OnAllPlayersConfirmed;
         public static event Action OnGameStarted;
         public static event Action<TankScript> OnTankSpawned;
         public static event Action OnAllTanksSpawned;
-
+        #endregion
         // ---------- PROPERTIES ----------
         public IReadOnlyList<TankScript> Tanks => _tanks.AsReadOnly();
 
@@ -43,8 +44,8 @@ namespace Manager
                 Destroy(gameObject);
                 return;
             }
-
             Instance = this;
+            gameOverPanel.playAgainButton.onClick.AddListener(HandlePlayAgain);
             gameplayRoot?.SetActive(false);
         }
 
@@ -68,7 +69,7 @@ namespace Manager
             StartGame();
         }
 
-        // ---------- GAME INITIALIZATION ----------
+        // -------------- GAME CYCLE --------------
         private void StartGame()
         {
             if (!ValidateReferences()) return;
@@ -87,6 +88,22 @@ namespace Manager
             turnManager.AssignIds(_tanks.ToArray());
             OnGameStarted?.Invoke();
             turnManager.StartGame();
+        }
+
+        private void EndGame(int? winnerId)
+        {
+            gameOverPanel.Show(winnerId?.ToString());
+        }
+        
+        public void NotifyEndGame(int? winnerId)
+        {
+            EndGame(winnerId);
+        }
+        
+        private void HandlePlayAgain()
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         }
 
         // ---------- SPAWNING ----------
@@ -125,6 +142,20 @@ namespace Manager
 
             Debug.LogError("[GameManager] Missing critical references! Cannot start game.");
             return false;
+        }
+
+        public void ApplyDamage(int tankId, float damage)
+        {
+            var tank = _tanks.Find(t => t.OwnerId == tankId);
+            if (tank != null)
+            {
+                turnManager.NotifyDamageApplied();
+                tank.ApplyDamage(damage);
+            }
+            else
+            {
+                Debug.LogWarning($"[GameManager] No tank found with ID {tankId} to apply damage.");
+            }
         }
     }
 }

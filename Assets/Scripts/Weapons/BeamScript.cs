@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Manager;
 using Tank;
 using UnityEngine;
 
@@ -55,7 +56,7 @@ namespace Weapons
 
                 var tank = hit.collider.GetComponent<TankScript>();
                 if (tank == null) continue;
-                tank.ApplyDamage(currentDamage);
+                GameManagerScript.Instance.ApplyDamage(tank.OwnerId, currentDamage);
                 currentDamage *= 2f;
             }
             

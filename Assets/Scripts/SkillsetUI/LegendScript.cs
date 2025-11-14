@@ -39,7 +39,8 @@ namespace SkillsetUI
             string body,
             Sprite background = null,
             float? magickaCost = null,
-            int? cooldown = null
+            int? cooldown = null,
+            bool isOnCooldown = false
             )
         {
             if (legendPanel == null) return;

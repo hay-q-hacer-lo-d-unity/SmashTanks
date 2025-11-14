@@ -36,9 +36,9 @@ public static class SmashTanksConstants
         public const float BaseScaledSoftCap = 50f;
 
         // Linear
-        public const float Multiplier = 0.02f; // additive per TDR (non-base-scaled)
-        public const float ScalingFactor = 0.002f; // per-point *baseDamage* contribution for hybrid
-        public const float BaseScaledMultiplier = 0.002f; // base-scaled linear multiplier
+        public const float Multiplier = 0.1f; // additive per TDR (non-base-scaled)
+        public const float ScalingFactor = 0.05f; // per-point *baseDamage* contribution for hybrid
+        public const float BaseScaledMultiplier = 0.05f; // base-scaled linear multiplier
 
         // Logarithmic
         public const float LOGMaxBonus = 5f;
@@ -87,7 +87,7 @@ public static class SmashTanksConstants
         public const float RecoilForce = 25f;
         public const float FuseTime = 8f;
         public const float MaxInitialSpeed = 30f;
-        public const int Cooldown = 1;
+        public const int Cooldown = 2;
     }
     
     public static class Crash
@@ -109,7 +109,7 @@ public static class SmashTanksConstants
         public const float Speed = 25f;
         public const float Distance = 25f;
         public const float MagickaCost = 7f;
-        public const int Cooldown = 3;
+        public const int Cooldown = 2;
     }
 
     public static class Beam
@@ -117,7 +117,7 @@ public static class SmashTanksConstants
         public const float BaseDamage = 0f;
         public const float DamagePerIntellect = 0.5f;
         public const float MagickaCost = 10f;
-        public const int Cooldown = 3;
+        public const int Cooldown = 4;
     }
 
     public static class Teleport

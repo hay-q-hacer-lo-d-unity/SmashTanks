@@ -75,11 +75,6 @@ namespace Manager
             _currentPhase = TurnPhase.Planning;
             _actions.Clear();
 
-            // Filter alive players & apply effects safely
-            _players = _players
-                .Where(p => !p.Tank.IsDead)
-                .ToList();
-
             foreach (var player in _players)
                 player.Tank.ApplyTurnStartEffects();
 
@@ -118,6 +113,7 @@ namespace Manager
 
         private IEnumerator ExecuteActionsPhase()
         {
+            _lastDamageTime = Time.time;
             foreach (var player in _players.Where(p => p.PendingAction != null))
             {
                 if (player.PendingAction.ActionType == "Idle") continue; // skip
@@ -128,7 +124,13 @@ namespace Manager
 
 
             yield return WaitForPhysicsToSettle();
-
+            RemoveDeadPlayers();
+            if (_players.Count <= 1)
+            {
+                timerText.text = "Game Over!";
+                GameManagerScript.Instance.NotifyEndGame(_players.FirstOrDefault()?.PlayerId);
+                yield break;
+            }
             StartPlanningPhase();
         }
 
@@ -173,7 +175,7 @@ namespace Manager
 
         #region Stationary Check
 
-        private static IEnumerator WaitForPhysicsToSettle()
+        private IEnumerator WaitForPhysicsToSettle()
         {
             var stationaryTime = 0f;
             const float maxWaitTime = 30f;
@@ -189,12 +191,17 @@ namespace Manager
                     .ToArray();
 
                 var allStill = rigidbodies.All(rb => rb.linearVelocity.magnitude < StationaryThreshold);
-                stationaryTime = allStill
-                    ? stationaryTime + Time.deltaTime
-                    : 0f;
+                var noRecentDamage = Time.time - _lastDamageTime >= RequiredStationaryTime;
+
+                if (allStill && noRecentDamage) stationaryTime += Time.deltaTime;
+                else stationaryTime = 0f;
             }
         }
 
+        private float _lastDamageTime;
+
+        public void NotifyDamageApplied() => _lastDamageTime = Time.time;
+        
         #endregion
 
         #region Utilities
@@ -202,11 +209,11 @@ namespace Manager
         public bool IsPlanningPhase() => _currentPhase == TurnPhase.Planning;
         public bool HasAction(int playerId) => _actions.ContainsKey(playerId);
 
-        public void RemovePlayer(int playerId)
+        private void RemoveDeadPlayers()
         {
-            var player = _players.FirstOrDefault(p => p.PlayerId == playerId);
-            if (player != null)
-                _players.Remove(player);
+            _players = _players
+                .Where(p => !p.Tank.IsDead)
+                .ToList();
         }
 
         #endregion

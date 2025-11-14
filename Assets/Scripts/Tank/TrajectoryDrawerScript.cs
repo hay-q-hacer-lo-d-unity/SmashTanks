@@ -32,6 +32,52 @@ namespace Tank
                 _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
             }   
         }
+        
+        public void DrawParabola2(Vector2 origin, Vector2 initialVelocity, float accuracy)
+        {
+            if (!_lineRenderer) return;
+
+            _lineRenderer.positionCount = segments;
+
+            float vx = initialVelocity.x;
+            float vy = initialVelocity.y;
+
+            // We’ll increment t until the distance between start and current point ≈ accuracy
+            float t = 0f;
+            float dt = 0.02f; // step size for finding the correct t (smaller = more precise)
+            float endTime = 0f;
+
+            while (true)
+            {
+                float x = origin.x + vx * t;
+                float y = origin.y + vy * t + 0.5f * gravity * t * t;
+
+                float dist = Vector2.Distance(origin, new Vector2(x, y));
+
+                if (dist >= accuracy)
+                {
+                    endTime = t;
+                    break;
+                }
+
+                t += dt;
+
+                // safety break to avoid infinite loops
+                if (t > 100f) break;
+            }
+
+            // Now we know how much time it takes for the projectile
+            // to be `accuracy` units away from the origin
+            for (int i = 0; i < segments; i++)
+            {
+                float ti = endTime * i / (segments - 1);
+                float x = origin.x + vx * ti;
+                float y = origin.y + vy * ti + 0.5f * gravity * ti * ti;
+
+                _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
+            }
+        }
+
     
         public void ClearParabola()
         {

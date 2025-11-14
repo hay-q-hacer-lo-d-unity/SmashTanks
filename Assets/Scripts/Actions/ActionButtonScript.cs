@@ -34,6 +34,7 @@ namespace Actions
         private void OnButtonClick()
         {
             if (_tank == null || _selector == null) return;
+            _button.Select();
             _selector.SelectAction(name);
         }
 
