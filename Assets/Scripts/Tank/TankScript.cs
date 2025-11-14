@@ -128,6 +128,12 @@ namespace Tank
         private void Update()
         {
             UpdateBars();
+            
+            if (transform.position.y < -20f && !IsDead)
+            {
+                Kill();
+                return;
+            }
 
             // Skip input if not this tank's turn or input is disabled
             if (!_canActThisTurn || !_inputHandler.CanAct()) return;
