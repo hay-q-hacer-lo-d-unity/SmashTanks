@@ -4,8 +4,8 @@ public static class SmashTanksConstants
 
     public static class Stats
     {
-        public const float BaseHealth = 15f;
-        public const float BaseMass = 10f;
+        public const float BaseHealth = 16f;
+        public const float BaseMass = 8f;
         public const float MassMultiplierPerLevel = 0.2f;
 
         public const float BaseMagicka = 20f;
@@ -52,7 +52,7 @@ public static class SmashTanksConstants
 
     public static class Jump
     {
-        public const float MaxForceMultiplierPerLevel = 0.3f;
+        public const float MaxForceMultiplierPerLevel = 0.2f;
         public const float BaseMaxForce = 100f;
         public const int Cooldown = 0;
     }
