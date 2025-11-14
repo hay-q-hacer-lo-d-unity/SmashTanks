@@ -6276,7 +6276,7 @@ MonoBehaviour:
   gameOverPanel: {fileID: 930226030}
   turnManager: {fileID: 705287537}
   playerCount: 2
-  spawnSpacing: 35
+  spawnAreaWidth: 80
 --- !u!4 &1542500108
 Transform:
   m_ObjectHideFlags: 0

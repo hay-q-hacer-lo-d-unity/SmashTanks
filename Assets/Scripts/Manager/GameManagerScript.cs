@@ -20,7 +20,7 @@ namespace Manager
 
         [Header("Game Settings")]
         [SerializeField] private int playerCount;
-        [SerializeField] private float spawnSpacing;
+        [SerializeField] private float spawnAreaWidth;
 
         private int _confirmedPlayers;
         private readonly List<Skillset> _pendingSkillsets = new();
@@ -113,12 +113,18 @@ namespace Manager
         {
             _tanks.Clear();
 
-            var totalWidth = (playerCount - 1) * spawnSpacing;
-            var startX = -totalWidth / 2f;
+            float startX = 0f;
+            float spawnStep = 0f;
+
+            if (playerCount > 1)
+            {
+                startX = -spawnAreaWidth / 2f;
+                spawnStep = spawnAreaWidth / (playerCount - 1);
+            }
 
             for (var i = 0; i < playerCount; i++)
             {
-                Vector3 spawnPos = new(startX + i * spawnSpacing, 0f, 0f);
+                Vector3 spawnPos = new(startX + i * spawnStep, 0f, 0f);
                 var tankGo = Instantiate(tankPrefab, spawnPos, Quaternion.identity, gameplayRoot.transform);
 
                 if (!tankGo.TryGetComponent(out TankScript newTank))
