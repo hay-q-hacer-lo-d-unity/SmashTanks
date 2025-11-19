@@ -49,6 +49,8 @@ namespace Tank
                 _ => throw new ArgumentOutOfRangeException(nameof(increaseType), increaseType, null)
             };
         }
+        
+        public static float CalculateNewMagickaCost(float currentCost) => currentCost * SmashTanksConstants.AtomicEssence.MagickaCostMultiplier;
     }
     public enum IncreaseType
     {

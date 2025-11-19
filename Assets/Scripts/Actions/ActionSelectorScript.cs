@@ -28,7 +28,9 @@ namespace Actions
         {
             if (!_tank) return;
             foreach (var btn in actionButtons)
+            {
                 btn.UpdateState();
+            }
         }
 
         public void SelectAction(string actionId)

@@ -42,7 +42,7 @@ namespace Tank
         
         [Header("Abilities")]
         public bool juggernaut;
-        
+        public bool atomicEssence;
 
         public void ApplySkillset(Skillset skillset)
         {
@@ -60,6 +60,7 @@ namespace Tank
             magickaRegenRate = mapper.MagickaRegenRate;
             intellect = mapper.Intellect;
             juggernaut = mapper.Juggernaut;
+            atomicEssence = mapper.AtomicEssence;
         }
     }
 }

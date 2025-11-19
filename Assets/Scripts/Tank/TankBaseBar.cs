@@ -54,7 +54,7 @@ namespace Tank
 
         public virtual void DestroyBar()
         {
-            if (Bar != null) Bar.DestroyBar();
+            if (Bar) Bar.DestroyBar();
         }
 
         public virtual void SetValue(float value)

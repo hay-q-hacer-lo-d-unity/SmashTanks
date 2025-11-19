@@ -37,8 +37,7 @@ namespace Actions
         bool LocksCannon();
     }
     
-    #region Circular Area Action
-
+    
     /// <summary>
     /// Action that targets a circular area.
     /// </summary>
@@ -49,23 +48,21 @@ namespace Actions
         /// </summary>
         float Radius { get; }
     }
+    
 
-    #endregion
-
-    #region Stat Scaled Action
     /// <summary>
     /// Base class for actions that scale with a given stat (e.g., damage, intellect).
     /// Handles mapper logic automatically.
     /// </summary>
     public abstract class StatScaledAction : IAction
     {
-        protected readonly float StatLevel;
-        protected readonly Func<float, float> Mapper;
+        private readonly float _statLevel;
+        private readonly Func<float, float> _mapper;
 
         protected StatScaledAction(float statLevel, Func<float, float> mapper)
         {
-            StatLevel = statLevel;
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _statLevel = statLevel;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -73,7 +70,7 @@ namespace Actions
         /// </summary>
         public void Execute(Vector3 origin, Vector3 target)
         {
-            var scaledValue = Mapper.Invoke(StatLevel);
+            var scaledValue = _mapper.Invoke(_statLevel);
             Perform(origin, target, scaledValue);
         }
 
@@ -87,9 +84,8 @@ namespace Actions
         public abstract int Cooldown { get; }
         public virtual bool LocksCannon() => false;
     }
-    #endregion
     
-    #region Damage Scaled Action
+    
     /// <summary>
     /// Base class for actions that scale with the tank's damage stat.
     /// </summary>
@@ -100,11 +96,9 @@ namespace Actions
 
         // Optionally: you can override this if all physical actions have consistent rules
         public override bool LocksCannon() => false;
-    }
-
-    #endregion
+    } 
     
-    #region Missile
+    
     /// <summary>
     /// Launches a missile projectile toward a target point.
     /// </summary>
@@ -158,9 +152,7 @@ namespace Actions
         public override int Cooldown => SmashTanksConstants.Missile.Cooldown;
     }
 
-    #endregion
-
-    #region Bouncy Missile Action
+    
     /// <summary>
     /// Launches a bouncy missile projectile toward a target point.
     /// </summary>
@@ -215,9 +207,7 @@ namespace Actions
         public new bool LocksCannon() => false;
     }
     
-    #endregion
-
-    #region Jump
+    
     /// <summary>
     /// Makes the tank jump toward a target location.
     /// </summary>
@@ -256,12 +246,11 @@ namespace Actions
         /// <inheritdoc />
         public bool LocksCannon() => false;
     }
-    #endregion
-
-    #region Crash
+    
+    
     /// <summary>
     /// Makes the tank jump toward a target location and applies collision damage when it impacts another object.
-    /// </summary> XOAQUEARE XOAQUEARAS XOAQUARA OTRA VEZ QUE LOS ASTROS TE VAN A VEEEERERRRERER
+    /// </summary>
     public class Crash : DamageScaledAction
     {
         private readonly Transform _aimPoint;
@@ -305,9 +294,8 @@ namespace Actions
         
         public new bool LocksCannon() => false;
     }
-    #endregion
 
-    #region Intellect Scaled Action
+    
     /// <summary>
     /// Base class for actions that use magicka and scale with intellect.
     /// </summary>
@@ -328,7 +316,7 @@ namespace Actions
         /// <summary>
         /// The magicka cost to perform this action.
         /// </summary>
-        protected abstract float MagickaCost { get; }
+        protected abstract float MagickaCost { get; set; }
         
         /// <summary>
         /// Executes the magical action, consuming magicka before performing.
@@ -342,9 +330,8 @@ namespace Actions
         }
         public new virtual bool LocksCannon() => false;
     }
-    #endregion
+    
 
-    #region Beam
     /// <summary>
     /// Fires a magical energy beam from the tank toward the target.
     /// </summary>
@@ -353,13 +340,15 @@ namespace Actions
         private readonly GameObject _beamPrefab;
         private readonly Transform _firePoint;
         public override int Cooldown => SmashTanksConstants.Beam.Cooldown;
-        protected override float MagickaCost => SmashTanksConstants.Beam.MagickaCost;
+        protected sealed override float MagickaCost { get; set; }
+
 
         public Beam(GameObject beamPrefab, Transform firePoint, float intellectLevel, TankScript tank)
             : base(tank, intellectLevel, StatMapper.MapBeamDamage)
         {
             _beamPrefab = beamPrefab;
             _firePoint = firePoint;
+            MagickaCost = tank.MagickaCosts[GetName()];
         }
 
         protected override void Perform(Vector3 origin, Vector3 target, float damage)
@@ -372,13 +361,11 @@ namespace Actions
             beamScript.Initialize(damage, (target - origin).normalized);
         }
 
-        public override string GetName() => "Beam";
+        public sealed override string GetName() => "Beam";
         public override AimType AimType() => Actions.AimType.HalfLine;
     }
-    #endregion
     
-    #region Teleport
-
+    
     /// <summary>
     /// Teleports the tank to a location near the target.
     /// The higher the intellect, the more accurate the teleport.
@@ -387,7 +374,7 @@ namespace Actions
     {
         public float Radius { get; }
 
-        protected override float MagickaCost => SmashTanksConstants.Teleport.MagickaCost;
+        protected sealed override float MagickaCost { get; set; }
         public override int Cooldown => SmashTanksConstants.Teleport.Cooldown;
 
 
@@ -395,6 +382,7 @@ namespace Actions
             : base(tank, intellectLevel, StatMapper.MapTeleportRadius)
         {
             Radius = StatMapper.MapTeleportRadius(intellectLevel);
+            MagickaCost = tank.MagickaCosts[GetName()];
         }
 
         protected override void Perform(Vector3 origin, Vector3 target, float radius)
@@ -404,14 +392,11 @@ namespace Actions
             Tank.transform.position = teleportDestination;
         }
 
-        public override string GetName() => "Teleport";
+        public sealed override string GetName() => "Teleport";
         public override AimType AimType() => Actions.AimType.CircularArea;
     }
 
 
-    #endregion
-    
-    #region Gale
     /// <summary>
     /// Creates a moving wind force that pushes all rigidbodies it touches.
     /// </summary>
@@ -421,13 +406,13 @@ namespace Actions
         private readonly Transform _firePoint;
         private readonly float _force;
         public override int Cooldown => SmashTanksConstants.Gale.Cooldown;
-
-
-        protected override float MagickaCost => SmashTanksConstants.Gale.MagickaCost;
+        
+        protected sealed override float MagickaCost { get; set; }
 
         public Gale(GameObject galePrefab, float intellectLevel, Transform firePoint, TankScript tank)
             : base(tank, intellectLevel, StatMapper.MapGaleForce)
         {
+            MagickaCost = tank.MagickaCosts[GetName()];
             _galePrefab = galePrefab;
             _firePoint = firePoint;
         }
@@ -443,10 +428,10 @@ namespace Actions
             galeScript.Initialize(direction, force);
         }
 
-        public override string GetName() => "Gale";
+        public sealed override string GetName() => "Gale";
         public override AimType AimType() => Actions.AimType.GaleZone;
     }
-    #endregion
+    
     
     public enum AimType
     {

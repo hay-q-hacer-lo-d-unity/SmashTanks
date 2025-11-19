@@ -13,9 +13,6 @@ namespace Tank
             Bar?.Set(CurrentValue, MaxValue);
         }
 
-        public void Regenerate(float amount)
-        {
-            SetValue(CurrentValue + amount);
-        }
+        public void Regenerate(float amount) => SetValue(CurrentValue + amount);
     }
 }

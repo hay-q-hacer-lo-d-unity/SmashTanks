@@ -102,10 +102,11 @@ namespace Manager
             EndGame(winnerId);
         }
         
-        private void HandlePlayAgain()
+        private static void HandlePlayAgain()
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
-                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+                );
         }
 
         // ---------- SPAWNING ----------

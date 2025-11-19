@@ -108,11 +108,11 @@ namespace Tank
         // ============================================================
 
         public bool Juggernaut;
-
+        public bool AtomicEssence;
         /// <summary>
-        /// Maps unlocked abilities from the player's skillset.
+        /// Maps abilities from the player's skillset.
         /// </summary>
-        /// <param name="abilities">A dictionary of ability names and their unlock states.</param>
+        /// <param name="abilities">A dictionary of ability names and their states.</param>
         private void MapAbilities(IReadOnlyDictionary<string, bool> abilities)
         {
             foreach (var (key, value) in abilities)
@@ -123,14 +123,12 @@ namespace Tank
                         Juggernaut = value;
                         break;
 
-                    // Future abilities can be added here.
+                    case "Atomic Essence":
+                        AtomicEssence = value;
+                        break;
                 }
             }
         }
-
-        // ============================================================
-        // ===================== HELPER METHOD ========================
-        // ============================================================
 
         /// <summary>
         /// Applies a level-based multiplier to a base stat value.

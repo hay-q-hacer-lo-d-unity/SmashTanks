@@ -48,6 +48,11 @@ public static class SmashTanksConstants
         public const float LOGScalingFactor = 0.01f;
     }
 
+    public static class AtomicEssence
+    {
+        public const float MagickaCostMultiplier = 0.9f;
+    }
+
     #region Weapons / Actions
 
     public static class Jump

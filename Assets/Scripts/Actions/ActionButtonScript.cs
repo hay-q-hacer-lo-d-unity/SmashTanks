@@ -1,7 +1,7 @@
-﻿using SkillsetUI;
+﻿using System.Collections.Generic;
+using SkillsetUI;
 using Tank;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Actions
@@ -9,7 +9,7 @@ namespace Actions
     [RequireComponent(typeof(Button))]
     public class ActionButtonScript : Tooltipable
     {
-        public float magickaCost;
+        private float _magickaCost;
         public int cooldown;
         private Button _button;
         private TankScript _tank;
@@ -43,9 +43,10 @@ namespace Actions
             if (!_tank) return;
 
             var magicka = _tank.Magicka;
-            var cooldowns = _tank.currentCooldowns;
+            _magickaCost = _tank.MagickaCosts.GetValueOrDefault(name, 0);
+            var cooldowns = _tank.CurrentCooldowns;
 
-            var hasMagicka = magicka >= magickaCost;
+            var hasMagicka = magicka >= _magickaCost;
             var notOnCooldown = true;
 
             if (cooldowns.TryGetValue(name, out var remainingCooldown))
@@ -60,7 +61,7 @@ namespace Actions
                 name,
                 description,
                 iconImage ? iconImage.sprite : null,
-                magickaCost,
+                _magickaCost,
                 cooldown
                 );
         }

@@ -34,7 +34,7 @@ namespace Tank
         [Tooltip("Transform point where projectiles and effects are spawned.")]
         [SerializeField] private Transform firePoint;
 
-        [Tooltip("Transform used for aiming direction.")]
+        [Tooltip("Transform used for jump aiming.")]
         [SerializeField] private Transform aimPoint;
 
         [Tooltip("Component responsible for drawing the projectile trajectory.")]
@@ -105,7 +105,15 @@ namespace Tank
         /// <summary> Current magicka value. </summary>
         public float Magicka => _magicka?.GetValue() ?? 0f;
         
-        public Dictionary<string, int> currentCooldowns = new();
+        
+        public readonly Dictionary<string, int> CurrentCooldowns = new();
+        
+        public readonly Dictionary<string, float> MagickaCosts = new()
+        {
+            {"Beam", SmashTanksConstants.Beam.MagickaCost},
+            {"Teleport", SmashTanksConstants.Teleport.MagickaCost},
+            {"Gale", SmashTanksConstants.Gale.MagickaCost},
+        };
 
         #endregion
 
@@ -120,7 +128,7 @@ namespace Tank
 
             _trajectoryHandler = new TankTrajectoryHandler(this, trajectoryDrawer);
             _inputHandler = new TankInputHandler(this, _turnManager);
-
+            
             // Default to missile action at turn start
             _currentAction = ActionFactory.Create("Missile", this);
         }
@@ -193,10 +201,8 @@ namespace Tank
 
             _currentAction = newAction;
 
-            if (newAction.LocksCannon())
-                cannonOrbitAndAim.LockCannonPosition();
-            else
-                cannonOrbitAndAim.UnlockCannonPosition();
+            if (newAction.LocksCannon()) cannonOrbitAndAim.LockCannonPosition();
+            else cannonOrbitAndAim.UnlockCannonPosition();
         }
 
         /// <summary>
@@ -206,7 +212,8 @@ namespace Tank
         public void ExecuteAction(PlayerAction action)
         {
             _confirmedAction?.Execute(action.Origin, action.Target);
-            currentCooldowns[_currentAction.GetName()] = _currentAction.Cooldown;
+            ApplyCooldown();
+            if (stats.atomicEssence) ApplyAtomicEssence();
         }
 
         /// <summary>
@@ -225,21 +232,14 @@ namespace Tank
         /// </summary>
         public void ApplyTurnStartEffects()
         {
-            foreach (var key in new List<string>(currentCooldowns.Keys).Where(key => currentCooldowns[key] >= 0))
+            foreach (var key in new List<string>(CurrentCooldowns.Keys).Where(key => CurrentCooldowns[key] >= 0))
             {
-                currentCooldowns[key]--;
+                CurrentCooldowns[key]--;
             }
             _health?.Heal(stats.mendingRate);
             _magicka?.Regenerate(stats.magickaRegenRate);
 
-            if (stats.juggernaut)
-            {
-                stats.damage = SkillsUtils.CalculateJuggernautDamage(
-                    stats.baseDamage,
-                    _health?.TotalDamageReceived ?? 0f,
-                    IncreaseType.LinearHybrid
-                );
-            }
+            if (stats.juggernaut) ApplyJuggernaut();
         }
 
         #endregion
@@ -317,14 +317,39 @@ namespace Tank
                 _turnManager.RegisterAction(OwnerId, "Idle", Vector2.zero, Vector2.zero);
                 return;
             }
-            if (!_inputHandler.TryGetActionTarget(out var target)) 
-                return;
+            if (!_inputHandler.TryGetActionTarget(out var target)) return;
 
             _confirmedAction = _currentAction;
             _turnManager.RegisterAction(OwnerId, _currentAction.GetName(), firePoint.position, target);
         }
 
+        /// <summary>
+        /// Applies the Atomic Essence ability effect, reducing the magicka cost of the action used.
+        /// </summary>
+        private void ApplyAtomicEssence()
+        {
+            {
+                MagickaCosts[_confirmedAction.GetName()] = 
+                    SkillsUtils.CalculateNewMagickaCost(MagickaCosts[_confirmedAction.GetName()]);
+            }
+        }
 
+        /// <summary>
+        /// Applies the Juggernaut ability effect, increasing damage based on total damage received.
+        /// </summary>
+        private void ApplyJuggernaut() => stats.damage = SkillsUtils.CalculateJuggernautDamage(
+                stats.baseDamage,
+                _health?.TotalDamageReceived ?? 0f,
+                IncreaseType.LinearHybrid
+            );
+        
+        /// <summary>
+        /// Applies the cooldown of the current action after execution.
+        /// </summary>
+        private void ApplyCooldown() => CurrentCooldowns[_currentAction.GetName()] = _currentAction.Cooldown;
+
+        
+        
         #endregion
     }
 }
