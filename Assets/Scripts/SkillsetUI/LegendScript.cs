@@ -11,7 +11,7 @@ namespace SkillsetUI
         [SerializeField] private TMP_Text titleTMP;
         [SerializeField] private TMP_Text descriptionTMP;
         [SerializeField] private TMP_Text cooldownTMP;
-        [SerializeField] private TMP_Text magickaCostTMP;
+        [SerializeField] private TMP_Text requirementTMP;
         [SerializeField] private Image backgroundImage;
         [SerializeField] private float fadeDuration;
 
@@ -40,7 +40,8 @@ namespace SkillsetUI
             Sprite background = null,
             float? magickaCost = null,
             int? cooldown = null,
-            bool isOnCooldown = false
+            bool isOnCooldown = false,
+            string requirement = null
             )
         {
             if (legendPanel == null) return;
@@ -62,21 +63,26 @@ namespace SkillsetUI
                 if (cooldownTMP != null)
                     cooldownTMP.gameObject.SetActive(false);
             }
-            
-            if (magickaCost != 0)
+
+            if (requirementTMP)
             {
-                if (magickaCostTMP != null)
+                if (magickaCost != null && magickaCost != 0)
                 {
-                    magickaCostTMP.text = $"Magicka Cost: {magickaCost:F1}";
-                    magickaCostTMP.gameObject.SetActive(true);
+                    requirementTMP.gameObject.SetActive(true);
+                    requirementTMP.text = $"Magicka Cost: {magickaCost:F1}";
+                    requirementTMP.gameObject.SetActive(true);
                 }
+                else if (requirement != null)
+                {
+                    if (!string.IsNullOrEmpty(requirement))
+                    {
+                        requirementTMP.gameObject.SetActive(true);
+                        requirementTMP.text = requirement;
+                    }
+                }
+                else requirementTMP.gameObject.SetActive(false);
             }
-            else
-            {
-                if (magickaCostTMP != null)
-                    magickaCostTMP.gameObject.SetActive(false);
-            }
-            
+
             if (backgroundImage)
             {
                 backgroundImage.sprite = background;
@@ -87,14 +93,13 @@ namespace SkillsetUI
             _fadeCoroutine = StartCoroutine(FadeCanvasGroup(1f));
         }
 
-        public new void Hide()
+        public void Hide()
         {
             if (legendPanel == null) return;
 
-            if (_fadeCoroutine != null)
-                StopCoroutine(_fadeCoroutine);
+            if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
 
-            _fadeCoroutine = StartCoroutine(FadeCanvasGroup(0f, disableOnEnd: true));
+            _fadeCoroutine = StartCoroutine(FadeCanvasGroup(0f, true));
         }
 
         private IEnumerator FadeCanvasGroup(float targetAlpha, bool disableOnEnd = false)

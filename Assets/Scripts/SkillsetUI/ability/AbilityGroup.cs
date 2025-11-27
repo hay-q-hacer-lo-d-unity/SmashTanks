@@ -26,7 +26,7 @@ namespace SkillsetUI.ability
 
             foreach (var button in _buttons.Where(b => b))
             {
-                var ability = new Ability(button.AbilityName);
+                var ability = new Ability(button.AbilityID);
                 Skills.Add(ability);
                 button.Initialize(ability, this, _legend);
             }
@@ -52,7 +52,7 @@ namespace SkillsetUI.ability
         public override void Reset()
         {
             _remainingAbilities = _maxActiveAbilities;
-            base.Reset(); // resets all abilities to inactive
+            base.Reset();
         }
     }
 }

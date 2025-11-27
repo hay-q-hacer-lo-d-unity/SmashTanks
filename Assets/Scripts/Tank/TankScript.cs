@@ -23,19 +23,24 @@ namespace Tank
         [Tooltip("Prefab of the projectile used for missile-type attacks.")]
         [SerializeField] private GameObject missilePrefab;
         
+        [Tooltip("Prefab of the projectile used for bouncy missile-type attacks.")]
         [SerializeField] private GameObject bouncyMissilePrefab;
-
+        
         [Tooltip("Prefab used for the beam attack")]
         [SerializeField] private GameObject beamPrefab;
         
         [Tooltip("Prefab used for the gale spell")]
         [SerializeField] private GameObject galePrefab;
+        
+        [Tooltip("Prefab used for the juggernaut ulti")]
+        [SerializeField] private GameObject juggernautProjectilePrefab;
 
         [Tooltip("Transform point where projectiles and effects are spawned.")]
         [SerializeField] private Transform firePoint;
 
+        [FormerlySerializedAs("aimPoint")]
         [Tooltip("Transform used for jump aiming.")]
-        [SerializeField] private Transform aimPoint;
+        [SerializeField] private Transform center;
 
         [Tooltip("Component responsible for drawing the projectile trajectory.")]
         [SerializeField] private TrajectoryDrawerScript trajectoryDrawer;
@@ -88,7 +93,7 @@ namespace Tank
         public Transform FirePoint => firePoint;
 
         /// <summary> Aiming reference transform (used for trajectory targeting). </summary>
-        public Transform AimPoint => aimPoint;
+        public Transform Center => center;
 
         /// <summary> Prefab for missile-based actions. </summary>
         public GameObject MissilePrefab => missilePrefab;
@@ -101,6 +106,8 @@ namespace Tank
         
         /// <summary> Prefab for gale-based actions. </summary>
         public GameObject GalePrefab => galePrefab;
+        
+        public GameObject JuggernautProjectilePrefab => juggernautProjectilePrefab;
 
         /// <summary> Current magicka value. </summary>
         public float Magicka => _magicka?.GetValue() ?? 0f;
@@ -110,9 +117,16 @@ namespace Tank
         
         public readonly Dictionary<string, float> MagickaCosts = new()
         {
-            {"Beam", SmashTanksConstants.Beam.MagickaCost},
-            {"Teleport", SmashTanksConstants.Teleport.MagickaCost},
-            {"Gale", SmashTanksConstants.Gale.MagickaCost},
+            {"action_beam", SmashTanksConstants.Beam.MagickaCost},
+            {"action_teleport", SmashTanksConstants.Teleport.MagickaCost},
+            {"action_gale", SmashTanksConstants.Gale.MagickaCost},
+        };
+        
+        public readonly Dictionary<string, float> UltiCurrentValues = new()
+        {
+            {"Juggernaut", 0f},
+            {"Atomic Essence", 0f},
+            {"Chronomancy", 0f},
         };
 
         #endregion
@@ -130,7 +144,7 @@ namespace Tank
             _inputHandler = new TankInputHandler(this, _turnManager);
             
             // Default to missile action at turn start
-            _currentAction = ActionFactory.Create("Missile", this);
+            _currentAction = ActionFactory.Create("action_missile", this);
         }
 
         private void Update()
@@ -213,7 +227,7 @@ namespace Tank
         {
             _confirmedAction?.Execute(action.Origin, action.Target);
             ApplyCooldown();
-            if (stats.atomicEssence) ApplyAtomicEssence();
+            if (stats.Abilities.GetValueOrDefault("Atomic Essence", false)) ApplyAtomicEssence();
         }
 
         /// <summary>
@@ -222,8 +236,7 @@ namespace Tank
         public void SetControlEnabled(bool newEnabled)
         {
             _canActThisTurn = newEnabled;
-            if (!newEnabled)
-                _trajectoryHandler.Hide();
+            if (!newEnabled) _trajectoryHandler.Hide();
         }
 
         /// <summary>
@@ -239,7 +252,7 @@ namespace Tank
             _health?.Heal(stats.mendingRate);
             _magicka?.Regenerate(stats.magickaRegenRate);
 
-            if (stats.juggernaut) ApplyJuggernaut();
+            if (stats.Abilities.GetValueOrDefault("Juggernaut", false)) ApplyJuggernaut();
         }
 
         #endregion
@@ -328,21 +341,25 @@ namespace Tank
         /// </summary>
         private void ApplyAtomicEssence()
         {
-            {
-                MagickaCosts[_confirmedAction.GetName()] = 
-                    SkillsUtils.CalculateNewMagickaCost(MagickaCosts[_confirmedAction.GetName()]);
-            }
+            var mc = MagickaCosts[_confirmedAction.GetName()];
+            UltiCurrentValues["Atomic Essence"] += mc;
+            MagickaCosts[_confirmedAction.GetName()] = SkillsUtils.CalculateNewMagickaCost(mc);
         }
 
         /// <summary>
         /// Applies the Juggernaut ability effect, increasing damage based on total damage received.
         /// </summary>
-        private void ApplyJuggernaut() => stats.damage = SkillsUtils.CalculateJuggernautDamage(
+        private void ApplyJuggernaut()
+        {
+            var tdr = _health?.TotalDamageReceived ?? 0f;
+            stats.damage = SkillsUtils.CalculateJuggernautDamage(
                 stats.baseDamage,
-                _health?.TotalDamageReceived ?? 0f,
+                tdr,
                 IncreaseType.LinearHybrid
             );
-        
+            UltiCurrentValues["Juggernaut"] = tdr;
+        }
+
         /// <summary>
         /// Applies the cooldown of the current action after execution.
         /// </summary>

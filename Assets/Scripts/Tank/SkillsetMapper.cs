@@ -56,8 +56,7 @@ namespace Tank
         // ============================================================
 
         public float Accuracy = SmashTanksConstants.Stats.BaseAccuracy;
-        private const float AccuracyMultiplier = SmashTanksConstants.Stats.AccuracyMultiplierPerLevel;
-        private void MapAccuracy(int level) => MapStat(ref Accuracy, level, AccuracyMultiplier);
+        private void MapAccuracy(int level) => Accuracy = level;
 
         // ============================================================
         // =================== MENDING SETTINGS =======================

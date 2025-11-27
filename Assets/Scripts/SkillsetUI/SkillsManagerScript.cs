@@ -21,7 +21,7 @@ namespace SkillsetUI
 
         [Header("Abilities")]
         [SerializeField] private List<AbilityButtonScript> abilityButtons;
-        [SerializeField] private int maxActiveAbilities = 2;
+        [SerializeField] private int maxActiveAbilities;
 
         private StatGroup _statGroup;
         private AbilityGroup _abilityGroup;

@@ -28,7 +28,7 @@ namespace SkillsetUI.stat
 
             foreach (var row in _rows.Where(r => r))
             {
-                var stat = new Stat(row.StatName);
+                var stat = new Stat(row.StatID);
                 Skills.Add(stat);
                 row.Initialize(stat, this, _legend);
             }

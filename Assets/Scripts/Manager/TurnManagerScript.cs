@@ -113,6 +113,8 @@ namespace Manager
 
         private IEnumerator ExecuteActionsPhase()
         {
+            yield return new WaitForSeconds(SmashTanksConstants.Config.ActionsPhaseDelay);
+
             _lastDamageTime = Time.time;
             foreach (var player in _players.Where(p => p.PendingAction != null))
             {

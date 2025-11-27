@@ -11,54 +11,54 @@ namespace Actions
     {
         private float _magickaCost;
         public int cooldown;
-        private Button _button;
-        private TankScript _tank;
+        protected Button Button;
+        protected TankScript Tank;
         private ActionSelectorScript _selector;
-        [SerializeField] private Image iconImage;
+        [SerializeField] protected Image iconImage;
 
-        private void Awake()
+        protected void Awake()
         {
-            _button = GetComponent<Button>();
-            _button.onClick.AddListener(OnButtonClick);
+            Button = GetComponent<Button>();
+            Button.onClick.AddListener(OnButtonClick);
         }
 
-        public void Initialize(ActionSelectorScript selector, TankScript tank, LegendScript legend)
+        public virtual void Initialize(ActionSelectorScript selector, TankScript tank, LegendScript legend)
         {
             Legend = legend;
             _selector = selector;
-            _tank = tank;
+            Tank = tank;
         }
         
         
 
         private void OnButtonClick()
         {
-            if (_tank == null || _selector == null) return;
-            _button.Select();
-            _selector.SelectAction(name);
+            if (Tank == null || _selector == null) return;
+            Button.Select();
+            _selector.SelectAction(id);
         }
 
-        public void UpdateState()
+        public virtual void UpdateState()
         {
-            if (!_tank) return;
+            if (!Tank) return;
 
-            var magicka = _tank.Magicka;
-            _magickaCost = _tank.MagickaCosts.GetValueOrDefault(name, 0);
-            var cooldowns = _tank.CurrentCooldowns;
+            var magicka = Tank.Magicka;
+            _magickaCost = Tank.MagickaCosts.GetValueOrDefault(id, 0);
+            var cooldowns = Tank.CurrentCooldowns;
 
             var hasMagicka = magicka >= _magickaCost;
             var notOnCooldown = true;
 
-            if (cooldowns.TryGetValue(name, out var remainingCooldown))
+            if (cooldowns.TryGetValue(id, out var remainingCooldown))
                 notOnCooldown = remainingCooldown < 0;
 
-            _button.interactable = hasMagicka && notOnCooldown;
+            Button.interactable = hasMagicka && notOnCooldown;
         }
         
         public override void ShowTooltip()
         {
             Legend?.Show(
-                name,
+                displayName,
                 description,
                 iconImage ? iconImage.sprite : null,
                 _magickaCost,

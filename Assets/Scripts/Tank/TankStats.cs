@@ -1,4 +1,5 @@
-﻿using SkillsetUI;
+﻿using System.Collections.Generic;
+using SkillsetUI;
 using UnityEngine;
 
 namespace Tank
@@ -9,6 +10,7 @@ namespace Tank
         [Header("Shot Settings")] 
         public float missileMaxSpeed = SmashTanksConstants.Missile.MaxInitialSpeed;
         public float bouncyMissileMaxSpeed = SmashTanksConstants.BouncyMissile.MaxInitialSpeed;
+        public float juggernautShotMaxSpeed = SmashTanksConstants.JuggernautUlti.MaxInitialSpeed;
 
         [Header("Jump Settings")]
         public float maxForce;
@@ -41,9 +43,9 @@ namespace Tank
         public float explosionForce;
         
         [Header("Abilities")]
-        public bool juggernaut;
-        public bool atomicEssence;
-
+        public IReadOnlyDictionary<string, bool> Abilities;
+        
+        
         public void ApplySkillset(Skillset skillset)
         {
             explosionRadius = SmashTanksConstants.Missile.ExplosionRadius;
@@ -59,8 +61,7 @@ namespace Tank
             maxMagicka = mapper.MaxMagicka;
             magickaRegenRate = mapper.MagickaRegenRate;
             intellect = mapper.Intellect;
-            juggernaut = mapper.Juggernaut;
-            atomicEssence = mapper.AtomicEssence;
+            Abilities = skillset.AbilitiesMap;
         }
     }
 }

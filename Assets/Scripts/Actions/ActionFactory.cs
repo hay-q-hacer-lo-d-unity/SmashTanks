@@ -15,20 +15,21 @@ namespace Actions
 
             switch (actionId.ToLowerInvariant())
             {
-                case "missile":       return CreateMissileAction(tank);
-                case "jump":        return CreateJumpAction(tank);
-                case "crash":       return CreateCrashAction(tank);
-                case "beam":        return CreateBeamAction(tank);
-                case "teleport":    return CreateTeleportAction(tank);
-                case "gale":        return CreateGaleAction(tank);
-                case "bouncy missile":      return CreateBouncyMissileAction(tank);
-                default:
+                case "action_missile":        return CreateMissileAction      (tank);
+                case "action_jump":           return CreateJumpAction         (tank);
+                case "action_crash":          return CreateCrashAction        (tank);
+                case "action_beam":           return CreateBeamAction         (tank);
+                case "action_teleport":       return CreateTeleportAction     (tank);
+                case "action_gale":           return CreateGaleAction         (tank);
+                case "action_bouncy_missile": return CreateBouncyMissileAction(tank);
+                case "juggernaut":            return CreateJuggernautAction   (tank);
+                default: 
                     Debug.LogWarning($"ActionFactory: Unknown action ID '{actionId}'.");
                     return null;
             }
         }
 
-        private static IAction CreateMissileAction(TankScript tank)
+        private static Missile CreateMissileAction(TankScript tank)
         {
             var stats = tank.Stats;
             return new Missile(
@@ -41,10 +42,10 @@ namespace Actions
             );
         }
 
-        private static IAction CreateBouncyMissileAction(TankScript tank)
+        private static BouncyMissile CreateBouncyMissileAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new BouncyMissileAction(
+            return new BouncyMissile(
                 tank.BouncyMissilePrefab,
                 stats.bouncyMissileMaxSpeed,
                 tank.FirePoint,
@@ -54,34 +55,47 @@ namespace Actions
             );
         }
 
-        private static IAction CreateJumpAction(TankScript tank)
+        private static Jump CreateJumpAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new Jump(stats.maxForce, tank.AimPoint, tank.Rb);
+            return new Jump(stats.maxForce, tank.Center, tank.Rb);
         }
 
-        private static IAction CreateCrashAction(TankScript tank)
+        private static Crash CreateCrashAction(TankScript tank)
         {
             var stats = tank.Stats;
-            return new Crash(stats.maxForce, tank.AimPoint, tank.Rb, stats.damage);
+            return new Crash(stats.maxForce, tank.Center, tank.Rb, stats.damage);
         }
 
-        private static IAction CreateBeamAction(TankScript tank)
+        private static Beam CreateBeamAction(TankScript tank)
         {
             var stats = tank.Stats;
             return new Beam(tank.BeamPrefab, tank.FirePoint, stats.intellect, tank);
         }
 
-        private static IAction CreateTeleportAction(TankScript tank)
+        private static Teleport CreateTeleportAction(TankScript tank)
         {
             var stats = tank.Stats;
             return new Teleport(tank, stats.intellect);
         }
 
-        private static IAction CreateGaleAction(TankScript tank)
+        private static Gale CreateGaleAction(TankScript tank)
         {
             var stats = tank.Stats;
             return new Gale(tank.GalePrefab, stats.intellect, tank.FirePoint, tank);
+        }
+        
+        private static JuggernautUlti CreateJuggernautAction(TankScript tank)
+        {
+            return new JuggernautUlti(
+                tank.UltiCurrentValues["Juggernaut"],
+                tank.JuggernautProjectilePrefab,
+                tank,
+                tank.Stats.juggernautShotMaxSpeed,
+                tank.FirePoint,
+                tank.Rb,
+                tank.Collider
+                );
         }
     }
 }

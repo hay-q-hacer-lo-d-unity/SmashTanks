@@ -18,11 +18,11 @@ namespace Tank
             _lineRenderer.widthMultiplier = 0.05f; //grosor
         }
 
-        public void DrawParabola(Vector2 origin, Vector2 initialVelocity, float accuracy)
+        public void DrawParabola_ByTime(Vector2 origin, Vector2 initialVelocity, float accuracy)
         {
             if (!_lineRenderer) return;
 
-            _lineRenderer.positionCount = segments; // reset position count
+            _lineRenderer.positionCount = segments;
 
             for (var i = 0; i < segments; i++)
             {
@@ -33,26 +33,25 @@ namespace Tank
             }   
         }
         
-        public void DrawParabola2(Vector2 origin, Vector2 initialVelocity, float accuracy)
+        public void DrawParabola_ByDistanceBetweenPoints(Vector2 origin, Vector2 initialVelocity, float accuracy)
         {
             if (!_lineRenderer) return;
 
             _lineRenderer.positionCount = segments;
 
-            float vx = initialVelocity.x;
-            float vy = initialVelocity.y;
+            var vx = initialVelocity.x;
+            var vy = initialVelocity.y;
 
-            // We’ll increment t until the distance between start and current point ≈ accuracy
-            float t = 0f;
-            float dt = 0.02f; // step size for finding the correct t (smaller = more precise)
-            float endTime = 0f;
+            var t = 0f;
+            const float dt = 0.02f;
+            var endTime = 0f;
 
             while (true)
             {
-                float x = origin.x + vx * t;
-                float y = origin.y + vy * t + 0.5f * gravity * t * t;
+                var x = origin.x + vx * t;
+                var y = origin.y + vy * t + 0.5f * gravity * t * t;
 
-                float dist = Vector2.Distance(origin, new Vector2(x, y));
+                var dist = Vector2.Distance(origin, new Vector2(x, y));
 
                 if (dist >= accuracy)
                 {
@@ -62,21 +61,81 @@ namespace Tank
 
                 t += dt;
 
-                // safety break to avoid infinite loops
                 if (t > 100f) break;
             }
-
-            // Now we know how much time it takes for the projectile
-            // to be `accuracy` units away from the origin
-            for (int i = 0; i < segments; i++)
+            
+            for (var i = 0; i < segments; i++)
             {
-                float ti = endTime * i / (segments - 1);
-                float x = origin.x + vx * ti;
-                float y = origin.y + vy * ti + 0.5f * gravity * ti * ti;
+                var ti = endTime * i / (segments - 1);
+                var x = origin.x + vx * ti;
+                var y = origin.y + vy * ti + 0.5f * gravity * ti * ti;
 
                 _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
             }
         }
+
+        public void DrawParabola_ByArcLength(Vector2 origin, Vector2 initialVelocity, float accuracy)
+        {
+            if (!_lineRenderer) return;
+
+            _lineRenderer.positionCount = segments;
+
+            var vx = initialVelocity.x;
+            var vy = initialVelocity.y;
+
+            var g = gravity;
+            
+            var low = 0f;
+            var high = 5f;
+
+            const float epsilon = 0.001f;
+
+            while (high - low > epsilon)
+            {
+                var mid = (low + high) * 0.5f;
+                var length = ArcLength(mid, vx, vy, g);
+
+                if (length < accuracy)
+                    low = mid;
+                else
+                    high = mid;
+            }
+
+            var endTime = (low + high) * 0.5f;
+
+            for (var i = 0; i < segments; i++)
+            {
+                var t = endTime * i / (segments - 1);
+                var x = origin.x + vx * t;
+                var y = origin.y + vy * t + 0.5f * g * t * t;
+
+                _lineRenderer.SetPosition(i, new Vector3(x, y, 0));
+            }
+        }
+
+        
+        private static float ArcLength(float T, float vx, float vy, float g)
+        {
+            const int n = 50;
+            var h = T / n;
+
+            var sum = 0f;
+
+            for (var i = 0; i <= n; i++)
+            {
+                var t = i * h;
+
+                var dy = vy + g * t;
+
+                var v = Mathf.Sqrt(vx * vx + dy * dy);
+
+                var w = i is 0 or n ? 1 : (i % 2 == 0 ? 2 : 4);
+                sum += w * v;
+            }
+
+            return sum * (h / 3f);
+        }
+
 
     
         public void ClearParabola()

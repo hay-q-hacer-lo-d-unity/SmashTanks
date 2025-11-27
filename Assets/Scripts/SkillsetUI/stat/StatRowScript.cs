@@ -11,7 +11,7 @@ namespace SkillsetUI.stat
         [SerializeField] private Button increaseButton;
         [SerializeField] private Button decreaseButton;
 
-        public string StatName => name;
+        public string StatID => id;
         public Stat Stat => _stat;
 
         private Stat _stat;

@@ -131,7 +131,7 @@ namespace Actions
             if (!_projectilePrefab || !_firePoint) return;
 
             var direction = (target - origin).normalized;
-            var initialSpeed = TankPhysicsHelper.CalculateMissileSpeed(_maxSpeed, origin, target);
+            var initialSpeed = TankPhysicsHelper.CalculateProjectileSpeed(_maxSpeed, origin, target);
 
             var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
             if (!projectile.TryGetComponent<ExplosiveProjectile>(out var proj)) return;
@@ -156,7 +156,7 @@ namespace Actions
     /// <summary>
     /// Launches a bouncy missile projectile toward a target point.
     /// </summary>
-    public class BouncyMissileAction : DamageScaledAction
+    public class BouncyMissile : DamageScaledAction
     {
         private readonly GameObject _projectilePrefab;
         private readonly float _maxSpeed;
@@ -164,7 +164,7 @@ namespace Actions
         private readonly Rigidbody2D _tankRb;
         private readonly Collider2D _tankCollider;
 
-        public BouncyMissileAction(
+        public BouncyMissile(
             GameObject projectilePrefab,
             float maxSpeed,
             Transform firePoint,
@@ -185,7 +185,7 @@ namespace Actions
             if (!_projectilePrefab || !_firePoint) return;
 
             var direction = (target - origin).normalized;
-            var initialSpeed = TankPhysicsHelper.CalculateMissileSpeed(_maxSpeed, origin, target);
+            var initialSpeed = TankPhysicsHelper.CalculateProjectileSpeed(_maxSpeed, origin, target);
 
             var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
             if (!projectile.TryGetComponent<ExplosiveProjectile>(out var proj)) return;
@@ -430,6 +430,61 @@ namespace Actions
 
         public sealed override string GetName() => "Gale";
         public override AimType AimType() => Actions.AimType.GaleZone;
+    }
+    
+    public class JuggernautUlti : IAction
+    {
+        private readonly GameObject _projectilePrefab;
+        private readonly float _maxSpeed;
+        private readonly Transform _firePoint;
+        private readonly Rigidbody2D _tankRb;
+        private readonly Collider2D _tankCollider;
+        private readonly float _tdr;
+        private readonly TankScript _tank;
+        public JuggernautUlti(
+            float tdr,
+            GameObject projectilePrefab,
+            TankScript tank,
+            float maxSpeed,
+            Transform firePoint, 
+            Rigidbody2D tankRb,
+            Collider2D tankCollider
+            )
+        {
+            _tank = tank;
+            _tdr = tdr;
+            _projectilePrefab = projectilePrefab;
+            _maxSpeed = maxSpeed;
+            _firePoint = firePoint;
+            _tankRb = tankRb;
+            _tankCollider = tankCollider;
+        }
+
+        public void Execute(Vector3 origin, Vector3 target)
+        {
+            if (!_projectilePrefab || !_firePoint) return;
+            _tank.UltiCurrentValues["Juggernaut"] = 0f;
+            
+            var direction = (target - origin).normalized;
+            var initialSpeed = TankPhysicsHelper.CalculateProjectileSpeed(_maxSpeed, origin, target);
+            
+            var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
+            if (!projectile.TryGetComponent<JuggernautProjectile>(out var proj)) return;
+            
+            proj.Initialize(
+                _tankCollider,
+                initialSpeed,
+                _tdr
+            );
+
+            _tankRb.AddForce(-direction * SmashTanksConstants.JuggernautUlti.RecoilForce, ForceMode2D.Impulse);
+        }
+
+        public string GetName() => "Juggernaut";
+
+        public AimType AimType() => Actions.AimType.Parabolic;
+        public int Cooldown { get; } = 0;
+        public bool LocksCannon() => false;
     }
     
     

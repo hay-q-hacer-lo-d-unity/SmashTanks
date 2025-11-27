@@ -9,7 +9,7 @@ namespace SkillsetUI.ability
         [SerializeField] private Button button;
         [SerializeField] private GameObject backgroundImage;
 
-        public string AbilityName => name;
+        public string AbilityID => id;
 
         private Ability _ability;
         private AbilityGroup _group;
@@ -36,7 +36,7 @@ namespace SkillsetUI.ability
         public new void ShowTooltip()
         {
             var backgrounds = GetComponentsInChildren<Image>();
-            Legend?.Show(name, description, backgrounds.Last().sprite);
+            Legend?.Show(id, description, backgrounds.Last().sprite);
         }
     }
 }

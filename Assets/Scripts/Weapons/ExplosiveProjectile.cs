@@ -5,26 +5,13 @@ using UnityEngine;
 
 namespace Weapons
 {
-    public abstract class ExplosiveProjectile : MonoBehaviour
+    public abstract class ExplosiveProjectile : Projectile
     {
         [Tooltip("Radius of the explosion area.")]
         protected float ExplosionRadius { get; set; }
 
         [Tooltip("Force applied to nearby objects within the explosion radius.")]
         protected float ExplosionForce { get; set; }
-
-        [Tooltip("Base damage dealt by the explosion.")]
-        protected float Damage { get; set; }
-        
-        protected Collider2D ProjectileCollider;
-        
-        protected Collider2D OwnerCollider;
-
-        protected Coroutine ReenableCollisionRoutine;
-
-
-        protected Rigidbody2D Rb;
-
         
         [Tooltip("Prefab of the explosion effect visual.")]
         protected GameObject ExplosionEffectPrefab { get; set; }
@@ -32,25 +19,8 @@ namespace Weapons
 
         public void Initialize(Collider2D owner, Vector2 speed, float explosionRadius, float explosionForce, float damage)
         {
-            ProjectileCollider = GetComponent<Collider2D>();
-            Rb = GetComponent<Rigidbody2D>();
-            Rb.linearVelocity = speed;
+            base.Initialize(owner, speed, damage);
             SetStats(explosionRadius, explosionForce, damage);
-            SetOwner(owner);
-        }
-
-        private void SetOwner(Collider2D owner)
-        {
-            OwnerCollider = owner;
-            
-            // Ignore collisions with owner collider.
-            if (!ProjectileCollider) return;
-            Physics2D.IgnoreCollision(owner, ProjectileCollider, true);
-
-            // Restart collision reenable coroutine if needed.
-            if (ReenableCollisionRoutine != null) StopCoroutine(ReenableCollisionRoutine);
-
-            ReenableCollisionRoutine = StartCoroutine(ReenableCollisionAfterDelay(OwnerCollider, ProjectileCollider, 0.25f));
         }
 
         private void SetStats(float explosionRadius, float explosionForce, float damage)
@@ -58,11 +28,6 @@ namespace Weapons
             ExplosionRadius = explosionRadius;
             ExplosionForce = explosionForce;
             Damage = damage;
-        }
-        
-        private void OnDestroy()
-        {
-            if (ReenableCollisionRoutine != null) StopCoroutine(ReenableCollisionRoutine);
         }
 
         
@@ -98,15 +63,6 @@ namespace Weapons
             }
 
             Destroy(gameObject);
-        }
-        
-        private IEnumerator ReenableCollisionAfterDelay(Collider2D owner, Collider2D projectile, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-
-            if (projectile) Physics2D.IgnoreCollision(owner, projectile, false);
-
-            ReenableCollisionRoutine = null;
         }
         
         private void OnDrawGizmosSelected()

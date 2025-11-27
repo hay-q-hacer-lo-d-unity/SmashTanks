@@ -743,6 +743,7 @@ MonoBehaviour:
   bouncyMissilePrefab: {fileID: 6017356574454321282, guid: 9fdc55f59f610944e87ca099d1d9fd2d, type: 3}
   beamPrefab: {fileID: 4470436920408959054, guid: 76d81c79e07e1fc48a1e79f278373a41, type: 3}
   galePrefab: {fileID: 8433505035259395599, guid: 4593b3d3399ab7d4297a3a5312b57f7c, type: 3}
+  juggernautProjectilePrefab: {fileID: 6177264332426742788, guid: 05367af9bf79ac449bc23ee53063d82d, type: 3}
   firePoint: {fileID: 6238391092178404524}
   aimPoint: {fileID: 5454113432729398971}
   trajectoryDrawer: {fileID: 838390347669665156}
@@ -751,6 +752,8 @@ MonoBehaviour:
   cannonOrbitAndAim: {fileID: 7281802776512893827}
   stats:
     missileMaxSpeed: 20
+    bouncyMissileMaxSpeed: 30
+    juggernautShotMaxSpeed: 80
     maxForce: 0
     mass: 0
     maxHealth: 0
@@ -763,7 +766,6 @@ MonoBehaviour:
     baseDamage: 0
     explosionRadius: 0
     explosionForce: 0
-    juggernaut: 0
 --- !u!114 &9205678515018744357
 MonoBehaviour:
   m_ObjectHideFlags: 0

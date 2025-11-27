@@ -1,4 +1,5 @@
-﻿using Actions;
+﻿using System;
+using Actions;
 using UnityEngine;
 
 namespace Tank
@@ -38,23 +39,50 @@ namespace Tank
         {
             if (!_drawer) return;
 
-            var velocity = action switch
+            var (origin, velocity) = action switch
             {
-                BouncyMissileAction => CalculateBouncyMissileVelocity(),
-                Actions.Missile => CalculateMissileVelocity(),
-                Jump or Crash => CalculateJumpVelocity(),
-                _ => Vector2.zero
+                JuggernautUlti =>
+                    (_tank.FirePoint.position, CalculateJuggernautProjectileVelocity()),
+
+                BouncyMissile =>
+                    (_tank.FirePoint.position, CalculateBouncyMissileVelocity()),
+
+                Actions.Missile =>
+                    (_tank.FirePoint.position, CalculateMissileVelocity()),
+
+                // AIMPOINT actions
+                Jump or Crash =>
+                    (_tank.Center.position, CalculateJumpVelocity()),
+
+                _ => (Vector3.zero, Vector2.zero)
             };
 
-            var origin = action switch
+            const SmashTanksConstants.Config.AccuracyMode mode = SmashTanksConstants.Config.TrajectoryAccuracyMode;
+            switch (mode)
             {
-                Actions.Missile or BouncyMissileAction=> _tank.FirePoint.position,
-                Jump or Crash => _tank.AimPoint.position,
-                _ => Vector3.zero
-            };
-
-            _drawer.DrawParabola(origin, velocity, _tank.Stats.accuracy);
+                case SmashTanksConstants.Config.AccuracyMode.TimeBased:
+                    var time = 
+                        SmashTanksConstants.Stats.AccuracyBaseTime + 
+                        (_tank.Stats.accuracy - 1) * SmashTanksConstants.Stats.AccuracyTimeIncreasePerLevel;
+                    _drawer.DrawParabola_ByTime(origin, velocity, time);
+                    break;
+                case SmashTanksConstants.Config.AccuracyMode.LengthBased:
+                    var length = 
+                        SmashTanksConstants.Stats.AccuracyBaseLength + 
+                        (_tank.Stats.accuracy - 1) * SmashTanksConstants.Stats.AccuracyLengthIncreasePerLevel;
+                    _drawer.DrawParabola_ByArcLength(origin, velocity, length);
+                    break;
+                case SmashTanksConstants.Config.AccuracyMode.PointsDistanceBased:
+                    var distance = 
+                        SmashTanksConstants.Stats.AccuracyBasePointsDistance + 
+                        (_tank.Stats.accuracy - 1) * SmashTanksConstants.Stats.AccuracyPointsDistanceIncreasePerLevel;
+                    _drawer.DrawParabola_ByDistanceBetweenPoints(origin, velocity, distance);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
+
         
         public void GaleTrajectory()
         {
@@ -70,19 +98,25 @@ namespace Tank
         private Vector2 CalculateMissileVelocity()
         {
             var cursor = GetMouseWorld();
-            return TankPhysicsHelper.CalculateMissileSpeed(_tank.Stats.missileMaxSpeed, _tank.FirePoint.position, cursor);
+            return TankPhysicsHelper.CalculateProjectileSpeed(_tank.Stats.missileMaxSpeed, _tank.FirePoint.position, cursor);
         }
         
         private Vector2 CalculateBouncyMissileVelocity()
         {
             var cursor = GetMouseWorld();
-            return TankPhysicsHelper.CalculateMissileSpeed(_tank.Stats.bouncyMissileMaxSpeed, _tank.FirePoint.position, cursor);
+            return TankPhysicsHelper.CalculateProjectileSpeed(_tank.Stats.bouncyMissileMaxSpeed, _tank.FirePoint.position, cursor);
+        }
+        
+        private Vector2 CalculateJuggernautProjectileVelocity()
+        {
+            var cursor = GetMouseWorld();
+            return TankPhysicsHelper.CalculateProjectileSpeed(_tank.Stats.juggernautShotMaxSpeed, _tank.FirePoint.position, cursor);
         }
 
         private Vector2 CalculateJumpVelocity()
         {
             var cursor = GetMouseWorld();
-            var force = TankPhysicsHelper.CalculateJumpForce(_tank.Stats.maxForce, _tank.AimPoint.position, cursor);
+            var force = TankPhysicsHelper.CalculateJumpForce(_tank.Stats.maxForce, _tank.Center.position, cursor);
             
             return force / _tank.Rb.mass;
         }

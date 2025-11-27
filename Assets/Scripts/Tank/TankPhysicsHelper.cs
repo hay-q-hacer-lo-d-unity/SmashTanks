@@ -19,7 +19,7 @@ namespace Tank
             return force;
         }
         
-        public static Vector2 CalculateMissileSpeed(float maxSpeed, Vector2 origin, Vector2 target)
+        public static Vector2 CalculateProjectileSpeed(float maxSpeed, Vector2 origin, Vector2 target)
         {
             var cursorPosition = new Vector2(target.x, target.y);
 

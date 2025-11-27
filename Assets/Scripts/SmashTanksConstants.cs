@@ -17,8 +17,13 @@ public static class SmashTanksConstants
         public const float BaseIntellect = 1f;
         public const float BaseDamage = 1f;
 
-        public const float BaseAccuracy = 0.5f;
-        public const float AccuracyMultiplierPerLevel = 0.4f;
+        public const float BaseAccuracy = 1f;
+        public const float AccuracyBaseTime = 0.5f;
+        public const float AccuracyTimeIncreasePerLevel = 0.2f;
+        public const float AccuracyBaseLength = 5f;
+        public const float AccuracyLengthIncreasePerLevel = 2f;
+        public const float AccuracyBasePointsDistance = 3f;
+        public const float AccuracyPointsDistanceIncreasePerLevel = 1.2f;
 
         public const float BaseMendingRateAbsolute = 0.5f;
         public const float BaseMendingRateRelative = BaseHealth * 0.05f;
@@ -133,6 +138,18 @@ public static class SmashTanksConstants
         public const float DecayRate = (MaxRadius - MinRadius) / (Config.Statpoints + 1);
         public const int Cooldown = 2;
     }
+    
+    public static class JuggernautUlti
+    {
+        public const float RequiredTdr = 2f;
+        public const float MaxInitialSpeed = 80f;
+        public const float RecoilForce = 100f;
+    }
+    
+    public static class AtomicEssenceUlti
+    {
+        public const float RequiredMagickaUsed = 40f;
+    }
 
     #endregion
 
@@ -140,6 +157,14 @@ public static class SmashTanksConstants
     {
         public const int Statpoints = 25;
         public const bool UseCompoundIncrease = false;
+        public enum AccuracyMode
+        {
+            TimeBased,
+            LengthBased,
+            PointsDistanceBased
+        }
+        public const AccuracyMode TrajectoryAccuracyMode = AccuracyMode.PointsDistanceBased;
+        public const float ActionsPhaseDelay = 2f;
     }
 
     public static class Physics
