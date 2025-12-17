@@ -387,9 +387,36 @@ namespace Actions
 
         protected override void Perform(Vector3 origin, Vector3 target, float radius)
         {
-            var randomOffset = Random.insideUnitCircle * Radius;
-            var teleportDestination = new Vector2(target.x + randomOffset.x, target.y + randomOffset.y);
-            Tank.transform.position = teleportDestination;
+            int j = 0;
+
+            while (true) {
+                for (int i = 0; i < SmashTanksConstants.Teleport.MaxAttempts; i++)
+                {
+                    var randomOffset = Random.insideUnitCircle * (Radius + j * 1f);
+                    var candidate = new Vector2(target.x + randomOffset.x, target.y + randomOffset.y);
+
+                    if (!IsInsideSolidObject(candidate))
+                    {
+                        Tank.transform.position = candidate;
+                        return;
+                    }
+                }
+                j++;
+            }
+        }
+
+        private static bool IsInsideMapBounds(Vector2 point)
+        {
+            return point.x >= SmashTanksConstants.MapBounds.MinX &&
+                   point.x <= SmashTanksConstants.MapBounds.MaxX &&
+                   point.y >= SmashTanksConstants.MapBounds.MinY &&
+                   point.y <= SmashTanksConstants.MapBounds.MaxY;
+        }
+
+        private static bool IsInsideSolidObject(Vector2 point)
+        {
+            var collider = Physics2D.OverlapCircle(point, SmashTanksConstants.Teleport.CollisionCheckRadius);
+            return collider != null;
         }
 
         public sealed override string GetName() => "action_teleport";

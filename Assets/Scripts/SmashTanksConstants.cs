@@ -137,6 +137,8 @@ public static class SmashTanksConstants
         public const float MaxRadius = 20f;
         public const float DecayRate = (MaxRadius - MinRadius) / (Config.Statpoints + 1);
         public const int Cooldown = 2;
+        public const int MaxAttempts = 50;
+        public const float CollisionCheckRadius = 2.5f; // Radio para verificar colisiones (tanque es ~2x1 unidades)
     }
     
     public static class JuggernautUlti
@@ -165,6 +167,14 @@ public static class SmashTanksConstants
         }
         public const AccuracyMode TrajectoryAccuracyMode = AccuracyMode.PointsDistanceBased;
         public const float ActionsPhaseDelay = 2f;
+    }
+
+    public static class MapBounds
+    {
+        public const float MinX = -44.12f;
+        public const float MaxX = 43.99f;
+        public const float MinY = -17.7f;
+        public const float MaxY = 100f; // Sin techo, valor alto por seguridad
     }
 
     public static class Physics
