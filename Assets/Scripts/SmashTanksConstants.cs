@@ -165,7 +165,7 @@ public static class SmashTanksConstants
             LengthBased,
             PointsDistanceBased
         }
-        public const AccuracyMode TrajectoryAccuracyMode = AccuracyMode.PointsDistanceBased;
+        public const AccuracyMode TrajectoryAccuracyMode = AccuracyMode.LengthBased;
         public const float ActionsPhaseDelay = 2f;
     }
 
