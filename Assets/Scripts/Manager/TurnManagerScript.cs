@@ -75,10 +75,9 @@ namespace Manager
             _currentPhase = TurnPhase.Planning;
             _actions.Clear();
 
-            foreach (var player in _players)
-                player.Tank.ApplyTurnStartEffects();
+            foreach (var player in _players) player.Tank.ApplyTurnStartEffects();
 
-            _playerQueue = new Queue<PlayerScript>(_players);
+            _playerQueue = new Queue<PlayerScript>(_players.OrderBy(_ => Random.value).ToList()); // shuffle
             StartNextPlayerTurn();
         }
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.Unity.VisualStudio.Editor;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using UnityEngine;
 
 namespace Actions.ulti
 {
@@ -9,7 +7,7 @@ namespace Actions.ulti
     {
         public Sprite icon;
         public string name;
-        public string requirement;
+        public string requirement; 
         [TextArea(5, 20)] [SerializeField] public string description;
 
         protected float RequiredValue;
