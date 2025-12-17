@@ -361,7 +361,7 @@ namespace Actions
             beamScript.Initialize(damage, (target - origin).normalized);
         }
 
-        public sealed override string GetName() => "Beam";
+        public sealed override string GetName() => "action_beam";
         public override AimType AimType() => Actions.AimType.HalfLine;
     }
     
@@ -392,7 +392,7 @@ namespace Actions
             Tank.transform.position = teleportDestination;
         }
 
-        public sealed override string GetName() => "Teleport";
+        public sealed override string GetName() => "action_teleport";
         public override AimType AimType() => Actions.AimType.CircularArea;
     }
 
@@ -428,7 +428,7 @@ namespace Actions
             galeScript.Initialize(direction, force);
         }
 
-        public sealed override string GetName() => "Gale";
+        public sealed override string GetName() => "action_gale";
         public override AimType AimType() => Actions.AimType.GaleZone;
     }
     
