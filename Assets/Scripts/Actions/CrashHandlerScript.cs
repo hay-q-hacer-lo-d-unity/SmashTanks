@@ -23,10 +23,12 @@ namespace Actions
         {
             var otherTank = collision.collider.GetComponent<TankScript>();
             if (!otherTank) return;
-
             if (_damagedTanks.Contains(otherTank)) return;
 
             var damage = damageMultiplier * collision.relativeVelocity.magnitude * rb.mass;
+            var volume = 1f - Mathf.Exp(-damage / 10f);
+            Sounds.Play2DSound(Sounds.Instance.crashImpact, volume);
+
             GameManagerScript.Instance.ApplyDamage(otherTank.OwnerId, damage);
 
             _damagedTanks.Add(otherTank); ;

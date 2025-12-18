@@ -36,17 +36,18 @@ namespace Actions
         public void OnPointerEnter(PointerEventData eventData)
         {
             rowHovered = true;
+            Sounds.Play2DSound(Sounds.Instance.jump);
             SlideTo(shownX);
         }
 
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (_isAnimating && Mathf.Approximately(_currentTargetX, shownX))
-                return;
+            if (_isAnimating && Mathf.Approximately(_currentTargetX, shownX)) return;
 
-            if (!rowHovered)
-                SlideTo(hiddenX);
+            if (rowHovered) return;
+            Sounds.Play2DSound(Sounds.Instance.jump);
+            SlideTo(hiddenX);
         }
 
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using Actions;
 using Tank;
 using UnityEngine;
 
@@ -32,8 +33,16 @@ namespace Weapons
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
             AnimateSprite();
         }
-        
-        private void OnCollisionEnter2D() => Explode();
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            // if collided with a tank, play crowd cheer sound
+            if (collision.collider.GetComponent<TankScript>())
+            {
+                Sounds.Play2DSound(Sounds.Instance.crowdCheerHit, 0.8f);
+            }
+            Explode();
+        }
 
         private void AnimateSprite()
         {

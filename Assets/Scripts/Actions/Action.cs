@@ -37,6 +37,11 @@ namespace Actions
         bool LocksCannon();
     }
     
+    public interface IActionWithSound
+    {
+        AudioClip ExecuteSound { get; }
+    }
+
     
     /// <summary>
     /// Action that targets a circular area.
@@ -56,27 +61,24 @@ namespace Actions
     /// </summary>
     public abstract class StatScaledAction : IAction
     {
-        private readonly float _statLevel;
+        protected readonly ActionContext Ctx;
         private readonly Func<float, float> _mapper;
 
-        protected StatScaledAction(float statLevel, Func<float, float> mapper)
+        protected StatScaledAction(ActionContext ctx, float statLevel, Func<float, float> mapper)
         {
-            _statLevel = statLevel;
+            Ctx = ctx;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            StatLevel = statLevel;
         }
 
-        /// <summary>
-        /// Executes the action by first mapping the stat level, then performing the behavior.
-        /// </summary>
+        protected float StatLevel { get; }
+
         public void Execute(Vector3 origin, Vector3 target)
         {
-            var scaledValue = _mapper.Invoke(_statLevel);
+            var scaledValue = _mapper(StatLevel);
             Perform(origin, target, scaledValue);
         }
 
-        /// <summary>
-        /// Performs the actual action with the mapped stat value (e.g., damage or intellect scaling).
-        /// </summary>
         protected abstract void Perform(Vector3 origin, Vector3 target, float scaledValue);
 
         public abstract string GetName();
@@ -84,6 +86,7 @@ namespace Actions
         public abstract int Cooldown { get; }
         public virtual bool LocksCannon() => false;
     }
+
     
     
     /// <summary>
@@ -91,10 +94,9 @@ namespace Actions
     /// </summary>
     public abstract class DamageScaledAction : StatScaledAction
     {
-        protected DamageScaledAction(float damageLevel, Func<float, float> damageMapper)
-            : base(damageLevel, damageMapper) { }
+        protected DamageScaledAction(ActionContext ctx, float damageLevel, Func<float, float> damageMapper)
+            : base(ctx, damageLevel, damageMapper) { }
 
-        // Optionally: you can override this if all physical actions have consistent rules
         public override bool LocksCannon() => false;
     } 
     
@@ -102,101 +104,71 @@ namespace Actions
     /// <summary>
     /// Launches a missile projectile toward a target point.
     /// </summary>
-    public class Missile : DamageScaledAction
+    public class Missile : DamageScaledAction, IActionWithSound
     {
-        private readonly GameObject _projectilePrefab;
-        private readonly float _maxSpeed;
-        private readonly Transform _firePoint;
-        private readonly Rigidbody2D _tankRb;
-        private readonly Collider2D _tankCollider;
+        public AudioClip ExecuteSound => Ctx.ExecuteSound;
 
-        public Missile(
-            GameObject projectilePrefab,
-            float maxSpeed,
-            Transform firePoint,
-            Rigidbody2D tankRb,
-            Collider2D tankCollider,
-            float damageLevel
-        ) : base(damageLevel, StatMapper.MapMissileDamage)
-        {
-            _projectilePrefab = projectilePrefab;
-            _maxSpeed = maxSpeed;
-            _firePoint = firePoint;
-            _tankRb = tankRb;
-            _tankCollider = tankCollider;
-        }
+        public Missile(ActionContext ctx)
+            : base(ctx, ctx.Stats.damage, StatMapper.MapMissileDamage) { }
 
         protected override void Perform(Vector3 origin, Vector3 target, float damage)
         {
-            if (!_projectilePrefab || !_firePoint) return;
-
             var direction = (target - origin).normalized;
-            var initialSpeed = TankPhysicsHelper.CalculateProjectileSpeed(_maxSpeed, origin, target);
+            var speed = TankPhysicsHelper.CalculateProjectileSpeed(
+                Ctx.Stats.missileMaxSpeed, origin, target
+            );
 
-            var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
-            if (!projectile.TryGetComponent<ExplosiveProjectile>(out var proj)) return;
+            var projectile = Object.Instantiate(
+                Ctx.MissilePrefab, origin, Quaternion.identity
+            );
+
+            if (!projectile.TryGetComponent(out ExplosiveProjectile proj)) return;
 
             proj.Initialize(
-                _tankCollider,
-                initialSpeed,
+                Ctx.Collider,
+                speed,
                 SmashTanksConstants.Missile.ExplosionRadius,
                 SmashTanksConstants.Missile.ExplosionForce,
                 damage
             );
 
-            _tankRb.AddForce(-direction * SmashTanksConstants.Missile.RecoilForce, ForceMode2D.Impulse);
+            Ctx.Rb.AddForce(
+                -direction * SmashTanksConstants.Missile.RecoilForce,
+                ForceMode2D.Impulse
+            );
         }
 
         public override string GetName() => "Shoot";
         public override AimType AimType() => Actions.AimType.Parabolic;
         public override int Cooldown => SmashTanksConstants.Missile.Cooldown;
     }
-
+    
     
     /// <summary>
     /// Launches a bouncy missile projectile toward a target point.
     /// </summary>
-    public class BouncyMissile : DamageScaledAction
+    public class BouncyMissile : DamageScaledAction, IActionWithSound
     {
-        private readonly GameObject _projectilePrefab;
-        private readonly float _maxSpeed;
-        private readonly Transform _firePoint;
-        private readonly Rigidbody2D _tankRb;
-        private readonly Collider2D _tankCollider;
-
-        public BouncyMissile(
-            GameObject projectilePrefab,
-            float maxSpeed,
-            Transform firePoint,
-            Rigidbody2D tankRb,
-            Collider2D tankCollider,
-            float damageLevel
-        ) : base(damageLevel, StatMapper.MapBouncyMissileDamage)
-        {
-            _projectilePrefab = projectilePrefab;
-            _maxSpeed = maxSpeed;
-            _firePoint = firePoint;
-            _tankRb = tankRb;
-            _tankCollider = tankCollider;
-        }
+        public BouncyMissile(ActionContext ctx) 
+            : base(ctx, ctx.Stats.damage, StatMapper.MapBouncyMissileDamage) { }
         
         protected override void Perform(Vector3 origin, Vector3 target, float damage)
         {
-            if (!_projectilePrefab || !_firePoint) return;
-
             var direction = (target - origin).normalized;
-            var initialSpeed = TankPhysicsHelper.CalculateProjectileSpeed(_maxSpeed, origin, target);
+            var speed = TankPhysicsHelper.CalculateProjectileSpeed(
+                Ctx.Stats.bouncyMissileMaxSpeed, origin, target
+            );
 
-            var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
+            var projectile = Object.Instantiate(Ctx.BouncyMissilePrefab, origin, Quaternion.identity);
             if (!projectile.TryGetComponent<ExplosiveProjectile>(out var proj)) return;
             proj.Initialize(
-                _tankCollider, 
-                initialSpeed, 
+                Ctx.Collider, 
+                speed, 
                 SmashTanksConstants.BouncyMissile.ExplosionRadius, 
                 SmashTanksConstants.BouncyMissile.ExplosionForce, 
                 damage
                 );
-            _tankRb.AddForce(-direction * SmashTanksConstants.BouncyMissile.RecoilForce, ForceMode2D.Impulse);
+            Ctx.Rb.AddForce(-direction * SmashTanksConstants.BouncyMissile.RecoilForce, ForceMode2D.Impulse);
         }
 
         public override string GetName() => "Bouncy";
@@ -205,45 +177,33 @@ namespace Actions
         
         public override int Cooldown => SmashTanksConstants.BouncyMissile.Cooldown;
         public new bool LocksCannon() => false;
+        public AudioClip ExecuteSound => Ctx.ExecuteSound;
     }
     
     
     /// <summary>
     /// Makes the tank jump toward a target location.
     /// </summary>
-    public class Jump : IAction
+    public class Jump : IAction, IActionWithSound
     {
-        private readonly Transform _aimPoint;
-        private readonly Rigidbody2D _rb;
-        private readonly float _maxForce;
-        int IAction.Cooldown => SmashTanksConstants.Jump.Cooldown;
+        private readonly ActionContext _ctx;
+        public AudioClip ExecuteSound => _ctx.ExecuteSound;
 
-        
+        public Jump(ActionContext ctx) => _ctx = ctx;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Jump"/> class.
-        /// </summary>
-        public Jump(float maxForce, Transform aimPoint, Rigidbody2D rb)
-        {
-            _maxForce = maxForce;
-            _aimPoint = aimPoint;
-            _rb = rb;
-        }
-
-        /// <inheritdoc />
         public void Execute(Vector3 origin, Vector3 target)
         {
-            var force = TankPhysicsHelper.CalculateJumpForce(_maxForce, _aimPoint.position, target);
-            _rb.AddForce(force, ForceMode2D.Impulse);
+            var force = TankPhysicsHelper.CalculateJumpForce(
+                _ctx.Stats.maxForce,
+                _ctx.Center.position,
+                target
+            );
+            _ctx.Rb.AddForce(force, ForceMode2D.Impulse);
         }
 
-        /// <inheritdoc />
         public string GetName() => "Jump";
-
-        /// <inheritdoc />
         public AimType AimType() => Actions.AimType.Parabolic;
-
-        /// <inheritdoc />
+        public int Cooldown => SmashTanksConstants.Jump.Cooldown;
         public bool LocksCannon() => false;
     }
     
@@ -251,11 +211,8 @@ namespace Actions
     /// <summary>
     /// Makes the tank jump toward a target location and applies collision damage when it impacts another object.
     /// </summary>
-    public class Crash : DamageScaledAction
+    public class Crash : DamageScaledAction, IActionWithSound
     {
-        private readonly Transform _aimPoint;
-        private readonly Rigidbody2D _rb;
-        private readonly float _maxForce;
         public override int Cooldown => SmashTanksConstants.Crash.Cooldown;
 
 
@@ -263,26 +220,20 @@ namespace Actions
         /// Initializes a new instance of the <see cref="Crash"/> class.
         /// </summary>
         public Crash(
-            float maxForce,
-            Transform aimPoint,
-            Rigidbody2D rb,
-            float damageLevel
-            ) : base(damageLevel, StatMapper.MapCrash)
+            ActionContext ctx
+            ) : base(ctx, ctx.Stats.damage, StatMapper.MapCrash)
         {
-            _maxForce = maxForce;
-            _aimPoint = aimPoint;
-            _rb = rb;
         }
 
         /// <inheritdoc />
         protected override void Perform(Vector3 origin, Vector3 target, float damageMultiplier)
         {
-            var force = TankPhysicsHelper.CalculateJumpForce(_maxForce, _aimPoint.position, target);
-            _rb.AddForce(force, ForceMode2D.Impulse);
+            var force = TankPhysicsHelper.CalculateJumpForce(Ctx.Stats.maxForce, Ctx.Center.position, target);
+            Ctx.Rb.AddForce(force, ForceMode2D.Impulse);
 
             // Attach a temporary crash handler to process collision-based damage.
-            var handler = _rb.gameObject.AddComponent<CrashHandlerScript>();
-            handler.rb = _rb;
+            var handler = Ctx.Rb.gameObject.AddComponent<CrashHandlerScript>();
+            handler.rb = Ctx.Rb;
             handler.damageMultiplier = damageMultiplier;
         }
 
@@ -293,6 +244,7 @@ namespace Actions
         public override AimType AimType() => Actions.AimType.Parabolic;
         
         public new bool LocksCannon() => false;
+        public AudioClip ExecuteSound => Ctx.ExecuteSound;
     }
 
     
@@ -301,17 +253,12 @@ namespace Actions
     /// </summary>
     public abstract class IntellectScaledAction : StatScaledAction
     {
-        protected readonly TankScript Tank;
-
         protected IntellectScaledAction(
-            TankScript tank, 
+            ActionContext ctx, 
             float intellectLevel,
             Func<float, float> intellectMapper
             )
-            : base(intellectLevel, intellectMapper)
-        {
-            Tank = tank;
-        }
+            : base(ctx, intellectLevel, intellectMapper) { }
 
         /// <summary>
         /// The magicka cost to perform this action.
@@ -323,9 +270,9 @@ namespace Actions
         /// </summary>
         public new void Execute(Vector3 origin, Vector3 target)
         {
-            if (!Tank) return;
+            if (!Ctx.Tank) return;
 
-            Tank.SpendMagicka(MagickaCost);
+            Ctx.Tank.SpendMagicka(MagickaCost);
             base.Execute(origin, target);
         }
         public new virtual bool LocksCannon() => false;
@@ -335,34 +282,29 @@ namespace Actions
     /// <summary>
     /// Fires a magical energy beam from the tank toward the target.
     /// </summary>
-    public class Beam : IntellectScaledAction
+    public class Beam : IntellectScaledAction, IActionWithSound
     {
-        private readonly GameObject _beamPrefab;
-        private readonly Transform _firePoint;
-        public override int Cooldown => SmashTanksConstants.Beam.Cooldown;
-        protected sealed override float MagickaCost { get; set; }
+        public AudioClip ExecuteSound => Ctx.ExecuteSound;
 
-
-        public Beam(GameObject beamPrefab, Transform firePoint, float intellectLevel, TankScript tank)
-            : base(tank, intellectLevel, StatMapper.MapBeamDamage)
+        public Beam(ActionContext ctx)
+            : base(ctx, ctx.Stats.intellect, StatMapper.MapBeamDamage)
         {
-            _beamPrefab = beamPrefab;
-            _firePoint = firePoint;
-            MagickaCost = tank.MagickaCosts[GetName()];
+            MagickaCost = ctx.Tank.MagickaCosts[GetName()];
         }
+
+        protected sealed override float MagickaCost { get; set; }
 
         protected override void Perform(Vector3 origin, Vector3 target, float damage)
         {
-            if (!_beamPrefab || !_firePoint) return;
-
-            var beam = Object.Instantiate(_beamPrefab, origin, Quaternion.identity);
-            if (!beam.TryGetComponent<BeamScript>(out var beamScript)) return;
+            var beam = Object.Instantiate(Ctx.BeamPrefab, origin, Quaternion.identity);
+            if (!beam.TryGetComponent(out BeamScript beamScript)) return;
 
             beamScript.Initialize(damage, (target - origin).normalized);
         }
 
-        public sealed override string GetName() => "action_beam";
+        public override string GetName() => "action_beam";
         public override AimType AimType() => Actions.AimType.HalfLine;
+        public override int Cooldown => SmashTanksConstants.Beam.Cooldown;
     }
     
     
@@ -370,36 +312,36 @@ namespace Actions
     /// Teleports the tank to a location near the target.
     /// The higher the intellect, the more accurate the teleport.
     /// </summary>
-    public class Teleport : IntellectScaledAction, ICircularAreaAction
+    public class Teleport : IntellectScaledAction, ICircularAreaAction, IActionWithSound
     {
+        public AudioClip ExecuteSound => Ctx.ExecuteSound;
         public float Radius { get; }
 
         protected sealed override float MagickaCost { get; set; }
-        public override int Cooldown => SmashTanksConstants.Teleport.Cooldown;
 
-
-        public Teleport(TankScript tank, float intellectLevel)
-            : base(tank, intellectLevel, StatMapper.MapTeleportRadius)
+        public Teleport(ActionContext ctx)
+            : base(ctx, ctx.Stats.intellect, StatMapper.MapTeleportRadius)
         {
-            Radius = StatMapper.MapTeleportRadius(intellectLevel);
-            MagickaCost = tank.MagickaCosts[GetName()];
+            Radius = StatMapper.MapTeleportRadius(ctx.Stats.intellect);
+            MagickaCost = ctx.Tank.MagickaCosts[GetName()];
         }
+
+        public override string GetName() => "action_teleport";
+        public override AimType AimType() => Actions.AimType.CircularArea;
+        public override int Cooldown => SmashTanksConstants.Teleport.Cooldown;
 
         protected override void Perform(Vector3 origin, Vector3 target, float radius)
         {
-            int j = 0;
-
+            var j = 0;
             while (true) {
-                for (int i = 0; i < SmashTanksConstants.Teleport.MaxAttempts; i++)
+                for (var i = 0; i < SmashTanksConstants.Teleport.MaxAttempts; i++)
                 {
                     var randomOffset = Random.insideUnitCircle * (Radius + j * 1f);
                     var candidate = new Vector2(target.x + randomOffset.x, target.y + randomOffset.y);
 
-                    if (!IsInsideSolidObject(candidate))
-                    {
-                        Tank.transform.position = candidate;
-                        return;
-                    }
+                    if (IsInsideSolidObject(candidate)) continue;
+                    Ctx.Tank.transform.position = candidate;
+                    return;
                 }
                 j++;
             }
@@ -407,49 +349,35 @@ namespace Actions
 
         private static bool IsInsideMapBounds(Vector2 point)
         {
-            return point.x >= SmashTanksConstants.MapBounds.MinX &&
-                   point.x <= SmashTanksConstants.MapBounds.MaxX &&
-                   point.y >= SmashTanksConstants.MapBounds.MinY &&
-                   point.y <= SmashTanksConstants.MapBounds.MaxY;
+            return point.x is >= SmashTanksConstants.MapBounds.MinX and <= SmashTanksConstants.MapBounds.MaxX &&
+                   point.y is >= SmashTanksConstants.MapBounds.MinY and <= SmashTanksConstants.MapBounds.MaxY;
         }
 
         private static bool IsInsideSolidObject(Vector2 point)
         {
             var collider = Physics2D.OverlapCircle(point, SmashTanksConstants.Teleport.CollisionCheckRadius);
-            return collider != null;
+            return collider;
         }
-
-        public sealed override string GetName() => "action_teleport";
-        public override AimType AimType() => Actions.AimType.CircularArea;
     }
 
 
     /// <summary>
     /// Creates a moving wind force that pushes all rigidbodies it touches.
     /// </summary>
-    public class Gale : IntellectScaledAction
+    public class Gale : IntellectScaledAction, IActionWithSound
     {
-        private readonly GameObject _galePrefab;
-        private readonly Transform _firePoint;
         private readonly float _force;
         public override int Cooldown => SmashTanksConstants.Gale.Cooldown;
         
         protected sealed override float MagickaCost { get; set; }
 
-        public Gale(GameObject galePrefab, float intellectLevel, Transform firePoint, TankScript tank)
-            : base(tank, intellectLevel, StatMapper.MapGaleForce)
-        {
-            MagickaCost = tank.MagickaCosts[GetName()];
-            _galePrefab = galePrefab;
-            _firePoint = firePoint;
-        }
+        public Gale(ActionContext ctx)
+            : base(ctx, ctx.Stats.intellect, StatMapper.MapGaleForce) { }
 
         protected override void Perform(Vector3 origin, Vector3 target, float force)
         {
-            if (!_firePoint) return;
-
             var direction = (target - origin).normalized;
-            var gale = Object.Instantiate(_galePrefab, origin, Quaternion.identity);
+            var gale = Object.Instantiate(Ctx.GalePrefab, origin, Quaternion.identity);
 
             if (!gale.TryGetComponent<GaleScript>(out var galeScript)) return;
             galeScript.Initialize(direction, force);
@@ -457,63 +385,44 @@ namespace Actions
 
         public sealed override string GetName() => "action_gale";
         public override AimType AimType() => Actions.AimType.GaleZone;
+        public AudioClip ExecuteSound => Ctx.ExecuteSound;
     }
     
-    public class JuggernautUlti : IAction
+    public class JuggernautUlti : IAction, IActionWithSound
     {
-        private readonly GameObject _projectilePrefab;
-        private readonly float _maxSpeed;
-        private readonly Transform _firePoint;
-        private readonly Rigidbody2D _tankRb;
-        private readonly Collider2D _tankCollider;
-        private readonly float _tdr;
-        private readonly TankScript _tank;
-        public JuggernautUlti(
-            float tdr,
-            GameObject projectilePrefab,
-            TankScript tank,
-            float maxSpeed,
-            Transform firePoint, 
-            Rigidbody2D tankRb,
-            Collider2D tankCollider
-            )
-        {
-            _tank = tank;
-            _tdr = tdr;
-            _projectilePrefab = projectilePrefab;
-            _maxSpeed = maxSpeed;
-            _firePoint = firePoint;
-            _tankRb = tankRb;
-            _tankCollider = tankCollider;
-        }
+        private readonly ActionContext _ctx;
+        public AudioClip ExecuteSound => _ctx.ExecuteSound;
+
+        public JuggernautUlti(ActionContext ctx) => _ctx = ctx;
 
         public void Execute(Vector3 origin, Vector3 target)
         {
-            if (!_projectilePrefab || !_firePoint) return;
-            _tank.UltiCurrentValues["Juggernaut"] = 0f;
-            
+            _ctx.Tank.UltiCurrentValues["Juggernaut"] = 0f;
+
             var direction = (target - origin).normalized;
-            var initialSpeed = TankPhysicsHelper.CalculateProjectileSpeed(_maxSpeed, origin, target);
-            
-            var projectile = Object.Instantiate(_projectilePrefab, origin, Quaternion.identity);
-            if (!projectile.TryGetComponent<JuggernautProjectile>(out var proj)) return;
-            
-            proj.Initialize(
-                _tankCollider,
-                initialSpeed,
-                _tdr
+            var speed = TankPhysicsHelper.CalculateProjectileSpeed(
+                _ctx.Stats.juggernautShotMaxSpeed, origin, target
             );
 
-            _tankRb.AddForce(-direction * SmashTanksConstants.JuggernautUlti.RecoilForce, ForceMode2D.Impulse);
+            var projectile = Object.Instantiate(
+                _ctx.JuggernautProjectilePrefab, origin, Quaternion.identity
+            );
+
+            if (!projectile.TryGetComponent(out JuggernautProjectile proj)) return;
+
+            proj.Initialize(_ctx.Collider, speed, _ctx.Stats.damage);
+
+            _ctx.Rb.AddForce(
+                -direction * SmashTanksConstants.JuggernautUlti.RecoilForce,
+                ForceMode2D.Impulse
+            );
         }
 
         public string GetName() => "Juggernaut";
-
         public AimType AimType() => Actions.AimType.Parabolic;
-        public int Cooldown { get; } = 0;
+        public int Cooldown => 0;
         public bool LocksCannon() => false;
     }
-    
     
     public enum AimType
     {

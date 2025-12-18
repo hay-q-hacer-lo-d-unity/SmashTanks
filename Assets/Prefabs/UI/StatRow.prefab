@@ -418,7 +418,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8907992448150159687}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4807502535125668375, guid: cf2dd8f342bd6aa4bb4bf296835a806f, type: 3}
+        m_TargetAssemblyTypeName: Actions.Sounds, Assembly-CSharp
+        m_MethodName: PlayButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4838463987169151891
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +508,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d3217b4519a83e4ca7c3476ae205080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.StatRowScript
-  name: New Stat
+  id: New Attribute
+  displayName: Attribute Name
   description: Stat description
   valueTMP: {fileID: 3293615945860036627}
   increaseButton: {fileID: 3695130588727697112}
@@ -621,7 +634,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6422548518894369672}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4807502535125668375, guid: cf2dd8f342bd6aa4bb4bf296835a806f, type: 3}
+        m_TargetAssemblyTypeName: Actions.Sounds, Assembly-CSharp
+        m_MethodName: PlayButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6186987709688618068
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Actions;
 using SkillsetUI;
 using Tank;
 using UnityEngine;
@@ -39,6 +40,7 @@ namespace Manager
         // ---------- UNITY LIFECYCLE ----------
         private void Awake()
         {
+            Sounds.Instance.PlayStatsScreenBackground();
             if (Instance != null && Instance != this)
             {
                 Debug.LogWarning("[GameManager] Duplicate instance found. Destroying new one.");
@@ -74,12 +76,14 @@ namespace Manager
         // -------------- GAME CYCLE --------------
         private void StartGame()
         {
+            Sounds.Instance.StopBackground();
             if (!ValidateReferences()) return;
             if (_pendingSkillsets.Count != playerCount)
             {
                 Debug.LogError("[GameManager] Skillset count does not match player count.");
                 return;
             }
+            Sounds.Instance.PlayGameBackground();
 
             skillsetScreen?.SetActive(false);
             gameplayRoot.SetActive(true);
@@ -94,6 +98,7 @@ namespace Manager
 
         private void EndGame(int? winnerId)
         {
+            Sounds.Instance.StopBackground();
             gameOverPanel.Show(winnerId?.ToString());
         }
         
@@ -114,8 +119,8 @@ namespace Manager
         {
             _tanks.Clear();
 
-            float startX = 0f;
-            float spawnStep = 0f;
+            var startX = 0f;
+            var spawnStep = 0f;
 
             if (playerCount > 1)
             {

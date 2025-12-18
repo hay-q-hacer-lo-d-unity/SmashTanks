@@ -1,4 +1,5 @@
-﻿using Tank;
+﻿using Actions;
+using Tank;
 using UnityEngine;
 
 namespace Weapons
@@ -19,7 +20,9 @@ namespace Weapons
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.collider.TryGetComponent<TankScript>(out _)) Explode();
+            if (!other.collider.TryGetComponent<TankScript>(out _)) return;
+            Sounds.Play2DSound(Sounds.Instance.crowdCheerHit, 0.8f);
+            Explode();
         }
 
         private void Update() => AnimateSprite();

@@ -53,7 +53,10 @@ namespace Tank
 
         [Tooltip("Component that controls cannon rotation and aiming lock state.")]
         [SerializeField] private CannonOrbitAndAim cannonOrbitAndAim;
-
+        
+        [Header("Audio")]
+        [SerializeField] private AudioSource actionAudioSource;
+        
         [Header("Stats")]
         [Tooltip("Base stats for this tank, including health, magicka, and damage.")]
         [SerializeField] private TankStats stats = new();
@@ -69,6 +72,7 @@ namespace Tank
         private TankMagicka _magicka;
         private TankTrajectoryHandler _trajectoryHandler;
         private TankInputHandler _inputHandler;
+        private ActionExecutor _actionExecutor;
 
         private bool _canActThisTurn;
         public bool IsDead { get; private set; }
@@ -143,7 +147,7 @@ namespace Tank
             _trajectoryHandler = new TankTrajectoryHandler(this, trajectoryDrawer);
             _inputHandler = new TankInputHandler(this, _turnManager);
             
-            // Default to missile action at turn start
+            _actionExecutor = new ActionExecutor(actionAudioSource);
             _currentAction = ActionFactory.Create("action_missile", this);
         }
 
@@ -225,7 +229,7 @@ namespace Tank
         /// <param name="action">Action data including origin, target, and type.</param>
         public void ExecuteAction(PlayerAction action)
         {
-            _confirmedAction?.Execute(action.Origin, action.Target);
+            _actionExecutor.Execute(_confirmedAction, action.Origin, action.Target);
             ApplyCooldown();
             if (stats.Abilities.GetValueOrDefault("Atomic Essence", false)) ApplyAtomicEssence();
         }

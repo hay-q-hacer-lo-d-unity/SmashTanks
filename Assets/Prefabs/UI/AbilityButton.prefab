@@ -121,18 +121,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11500000, guid: a7b7d91dd0bf49c999bd8586d7d45e7a, type: 3}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 4807502535125668375, guid: cf2dd8f342bd6aa4bb4bf296835a806f, type: 3}
+        m_TargetAssemblyTypeName: Actions.Sounds, Assembly-CSharp
+        m_MethodName: PlayButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 2
 --- !u!114 &2052510062570689652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,7 +196,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f04f295f4e8b46f9b8814b17c5a1908b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.AbilityButtonScript
-  name: Juggernaut
+  id: New Attribute
+  displayName: Attribute Name
   description: "When the weak would falter, the Juggernaut laugheth in the face of
     ruin. Each blow that striketh thy armor feedeth thy fury. The more thy foes batter
     thee, the mightier thy retribution shall become.\nHe who beareth the mantle of

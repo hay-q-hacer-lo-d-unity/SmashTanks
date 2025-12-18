@@ -1,7 +1,9 @@
 ﻿using System.Collections;
+using Actions;
 using Manager;
 using Tank;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Weapons
 {
@@ -16,6 +18,10 @@ namespace Weapons
         [Tooltip("Prefab of the explosion effect visual.")]
         protected GameObject ExplosionEffectPrefab { get; set; }
         
+        [FormerlySerializedAs("ExplosionSound")]
+        [Header("Audio")]
+        [SerializeField] private AudioClip explosionSound;
+        [SerializeField] private float explosionVolume = 1f;
 
         public void Initialize(Collider2D owner, Vector2 speed, float explosionRadius, float explosionForce, float damage)
         {
@@ -36,22 +42,25 @@ namespace Weapons
         /// </summary>
         public void Explode()
         {
-            if (ExplosionEffectPrefab)
-                Instantiate(ExplosionEffectPrefab, transform.position, Quaternion.identity);
+            if (ExplosionEffectPrefab) Instantiate(ExplosionEffectPrefab, transform.position, Quaternion.identity);
 
+            if (explosionSound)
+                Sounds.Play2DSound(
+                    explosionSound,
+                    explosionVolume
+                );
+            
             var colliders = Physics2D.OverlapCircleAll(transform.position, ExplosionRadius);
 
             foreach (var col in colliders)
             {
-                if (col.attachedRigidbody == null || col.attachedRigidbody == Rb)
-                    continue;
+                if (col.attachedRigidbody == null || col.attachedRigidbody == Rb) continue;
 
                 var rb = col.attachedRigidbody;
                 var direction = rb.position - (Vector2)transform.position;
                 var distance = direction.magnitude;
                 var normalizedDistance = Mathf.Clamp01(distance / ExplosionRadius);
 
-                // Quadratic falloff
                 var attenuation = 1f - normalizedDistance * normalizedDistance;
                 var force = ExplosionForce * attenuation;
                 var damageAmount = Damage * attenuation;
