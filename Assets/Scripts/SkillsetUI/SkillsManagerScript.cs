@@ -14,6 +14,7 @@ namespace SkillsetUI
         [SerializeField] private TMP_Text statpointsText;
         [SerializeField] private Button confirmButton;
         [SerializeField] private LegendScript legend;
+        [SerializeField] private Button returnButton;
 
         [Header("Stats")]
         [SerializeField] private List<StatRowScript> statRows;
@@ -35,6 +36,7 @@ namespace SkillsetUI
             _abilityGroup.Initialize();
 
             confirmButton.onClick.AddListener(OnConfirm);
+            returnButton.onClick.AddListener(OnReturn);
         }
 
         private void OnConfirm()
@@ -49,6 +51,12 @@ namespace SkillsetUI
         public void UpdateStatpointsUI(int remaining)
         {
             statpointsText.text = remaining.ToString();
+        }
+        private void OnReturn()
+        {
+            _statGroup.Reset();
+            _abilityGroup.Reset();
+            GameManagerScript.Instance.ReturnToPreviousPlauer();
         }
     }
 
