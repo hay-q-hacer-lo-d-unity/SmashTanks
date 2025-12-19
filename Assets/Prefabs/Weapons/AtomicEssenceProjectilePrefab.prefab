@@ -183,6 +183,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.AtomicEssenceProjectile
   projectileCollider: {fileID: -3720673336274447819}
+  tankHitSound: {fileID: 8300000, guid: bd0267f4451171e4a838746423497124, type: 3}
+  hitSound: {fileID: 0}
   rb: {fileID: 8199702797495018697}
   animationFrames:
   - {fileID: 21300000, guid: 38790118b39409c4d906893aa277e5f6, type: 3}

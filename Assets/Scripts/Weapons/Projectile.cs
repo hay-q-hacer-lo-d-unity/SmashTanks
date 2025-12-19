@@ -7,6 +7,8 @@ namespace Weapons
     public abstract class Projectile : MonoBehaviour
     {
         [SerializeField] protected Collider2D projectileCollider;
+        [SerializeField] protected AudioClip tankHitSound;
+        [SerializeField] protected AudioClip hitSound;
         
         protected Collider2D OwnerCollider;
 

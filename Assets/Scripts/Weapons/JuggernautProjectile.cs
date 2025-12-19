@@ -1,4 +1,5 @@
-﻿using Tank;
+﻿using Manager;
+using Tank;
 using UnityEngine;
 
 namespace Weapons
@@ -23,7 +24,11 @@ namespace Weapons
         private void OnCollisionEnter2D(Collision2D collision)
         {
             var tank = collision.gameObject.GetComponent<TankScript>();
-            if (tank != null) tank.ApplyDamage(Damage);
+            if (tank != null)
+            {
+                GameManagerScript.Instance.ApplyDamage(tank.OwnerId, Damage);
+                SoundsScript.Play2DSound(tankHitSound);
+            }
             Debug.Log($"Projectile hit {collision.collider.name}");
             Destroy(gameObject);
         }
