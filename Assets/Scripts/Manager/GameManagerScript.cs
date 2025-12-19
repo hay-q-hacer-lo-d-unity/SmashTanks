@@ -75,11 +75,12 @@ namespace Manager
             StartGame();
         }
 
-        public void ReturnToPreviousPlauer()
+        public void ReturnToPreviousPlayer()
         {
             if (_confirmedPlayers <= 0)
             {
-                Debug.LogWarning("[GameManager] No players to return to.");
+                skillsetScreen?.SetActive(false);
+                playerQuantityScreen?.SetActive(true);
                 return;
             }
 

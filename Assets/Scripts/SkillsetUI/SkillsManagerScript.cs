@@ -56,7 +56,7 @@ namespace SkillsetUI
         {
             _statGroup.Reset();
             _abilityGroup.Reset();
-            GameManagerScript.Instance.ReturnToPreviousPlauer();
+            GameManagerScript.Instance.ReturnToPreviousPlayer();
         }
     }
 
