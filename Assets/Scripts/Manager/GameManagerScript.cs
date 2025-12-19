@@ -75,6 +75,21 @@ namespace Manager
             StartGame();
         }
 
+        public void ReturnToPreviousPlauer()
+        {
+            if (_confirmedPlayers <= 0)
+            {
+                Debug.LogWarning("[GameManager] No players to return to.");
+                return;
+            }
+
+            _pendingSkillsets.RemoveAt(_pendingSkillsets.Count - 1);
+            _confirmedPlayers--;
+
+            OnTankConfirmed?.Invoke(_confirmedPlayers, playerCount);
+            playerCountText.text = _confirmedPlayers.ToString() + "/" + playerCount.ToString();
+        }
+
         // -------------- GAME CYCLE --------------
         private void StartGame()
         {
