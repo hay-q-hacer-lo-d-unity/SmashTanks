@@ -4,6 +4,7 @@ using Actions;
 using SkillsetUI;
 using Tank;
 using UnityEngine;
+using TMPro;
 
 namespace Manager
 {
@@ -18,6 +19,7 @@ namespace Manager
         [SerializeField] private GameObject gameplayRoot;
         [SerializeField] private GameOverPanelScript gameOverPanel;
         [SerializeField] private TurnManagerScript turnManager;
+        [SerializeField] private TMP_Text playerCountText;
 
         [Header("Game Settings")]
         [SerializeField] private int playerCount;
@@ -66,7 +68,7 @@ namespace Manager
             _confirmedPlayers++;
 
             OnTankConfirmed?.Invoke(_confirmedPlayers, playerCount);
-            Debug.Log($"[GameManager] Confirmed tank {_confirmedPlayers}/{playerCount}");
+            playerCountText.text = _confirmedPlayers.ToString() + "/" + playerCount.ToString();
 
             if (_confirmedPlayers < playerCount) return;
             OnAllPlayersConfirmed?.Invoke();
@@ -182,6 +184,7 @@ namespace Manager
         {
             playerQuantityScreen?.SetActive(false);
             skillsetScreen?.SetActive(true);
+            playerCountText.text = "0/" + playerCount.ToString();
         }
     }
 }
