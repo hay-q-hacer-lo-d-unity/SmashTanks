@@ -7584,6 +7584,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sounds
       objectReference: {fileID: 0}
+    - target: {fileID: 4807502535125668375, guid: cf2dd8f342bd6aa4bb4bf296835a806f, type: 3}
+      propertyPath: juggernaut
+      value: 
+      objectReference: {fileID: 8300000, guid: 142db68aa6409ab49ac88f4538d24701, type: 3}
+    - target: {fileID: 4807502535125668375, guid: cf2dd8f342bd6aa4bb4bf296835a806f, type: 3}
+      propertyPath: atomicEssence
+      value: 
+      objectReference: {fileID: 8300000, guid: 2f2e927f84a374246a7d69b016b56597, type: 3}
     - target: {fileID: 7455001071137700137, guid: cf2dd8f342bd6aa4bb4bf296835a806f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 900.8952
