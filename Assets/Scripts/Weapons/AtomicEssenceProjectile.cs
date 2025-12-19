@@ -12,18 +12,18 @@ namespace Weapons
 
         private void Awake()
         {
-            ProjectileCollider = GetComponent<Collider2D>();
-            Rb = GetComponent<Rigidbody2D>();
+            projectileCollider = GetComponent<Collider2D>();
+            rb = GetComponent<Rigidbody2D>();
 
             // Must be trigger to pass through objects
-            ProjectileCollider.isTrigger = true;
+            projectileCollider.isTrigger = true;
         }
 
         private void Update()
         {
-            if (Rb.linearVelocity.sqrMagnitude <= 0.01f) return;
+            if (rb.linearVelocity.sqrMagnitude <= 0.01f) return;
 
-            var angle = Mathf.Atan2(Rb.linearVelocity.y, Rb.linearVelocity.x) * Mathf.Rad2Deg + 90f;
+            var angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg + 90f;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
         
@@ -42,7 +42,6 @@ namespace Weapons
         {
             GameManagerScript.Instance.ApplyDamage(tank.OwnerId, Damage);
 
-            // Optional: sound / VFX per hit
             SoundsScript.Play2DSound(
                 SoundsScript.Instance.atomicHit,
                 0.7f

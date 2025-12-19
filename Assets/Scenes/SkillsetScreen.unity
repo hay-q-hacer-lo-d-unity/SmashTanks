@@ -9666,7 +9666,7 @@ MonoBehaviour:
     their iron shalt thou repay all the torment thou hast endured."
   cooldown: 0
   iconImage: {fileID: 1835927342}
-  requiredValue: 2
+  requiredValue: 0
   requirement: Total damage received
 --- !u!224 &1934051843
 RectTransform:

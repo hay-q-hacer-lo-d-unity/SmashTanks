@@ -54,7 +54,7 @@ namespace Weapons
 
             foreach (var col in colliders)
             {
-                if (col.attachedRigidbody == null || col.attachedRigidbody == Rb) continue;
+                if (col.attachedRigidbody == null || col.attachedRigidbody == base.rb) continue;
 
                 var rb = col.attachedRigidbody;
                 var direction = rb.position - (Vector2)transform.position;

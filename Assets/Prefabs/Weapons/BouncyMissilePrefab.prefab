@@ -168,9 +168,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62a24c9bc60048c99278ccc2dc049fa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.BouncyMissile
+  projectileCollider: {fileID: 1870407949410075186}
+  rb: {fileID: 5907334954290754177}
   explosionSound: {fileID: 8300000, guid: 4a532971b1a6beb40bf7e6585b760b80, type: 3}
   explosionVolume: 1
   fuseTime: 8
   animationFrames:
   - {fileID: 21300000, guid: 0f2f02453d1551c48abddbe19ea850d8, type: 3}
   - {fileID: 21300000, guid: c66948da8ddb70d458ab9ddb4c3ceb17, type: 3}
+  spriteRenderer: {fileID: 3743748127977755626}

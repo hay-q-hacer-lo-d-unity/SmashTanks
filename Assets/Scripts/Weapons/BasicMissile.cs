@@ -3,6 +3,7 @@ using Actions;
 using Manager;
 using Tank;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Weapons
 {
@@ -14,29 +15,28 @@ namespace Weapons
     [RequireComponent(typeof(Collider2D))]
     public class BasicMissile : ExplosiveProjectile
     {
-        [Header("Animation Settings")] public Sprite[] animationFrames;
+        [Header("Animation Settings")] 
+        public Sprite[] animationFrames;
         public float frameRate = 10f; // Frames per second
-        private SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRenderer;
         private int _currentFrame;
         private float _frameTimer;
 
-        private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
         
         
         #region Unity Callbacks
         
         private void Update()
         {
-            if (Rb.linearVelocity.sqrMagnitude <= 0.01f) return;
+            if (rb.linearVelocity.sqrMagnitude <= 0.01f) return;
 
-            var angle = Mathf.Atan2(Rb.linearVelocity.y, Rb.linearVelocity.x) * Mathf.Rad2Deg + 90f;
+            var angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg + 90f;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
             AnimateSprite();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // if collided with a tank, play crowd cheer sound
             if (collision.collider.GetComponent<TankScript>())
             {
                 SoundsScript.Play2DSound(SoundsScript.Instance.crowdCheerHit, 0.8f);
@@ -52,7 +52,7 @@ namespace Weapons
             if (!(_frameTimer >= 1f / frameRate)) return;
             _frameTimer = 0f;
             _currentFrame = (_currentFrame + 1) % animationFrames.Length;
-            _spriteRenderer.sprite = animationFrames[_currentFrame];
+            spriteRenderer.sprite = animationFrames[_currentFrame];
         }
 
         #endregion

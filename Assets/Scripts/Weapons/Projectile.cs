@@ -1,25 +1,24 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Weapons
 {
     public abstract class Projectile : MonoBehaviour
     {
-        protected Collider2D ProjectileCollider;
+        [SerializeField] protected Collider2D projectileCollider;
         
         protected Collider2D OwnerCollider;
 
         protected Coroutine ReenableCollisionRoutine;
         
-        protected Rigidbody2D Rb;
+        [SerializeField] protected Rigidbody2D rb;
         
         protected float Damage { get; set; }
 
         public void Initialize(Collider2D owner, Vector2 speed, float damage)
         {
-            ProjectileCollider = GetComponent<Collider2D>();
-            Rb = GetComponent<Rigidbody2D>();
-            Rb.linearVelocity = speed;
+            rb.linearVelocity = speed;
             Damage = damage;
             SetOwner(owner);
         }
@@ -33,13 +32,13 @@ namespace Weapons
             OwnerCollider = owner;
             
             // Ignore collisions with owner collider.
-            if (!ProjectileCollider) return;
-            Physics2D.IgnoreCollision(owner, ProjectileCollider, true);
+            if (!projectileCollider) return;
+            Physics2D.IgnoreCollision(owner, projectileCollider, true);
 
             // Restart collision reenable coroutine if needed.
             if (ReenableCollisionRoutine != null) StopCoroutine(ReenableCollisionRoutine);
 
-            ReenableCollisionRoutine = StartCoroutine(ReenableCollisionAfterDelay(OwnerCollider, ProjectileCollider, 0.25f));
+            ReenableCollisionRoutine = StartCoroutine(ReenableCollisionAfterDelay(OwnerCollider, projectileCollider, 0.5f));
         }
         
         private IEnumerator ReenableCollisionAfterDelay(Collider2D owner, Collider2D projectile, float delay)

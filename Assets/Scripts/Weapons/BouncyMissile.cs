@@ -10,12 +10,11 @@ namespace Weapons
         [SerializeField] private float fuseTime = SmashTanksConstants.BouncyMissile.FuseTime;
         [Header("Animation Settings")] public Sprite[] animationFrames;
 
-        private SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteRenderer spriteRenderer;
         private float _timer;
 
         private void Start()
         {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
             Invoke(nameof(Explode), fuseTime);
         }
 
@@ -30,14 +29,14 @@ namespace Weapons
 
         private void AnimateSprite()
         {
-            if (animationFrames == null || animationFrames.Length < 2 || _spriteRenderer == null)
+            if (animationFrames == null || animationFrames.Length < 2 || spriteRenderer == null)
                 return;
 
             _timer += Time.deltaTime;
             var cycleTime = _timer % 1f; // 1 second total cycle
 
             // Show first sprite for 0.75s, second for 0.25s
-            _spriteRenderer.sprite = cycleTime < 0.75f ? animationFrames[0] : animationFrames[1];
+            spriteRenderer.sprite = cycleTime < 0.75f ? animationFrames[0] : animationFrames[1];
         }
     }
 

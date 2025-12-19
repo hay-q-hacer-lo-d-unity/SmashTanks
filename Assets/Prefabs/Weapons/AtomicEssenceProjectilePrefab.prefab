@@ -182,3 +182,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474749d8495045ff9402e81520c1d495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapons.AtomicEssenceProjectile
+  projectileCollider: {fileID: -3720673336274447819}
+  rb: {fileID: 8199702797495018697}

@@ -143,7 +143,7 @@ public static class SmashTanksConstants
     
     public static class JuggernautUlti
     {
-        public const float RequiredTdr = 2f;
+        public const float RequiredTdr = 0f;
         public const float MaxInitialSpeed = 80f;
         public const float RecoilForce = 100f;
     }
