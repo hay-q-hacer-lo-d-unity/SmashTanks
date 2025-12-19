@@ -31,7 +31,7 @@ namespace Tank
             }
 
             var instance = Object.Instantiate(prefab, uiCanvas.transform);
-            instance.transform.SetAsLastSibling();
+            instance.transform.SetAsFirstSibling();
 
             Bar = instance.GetComponent<BarScript>();
             if (Bar == null) return;
