@@ -39,18 +39,8 @@ namespace Weapons
 
             var tank = other.GetComponent<TankScript>();
             if (!tank) return;
-
-            ApplyDamage(tank);
-        }
-
-        private void ApplyDamage(TankScript tank)
-        {
+            SoundsScript.Play2DSound(tankHitSound);
             GameManagerScript.Instance.ApplyDamage(tank.OwnerId, Damage);
-
-            SoundsScript.Play2DSound(
-                SoundsScript.Instance.atomicHit,
-                0.7f
-            );
         }
         
         private void AnimateSprite()
