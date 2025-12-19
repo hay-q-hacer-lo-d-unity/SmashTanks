@@ -45,7 +45,7 @@ namespace Weapons
             if (ExplosionEffectPrefab) Instantiate(ExplosionEffectPrefab, transform.position, Quaternion.identity);
 
             if (explosionSound)
-                Sounds.Play2DSound(
+                SoundsScript.Play2DSound(
                     explosionSound,
                     explosionVolume
                 );

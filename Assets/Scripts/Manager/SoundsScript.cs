@@ -1,20 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Actions
+namespace Manager
 {
-    public class Sounds : MonoBehaviour
+    public class SoundsScript : MonoBehaviour
     {
-        public static Sounds Instance { get; private set; }
+        public static SoundsScript Instance { get; private set; }
         private void Awake()
         {
-            if (Instance != null && Instance != this) Destroy(this);
-            else Instance = this;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
             DontDestroyOnLoad(gameObject);
 
             _bgSource = gameObject.AddComponent<AudioSource>();
             _bgSource.loop = true;
-            _bgSource.spatialBlend = 0f; // 2D
+            _bgSource.spatialBlend = 0f;
             _bgSource.volume = 0.6f;
         }
         
@@ -46,14 +51,24 @@ namespace Actions
         
         [Header("Actions")]
         public AudioClip missile;
+        
         public AudioClip bouncyMissile;
+        
         public AudioClip beam;
+        
         public AudioClip jump;
+        
         public AudioClip crash;
         public AudioClip crashImpact;
+        
         public AudioClip teleport;
+        
         public AudioClip gale;
+        
         public AudioClip juggernaut;
+        
+        public AudioClip atomicEssence;
+        public AudioClip atomicHit;
         
         [Header("Ambience")]
         public AudioClip crowdBackground;

@@ -27,7 +27,7 @@ namespace Actions
 
             var damage = damageMultiplier * collision.relativeVelocity.magnitude * rb.mass;
             var volume = 1f - Mathf.Exp(-damage / 10f);
-            Sounds.Play2DSound(Sounds.Instance.crashImpact, volume);
+            SoundsScript.Play2DSound(SoundsScript.Instance.crashImpact, volume);
 
             GameManagerScript.Instance.ApplyDamage(otherTank.OwnerId, damage);
 

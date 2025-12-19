@@ -34,6 +34,9 @@ namespace Tank
         
         [Tooltip("Prefab used for the juggernaut ulti")]
         [SerializeField] private GameObject juggernautProjectilePrefab;
+        
+        [Tooltip("Prefab used for the atomic essence ulti")]
+        [SerializeField] private GameObject atomicEssenceProjectilePrefab;
 
         [Tooltip("Transform point where projectiles and effects are spawned.")]
         [SerializeField] private Transform firePoint;
@@ -112,18 +115,26 @@ namespace Tank
         public GameObject GalePrefab => galePrefab;
         
         public GameObject JuggernautProjectilePrefab => juggernautProjectilePrefab;
+        public GameObject AtomicEssenceProjectilePrefab => atomicEssenceProjectilePrefab;
 
         /// <summary> Current magicka value. </summary>
         public float Magicka => _magicka?.GetValue() ?? 0f;
         
         
         public readonly Dictionary<string, int> CurrentCooldowns = new();
+
+        private readonly Dictionary<string, float> baseMagickaCosts = new()
+        {
+            {"action_beam",     SmashTanksConstants.Beam.    MagickaCost},
+            {"action_teleport", SmashTanksConstants.Teleport.MagickaCost},
+            {"action_gale",     SmashTanksConstants.Gale.    MagickaCost},
+        };
         
         public readonly Dictionary<string, float> MagickaCosts = new()
         {
-            {"action_beam", SmashTanksConstants.Beam.MagickaCost},
+            {"action_beam",     SmashTanksConstants.Beam.    MagickaCost},
             {"action_teleport", SmashTanksConstants.Teleport.MagickaCost},
-            {"action_gale", SmashTanksConstants.Gale.MagickaCost},
+            {"action_gale",     SmashTanksConstants.Gale.    MagickaCost},
         };
         
         public readonly Dictionary<string, float> UltiCurrentValues = new()
@@ -132,6 +143,8 @@ namespace Tank
             {"Atomic Essence", 0f},
             {"Chronomancy", 0f},
         };
+        
+        private float juggernautConsumedDamage;
 
         #endregion
 
@@ -155,7 +168,7 @@ namespace Tank
         {
             UpdateBars();
             
-            if (transform.position.y < -20f && !IsDead)
+            if (!Utils.IsInsideMapBounds(transform.position) && !IsDead)
             {
                 Kill();
                 return;
@@ -345,9 +358,16 @@ namespace Tank
         /// </summary>
         private void ApplyAtomicEssence()
         {
-            var mc = MagickaCosts[_confirmedAction.GetName()];
-            UltiCurrentValues["Atomic Essence"] += mc;
-            MagickaCosts[_confirmedAction.GetName()] = SkillsUtils.CalculateNewMagickaCost(mc);
+            var baseCost = baseMagickaCosts.GetValueOrDefault(_confirmedAction.GetName(), -1f);
+            if (baseCost < 0f) return; // not a magicka-consuming action
+            var currentCost = MagickaCosts[_confirmedAction.GetName()];
+            UltiCurrentValues["Atomic Essence"] += baseCost - currentCost; // Track savings
+            MagickaCosts[_confirmedAction.GetName()] = SkillsUtils.CalculateNewMagickaCost(baseCost);
+        }
+        
+        public void ConsumeAtomicEssenceProgress()
+        {
+            UltiCurrentValues["Atomic Essence"] = 0f;
         }
 
         /// <summary>
@@ -361,8 +381,17 @@ namespace Tank
                 tdr,
                 IncreaseType.LinearHybrid
             );
-            UltiCurrentValues["Juggernaut"] = tdr;
+            var progress = tdr - juggernautConsumedDamage;
+            UltiCurrentValues["Juggernaut"] = progress;
         }
+        
+        public void ConsumeJuggernautProgress()
+        {
+            var tdr = _health?.TotalDamageReceived ?? 0f;
+            juggernautConsumedDamage = tdr;
+            UltiCurrentValues["Juggernaut"] = 0f;
+        }
+
 
         /// <summary>
         /// Applies the cooldown of the current action after execution.

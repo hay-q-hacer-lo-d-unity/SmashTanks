@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using Manager;
 
 namespace Actions
 {
@@ -36,7 +37,6 @@ namespace Actions
         public void OnPointerEnter(PointerEventData eventData)
         {
             rowHovered = true;
-            Sounds.Play2DSound(Sounds.Instance.jump);
             SlideTo(shownX);
         }
 
@@ -46,7 +46,6 @@ namespace Actions
             if (_isAnimating && Mathf.Approximately(_currentTargetX, shownX)) return;
 
             if (rowHovered) return;
-            Sounds.Play2DSound(Sounds.Instance.jump);
             SlideTo(hiddenX);
         }
 
@@ -60,9 +59,8 @@ namespace Actions
         {
             _currentTargetX = targetX;
 
-            if (_slideRoutine != null)
-                StopCoroutine(_slideRoutine);
-
+            if (_slideRoutine != null) StopCoroutine(_slideRoutine);
+            SoundsScript.Play2DSound(SoundsScript.Instance.jump);
             _slideRoutine = StartCoroutine(SlideCoroutine());
         }
 

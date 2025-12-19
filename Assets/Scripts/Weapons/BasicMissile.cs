@@ -1,5 +1,6 @@
 using System.Collections;
 using Actions;
+using Manager;
 using Tank;
 using UnityEngine;
 
@@ -22,7 +23,6 @@ namespace Weapons
         private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
         
         
-        
         #region Unity Callbacks
         
         private void Update()
@@ -39,7 +39,7 @@ namespace Weapons
             // if collided with a tank, play crowd cheer sound
             if (collision.collider.GetComponent<TankScript>())
             {
-                Sounds.Play2DSound(Sounds.Instance.crowdCheerHit, 0.8f);
+                SoundsScript.Play2DSound(SoundsScript.Instance.crowdCheerHit, 0.8f);
             }
             Explode();
         }

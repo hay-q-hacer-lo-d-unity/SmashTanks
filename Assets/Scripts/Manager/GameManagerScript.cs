@@ -40,7 +40,6 @@ namespace Manager
         // ---------- UNITY LIFECYCLE ----------
         private void Awake()
         {
-            Sounds.Instance.PlayStatsScreenBackground();
             if (Instance != null && Instance != this)
             {
                 Debug.LogWarning("[GameManager] Duplicate instance found. Destroying new one.");
@@ -48,6 +47,7 @@ namespace Manager
                 return;
             }
             Instance = this;
+            SoundsScript.Instance.PlayStatsScreenBackground();
             gameOverPanel.playAgainButton.onClick.AddListener(HandlePlayAgain);
             gameplayRoot?.SetActive(false);
             skillsetScreen?.SetActive(false);
@@ -76,14 +76,14 @@ namespace Manager
         // -------------- GAME CYCLE --------------
         private void StartGame()
         {
-            Sounds.Instance.StopBackground();
+            SoundsScript.Instance.StopBackground();
             if (!ValidateReferences()) return;
             if (_pendingSkillsets.Count != playerCount)
             {
                 Debug.LogError("[GameManager] Skillset count does not match player count.");
                 return;
             }
-            Sounds.Instance.PlayGameBackground();
+            SoundsScript.Instance.PlayGameBackground();
 
             skillsetScreen?.SetActive(false);
             gameplayRoot.SetActive(true);
@@ -98,7 +98,7 @@ namespace Manager
 
         private void EndGame(int? winnerId)
         {
-            Sounds.Instance.StopBackground();
+            SoundsScript.Instance.StopBackground();
             gameOverPanel.Show(winnerId?.ToString());
         }
         

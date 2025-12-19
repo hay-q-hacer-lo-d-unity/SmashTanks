@@ -23,7 +23,11 @@ namespace Weapons
             Damage = damage;
             SetOwner(owner);
         }
-        
+
+        private void FixedUpdate()
+        {
+            if (!Utils.IsInsideMapBounds(transform.position)) Destroy(gameObject);
+        }
         private void SetOwner(Collider2D owner)
         {
             OwnerCollider = owner;

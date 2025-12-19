@@ -1,4 +1,5 @@
 using System;
+using Manager;
 using Tank;
 using UnityEngine;
 using Weapons;
@@ -347,12 +348,6 @@ namespace Actions
             }
         }
 
-        private static bool IsInsideMapBounds(Vector2 point)
-        {
-            return point.x is >= SmashTanksConstants.MapBounds.MinX and <= SmashTanksConstants.MapBounds.MaxX &&
-                   point.y is >= SmashTanksConstants.MapBounds.MinY and <= SmashTanksConstants.MapBounds.MaxY;
-        }
-
         private static bool IsInsideSolidObject(Vector2 point)
         {
             var collider = Physics2D.OverlapCircle(point, SmashTanksConstants.Teleport.CollisionCheckRadius);
@@ -397,7 +392,7 @@ namespace Actions
 
         public void Execute(Vector3 origin, Vector3 target)
         {
-            _ctx.Tank.UltiCurrentValues["Juggernaut"] = 0f;
+            _ctx.Tank.ConsumeJuggernautProgress();
 
             var direction = (target - origin).normalized;
             var speed = TankPhysicsHelper.CalculateProjectileSpeed(
@@ -410,7 +405,7 @@ namespace Actions
 
             if (!projectile.TryGetComponent(out JuggernautProjectile proj)) return;
 
-            proj.Initialize(_ctx.Collider, speed, _ctx.Stats.damage);
+            proj.Initialize(_ctx.Collider, speed, _ctx.Tank.UltiCurrentValues["Juggernaut"]);
 
             _ctx.Rb.AddForce(
                 -direction * SmashTanksConstants.JuggernautUlti.RecoilForce,
@@ -423,6 +418,48 @@ namespace Actions
         public int Cooldown => 0;
         public bool LocksCannon() => false;
     }
+    public class AtomicEssenceUlti : IAction, IActionWithSound
+    {
+        private readonly ActionContext _ctx;
+
+        public AudioClip ExecuteSound => _ctx.ExecuteSound;
+
+        public AtomicEssenceUlti(ActionContext ctx) => _ctx = ctx;
+
+        public void Execute(Vector3 origin, Vector3 target)
+        {
+            // Consume ulti progress FIRST
+            _ctx.Tank.ConsumeAtomicEssenceProgress();
+
+            var direction = (target - origin).normalized;
+            var speed = TankPhysicsHelper.CalculateProjectileSpeed(
+                _ctx.Stats.atomicEssenceShotMaxSpeed, origin, target
+            );
+
+            var projectile = Object.Instantiate(
+                _ctx.AtomicEssenceProjectilePrefab,
+                origin,
+                Quaternion.identity
+            );
+
+            if (!projectile.TryGetComponent(out AtomicEssenceProjectile proj)) return;
+
+            proj.Initialize(
+                _ctx.Collider,
+                speed,
+                _ctx.Tank.UltiCurrentValues["Atomic Essence"]
+            );
+        }
+
+        public string GetName() => "Atomic Essence";
+
+        public AimType AimType() => Actions.AimType.Parabolic;
+
+        public int Cooldown => 0;
+
+        public bool LocksCannon() => false;
+    }
+
     
     public enum AimType
     {

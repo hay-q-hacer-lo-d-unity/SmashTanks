@@ -1,4 +1,5 @@
-﻿using Tank;
+﻿using Manager;
+using Tank;
 using UnityEngine;
 
 namespace Actions
@@ -8,17 +9,18 @@ namespace Actions
         public static IAction Create(string actionId, TankScript tank)
         {
             if (!tank) return null;
-
-            return actionId.ToLowerInvariant() switch
+            Debug.Log(Utils.SnakeFromTitle(actionId));
+            return Utils.SnakeFromTitle(actionId) switch
             {
-                "action_missile"        => new Missile       (CreateCtx(tank, Sounds.Instance.missile)),
-                "action_bouncy_missile" => new BouncyMissile (CreateCtx(tank, Sounds.Instance.bouncyMissile)),
-                "action_jump"           => new Jump          (CreateCtx(tank, Sounds.Instance.jump)),
-                "action_crash"          => new Crash         (CreateCtx(tank, Sounds.Instance.crash)),
-                "action_beam"           => new Beam          (CreateCtx(tank, Sounds.Instance.beam)),
-                "action_teleport"       => new Teleport      (CreateCtx(tank, Sounds.Instance.teleport)),
-                "action_gale"           => new Gale          (CreateCtx(tank, Sounds.Instance.gale)),
-                "juggernaut"            => new JuggernautUlti(CreateCtx(tank, Sounds.Instance.juggernaut)),
+                "action_missile"        => new Missile          (CreateCtx(tank, SoundsScript.Instance.missile)),
+                "action_bouncy_missile" => new BouncyMissile    (CreateCtx(tank, SoundsScript.Instance.bouncyMissile)),
+                "action_jump"           => new Jump             (CreateCtx(tank, SoundsScript.Instance.jump)),
+                "action_crash"          => new Crash            (CreateCtx(tank, SoundsScript.Instance.crash)),
+                "action_beam"           => new Beam             (CreateCtx(tank, SoundsScript.Instance.beam)),
+                "action_teleport"       => new Teleport         (CreateCtx(tank, SoundsScript.Instance.teleport)),
+                "action_gale"           => new Gale             (CreateCtx(tank, SoundsScript.Instance.gale)),
+                "juggernaut"            => new JuggernautUlti   (CreateCtx(tank, SoundsScript.Instance.juggernaut)), 
+                "atomic_essence"        => new AtomicEssenceUlti(CreateCtx(tank, SoundsScript.Instance.atomicEssence)),
                 _                       => null
             };
         }

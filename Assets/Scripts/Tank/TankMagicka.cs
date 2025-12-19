@@ -5,7 +5,7 @@ namespace Tank
     public class TankMagicka : TankBarBase
     {
         public TankMagicka(TankScript tank, GameObject prefab, float maxMagicka)
-            : base(tank, prefab, maxMagicka, Vector3.up * 2f) { }
+            : base(tank, prefab, maxMagicka, Vector3.up * 2.5f) { }
 
         public void Spend(float amount)
         {

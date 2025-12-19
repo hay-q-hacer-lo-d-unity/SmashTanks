@@ -11,6 +11,7 @@ namespace Tank
         public float missileMaxSpeed = SmashTanksConstants.Missile.MaxInitialSpeed;
         public float bouncyMissileMaxSpeed = SmashTanksConstants.BouncyMissile.MaxInitialSpeed;
         public float juggernautShotMaxSpeed = SmashTanksConstants.JuggernautUlti.MaxInitialSpeed;
+        public float atomicEssenceShotMaxSpeed = SmashTanksConstants.AtomicEssenceUlti.MaxInitialSpeed;
 
         [Header("Jump Settings")]
         public float maxForce;

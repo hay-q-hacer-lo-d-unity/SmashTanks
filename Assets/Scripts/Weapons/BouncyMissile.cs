@@ -1,4 +1,5 @@
 ﻿using Actions;
+using Manager;
 using Tank;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace Weapons
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (!other.collider.TryGetComponent<TankScript>(out _)) return;
-            Sounds.Play2DSound(Sounds.Instance.crowdCheerHit, 0.8f);
+            SoundsScript.Play2DSound(SoundsScript.Instance.crowdCheerHit, 0.8f);
             Explode();
         }
 

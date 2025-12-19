@@ -127,7 +127,7 @@ public static class SmashTanksConstants
         public const float BaseDamage = 0f;
         public const float DamagePerIntellect = 0.5f;
         public const float MagickaCost = 10f;
-        public const int Cooldown = 4;
+        public const int Cooldown = 1;
     }
 
     public static class Teleport
@@ -150,7 +150,8 @@ public static class SmashTanksConstants
     
     public static class AtomicEssenceUlti
     {
-        public const float RequiredMagickaUsed = 40f;
+        public const float RequiredMagickaSaved = 0f;
+        public const float MaxInitialSpeed = 25f;
     }
 
     #endregion
@@ -171,10 +172,10 @@ public static class SmashTanksConstants
 
     public static class MapBounds
     {
-        public const float MinX = -44.12f;
-        public const float MaxX = 43.99f;
-        public const float MinY = -17.7f;
-        public const float MaxY = 100f; // Sin techo, valor alto por seguridad
+        public const float MinX = -45;
+        public const float MaxX = 45;
+        public const float MinY = -25;
+        public const float MaxY = 1000f; // Sin techo, valor alto por seguridad
     }
 
     public static class Physics

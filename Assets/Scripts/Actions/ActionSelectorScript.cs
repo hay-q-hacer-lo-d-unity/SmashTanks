@@ -40,7 +40,9 @@ namespace Actions
         public void SelectAction(string actionId)
         {
             if (!_tank) return;
-            _tank.SetAction(ActionFactory.Create(actionId, _tank));
+            var action = ActionFactory.Create(actionId, _tank);
+            if (action == null) Debug.LogWarning($"Action {actionId} not found");
+            _tank.SetAction(action);
         }
     }
 }

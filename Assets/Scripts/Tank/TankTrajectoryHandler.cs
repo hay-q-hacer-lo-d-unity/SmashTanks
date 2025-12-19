@@ -41,18 +41,16 @@ namespace Tank
 
             var (origin, velocity) = action switch
             {
-                JuggernautUlti =>
-                    (_tank.FirePoint.position, CalculateJuggernautProjectileVelocity()),
+                AtomicEssenceUlti => (_tank.FirePoint.position, CalculateAtomicEssenceProjectileVelocity()),
+                
+                JuggernautUlti => (_tank.FirePoint.position, CalculateJuggernautProjectileVelocity()),
 
-                BouncyMissile =>
-                    (_tank.FirePoint.position, CalculateBouncyMissileVelocity()),
+                BouncyMissile => (_tank.FirePoint.position, CalculateBouncyMissileVelocity()),
 
-                Actions.Missile =>
-                    (_tank.FirePoint.position, CalculateMissileVelocity()),
+                Actions.Missile => (_tank.FirePoint.position, CalculateMissileVelocity()),
 
                 // AIMPOINT actions
-                Jump or Crash =>
-                    (_tank.Center.position, CalculateJumpVelocity()),
+                Jump or Crash => (_tank.Center.position, CalculateJumpVelocity()),
 
                 _ => (Vector3.zero, Vector2.zero)
             };
@@ -111,6 +109,12 @@ namespace Tank
         {
             var cursor = GetMouseWorld();
             return TankPhysicsHelper.CalculateProjectileSpeed(_tank.Stats.juggernautShotMaxSpeed, _tank.FirePoint.position, cursor);
+        }
+        
+        private Vector2 CalculateAtomicEssenceProjectileVelocity()
+        {
+            var cursor = GetMouseWorld();
+            return TankPhysicsHelper.CalculateProjectileSpeed(_tank.Stats.atomicEssenceShotMaxSpeed, _tank.FirePoint.position, cursor);
         }
 
         private Vector2 CalculateJumpVelocity()

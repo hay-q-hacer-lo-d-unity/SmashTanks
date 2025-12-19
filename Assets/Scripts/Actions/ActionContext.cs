@@ -19,6 +19,7 @@ namespace Actions
         public GameObject BeamPrefab { get; }
         public GameObject GalePrefab { get; }
         public GameObject JuggernautProjectilePrefab { get; }
+        public GameObject AtomicEssenceProjectilePrefab { get; }
 
         // 🔊 Audio
         public AudioClip ExecuteSound { get; }
@@ -38,7 +39,8 @@ namespace Actions
             BeamPrefab = tank.BeamPrefab;
             GalePrefab = tank.GalePrefab;
             JuggernautProjectilePrefab = tank.JuggernautProjectilePrefab;
-
+            AtomicEssenceProjectilePrefab = tank.AtomicEssenceProjectilePrefab;
+            
             ExecuteSound = executeSound;
         }
     }
