@@ -9,7 +9,6 @@ namespace Actions
         public static IAction Create(string actionId, TankScript tank)
         {
             if (!tank) return null;
-            Debug.Log(Utils.SnakeFromTitle(actionId));
             return Utils.SnakeFromTitle(actionId) switch
             {
                 "action_missile"        => new Missile          (CreateCtx(tank, SoundsScript.Instance.missile)),
