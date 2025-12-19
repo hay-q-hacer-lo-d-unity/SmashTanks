@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
+using TMPro;
 
 namespace Manager
 {
@@ -23,6 +25,20 @@ namespace Manager
             _bgSource.volume = 0.6f;
         }
         
+        private void Start()
+        {
+            if (skillsetMute != null)
+            {
+                skillsetMute.onClick.AddListener(ToggleMute);
+            }
+
+            if (playerCountMute != null)
+            {
+                playerCountMute.onClick.AddListener(ToggleMute);
+            }
+
+            UpdateButtonText();
+        }
         
         public void PlayStatsScreenBackground()
         {
@@ -80,6 +96,42 @@ namespace Manager
         
         private AudioSource _bgSource;
 
+        [Header("MuteButtons")]
+        [SerializeField] private Button skillsetMute;
+        [SerializeField] private Button playerCountMute;
+
+        public void ToggleMute()
+        {
+            AudioListener.volume = AudioListener.volume > 0 ? 0f : 1f;
+            UpdateButtonText();
+        }
+
+        private void UpdateButtonText()
+        {
+            bool isMuted = AudioListener.volume <= 0;
+            string textToShow = isMuted ? "Unmute" : "Mute";
+
+            UpdateButtonTextInternal(skillsetMute, textToShow);
+            UpdateButtonTextInternal(playerCountMute, textToShow);
+        }
+
+        private void UpdateButtonTextInternal(Button button, string text)
+        {
+            if (button == null) return;
+
+            var tmpText = button.GetComponentInChildren<TMP_Text>();
+            if (tmpText != null)
+            {
+                tmpText.text = text;
+                return;
+            }
+
+            var legacyText = button.GetComponentInChildren<Text>();
+            if (legacyText != null)
+            {
+                legacyText.text = text;
+            }
+        }
         
         public static void Play2DSound(AudioClip clip, float volume = 1f)
         {
